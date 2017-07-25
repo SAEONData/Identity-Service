@@ -1,0 +1,51 @@
+﻿.page-header {
+    margin-top: 0;
+    padding-top: 0;
+    /*padding-bottom: 0;
+    border-bottom: 0;*/
+}
+
+body {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #567baf;
+}
+
+#Body {
+    padding-right: 50px;
+}
+
+#Page {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 15px;
+    background-color: white;
+    color: black;
+}
+
+.Logo {
+    margin-bottom: 10px;
+}
+
+.navbar-inverse {
+    background-color: #567baf;
+    border-color: #567baf;
+}
+
+/*.listViewSelectedLocations {
+    width: auto;
+    height: auto;
+}
+
+.listViewSelectedFeatures {
+    width: auto;
+    height: auto;
+}*/
+
+.ButtonRow {
+    padding-top: 5px;
+}
+
+.ErrorRow {
+    color: red;
+}

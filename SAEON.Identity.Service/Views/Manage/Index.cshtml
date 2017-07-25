@@ -1,0 +1,26 @@
+﻿@model ManageViewModel
+@{
+    ViewData["Title"] = "Manage your account";
+}
+
+<p class="text-success">@ViewData["StatusMessage"]</p>
+<div>
+    <dl class="dl-horizontal">
+        <dt>Password:</dt>
+        <dd>
+            @if (Model.HasPassword)
+            {
+                <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">Change</a>
+            }
+            else
+            {
+                <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">Create</a>
+            }
+        </dd>
+        <dt>External Logins:</dt>
+        <dd>
+
+            @Model.Logins.Count <a asp-controller="Manage" asp-action="ManageLogins" class="btn-bracketed">Manage</a>
+        </dd>
+    </dl>
+</div>
