@@ -16,6 +16,7 @@ using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SAEON.Identity.Service.UI
 {
@@ -267,5 +268,37 @@ namespace SAEON.Identity.Service.UI
 
             return View("LoggedOut", vm);
         }
+
+        //
+        // GET: /Account/Register
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Register(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        //
+        // POST: /Account/Register
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var identityUser = new SAEONUser { UserName = model.Email, Email = model.Email };
+                var result = await _userManager.CreateAsync(identityUser, model.Password);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Login");
+                }
+            }
+            return View(model);
+        }
+
+
     }
 }
