@@ -6,6 +6,7 @@
             {
                 <li><a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage you account">@User.Identity.Name</a></li>
                 <li><a asp-area="" asp-controller="Manage" asp-action="ChangePassword" title="Change your password">Change password</a></li>
+                <li><a asp-area="" asp-controller="Grants" asp-action="Index" title="Client Application Access">Client Application Access</a></li>
                 <li><a asp-area="" asp-controller="Account" asp-action="Logout" title="Log out from all sites">Log out</a></li>
             }
             else

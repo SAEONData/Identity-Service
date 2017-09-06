@@ -275,8 +275,8 @@ namespace SAEON.Identity.Service.UI
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            var vm = new RegisterViewModel { ReturnUrl = returnUrl };
+            return View(vm);
         }
 
         //
@@ -284,15 +284,18 @@ namespace SAEON.Identity.Service.UI
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 var identityUser = new SAEONUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(identityUser, model.Password);
                 if (result.Succeeded)
                 {
+                    if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
+                    {
+                        return Redirect(model.ReturnUrl);
+                    }
                     return RedirectToAction("Login");
                 }
             }
