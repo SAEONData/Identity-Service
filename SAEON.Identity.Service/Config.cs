@@ -67,13 +67,13 @@ namespace SAEON.Identity.Service
                     AllowRememberConsent = true,
                     RedirectUris = new List<string>
                     {
-                        $"http://localhost:{QuerySitePort}/signin-oidc",
-                        "http://observations.saeon.ac.za/signin-oidc",
+                        $"http://localhost:{QuerySitePort}",
+                        "http://observations.saeon.ac.za",
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
-                        $"http://localhost:{QuerySitePort}/signout-oidc",
-                        "http://observations.saeon.ac.za/signout-oidc",
+                        $"http://localhost:{QuerySitePort}",
+                        "http://observations.saeon.ac.za",
                     },
                     AllowedScopes = new List<string>
                     {
@@ -94,13 +94,13 @@ namespace SAEON.Identity.Service
                     AllowRememberConsent = true,
                     RedirectUris = new List<string>
                     {
-                        $"http://localhost:{AdminSitePort}/signin-oidc",
-                        "http://observations.saeon.ac.za/signin-oidc",
+                        $"http://localhost:{AdminSitePort}",
+                        "http://observations.saeon.ac.za",
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
-                        $"http://localhost:{AdminSitePort}/signout-oidc",
-                        "http://observations.saeon.ac.za/signout-oidc",
+                        $"http://localhost:{AdminSitePort}",
+                        "http://observations.saeon.ac.za",
                     },
                     AllowedScopes = new List<string>
                     {
@@ -115,7 +115,7 @@ namespace SAEON.Identity.Service
                 new Client
                 {
                     ClientId = "Postman",
-                    ClientName = "Postman http test client",
+                    ClientName = "Postman client",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     IdentityTokenLifetime = (int)new TimeSpan(1, 0, 0).TotalSeconds,
                     AccessTokenLifetime = (int)new TimeSpan(1, 0, 0).TotalSeconds,
