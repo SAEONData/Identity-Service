@@ -17,10 +17,10 @@ using IdentityModel;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using SAEON.Logs;
 
 namespace SAEON.Identity.Service.UI
 {
-    [SecurityHeaders]
     public class AccountController : Controller
     {
         private readonly UserManager<SAEONUser> _userManager;
@@ -275,6 +275,7 @@ namespace SAEON.Identity.Service.UI
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
+            Logging.Verbose("ReturnUrl: {returnUrl}", returnUrl);
             var vm = new RegisterViewModel { ReturnUrl = returnUrl };
             return View(vm);
         }
@@ -288,15 +289,28 @@ namespace SAEON.Identity.Service.UI
         {
             if (ModelState.IsValid)
             {
-                var identityUser = new SAEONUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(identityUser, model.Password);
-                if (result.Succeeded)
+                var identityUser = await _userManager.FindByNameAsync(model.Email);
+                if (identityUser != null)
                 {
-                    if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
+                    ModelState.AddModelError("", AccountOptions.AlreadyRegisteredErrorMessage);
+                }
+                else
+                {
+                    identityUser = new SAEONUser { UserName = model.Email, Email = model.Email };
+                    var result = await _userManager.CreateAsync(identityUser, model.Password);
+                    if (!result.Succeeded)
                     {
-                        return Redirect(model.ReturnUrl);
+                        ModelState.AddModelError("", string.Join("; ", result.Errors.Select(i => i.Description)));
                     }
-                    return RedirectToAction("Login");
+                    else
+                    {
+                        Logging.Verbose("ReturnUrl: {returnUrl} IsValid: {isValid} IsLocal: {isLocal}", model.ReturnUrl, _interaction.IsValidReturnUrl(model.ReturnUrl), Url.IsLocalUrl(model.ReturnUrl));
+                        if (_interaction.IsValidReturnUrl(model.ReturnUrl+ "/connect/authorize") || Url.IsLocalUrl(model.ReturnUrl))
+                        {
+                            return Redirect(model.ReturnUrl);
+                        }
+                        return RedirectToAction("Login");
+                    }
                 }
             }
             return View(model);

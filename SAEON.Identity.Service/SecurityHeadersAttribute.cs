@@ -1,14 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace SAEON.Identity.Service
 {
     public class SecurityHeadersAttribute : ActionFilterAttribute
     {
+        private IConfiguration _config;
+
+        public SecurityHeadersAttribute(IConfiguration config)
+        {
+            _config = config;
+        }
+
         public override void OnResultExecuting(ResultExecutingContext context)
         {
             var result = context.Result;
@@ -23,11 +27,7 @@ namespace SAEON.Identity.Service
                     context.HttpContext.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 }
 
-                //var csp = "default-src 'self';";
-                var csp = "default-src 'self'; img-src 'self' https://i.creativecommons.org";
-                // an example if you need client images to be displayed from twitter
-                //var csp = "default-src 'self'; img-src 'self' https://pbs.twimg.com";
-
+                var csp = _config["ContentSecurityPolicy:Policy"];
                 // once for standards compliant browsers
                 if (!context.HttpContext.Response.Headers.ContainsKey("Content-Security-Policy"))
                 {

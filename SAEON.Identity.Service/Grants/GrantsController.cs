@@ -11,7 +11,6 @@ namespace SAEON.Identity.Service.UI
     /// <summary>
     /// This sample controller allows a user to revoke grants given to clients
     /// </summary>
-    [SecurityHeaders]
     //[Authorize(ActiveAuthenticationSchemes = IdentityServer4.IdentityServerConstants.DefaultCookieAuthenticationScheme)]
     [Authorize]
     public class GrantsController : Controller

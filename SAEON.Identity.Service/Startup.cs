@@ -25,10 +25,6 @@ namespace SAEON.Identity.Service
     {
         public Startup(IHostingEnvironment env)
         {
-            Logging
-                .CreateConfiguration("Logs/SAEON.Identity.Service {Date}.txt")
-                .WriteTo.Seq("http://localhost:5341/")
-                .Create();
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -43,6 +39,9 @@ namespace SAEON.Identity.Service
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            Logging
+                .CreateConfiguration("Logs/SAEON.Identity.Service {Date}.txt", Configuration)
+                .Create();
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -93,9 +92,13 @@ namespace SAEON.Identity.Service
                     .AddAspNetIdentity<SAEONUser>()
                     .AddTemporarySigningCredential();
 
-                services.AddMvc();
+                services.AddMvc(options =>
+                {
+                    options.Filters.Add(typeof(SecurityHeadersAttribute));
+                });
                 services.AddLogging();
 
+                services.AddSingleton<IConfiguration>(Configuration);
                 // Add application services.
                 services.AddTransient<IEmailSender, AuthMessageSender>();
                 services.AddTransient<ISmsSender, AuthMessageSender>();
@@ -110,9 +113,7 @@ namespace SAEON.Identity.Service
                 loggerFactory
                     .AddConsole(Configuration.GetSection("Logging"))
                     .AddDebug()
-                    .AddSerilog()
-                    //.AddFile(Configuration.GetSection("Logging"))
-                    ;
+                    .AddSerilog();
 
                 if (env.IsDevelopment())
                 {

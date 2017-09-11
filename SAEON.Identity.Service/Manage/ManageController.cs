@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Http;
 namespace SAEON.Identity.Service.UI
 {
     [Authorize]
-    [SecurityHeaders]
     public class ManageController : Controller
     {
         private readonly UserManager<SAEONUser> _userManager;

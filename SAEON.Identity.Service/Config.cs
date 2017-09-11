@@ -82,7 +82,8 @@ namespace SAEON.Identity.Service
                         IdentityServerConstants.StandardScopes.Email,
                         "SAEON.Observations.WebAPI"
                     },
-                    AllowOfflineAccess = true
+                    AllowOfflineAccess = true,
+                    AllowAccessTokensViaBrowser = true
                 },
                 new Client {
                     ClientId = "SAEON.Observations.AdminSite",
@@ -110,7 +111,8 @@ namespace SAEON.Identity.Service
                         IdentityServerConstants.StandardScopes.OfflineAccess,
                         "SAEON.Observations.WebAPI"
                     },
-                    AllowOfflineAccess = true
+                    AllowOfflineAccess = true,
+                    AllowAccessTokensViaBrowser = true
                 },
                 new Client
                 {

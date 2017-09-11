@@ -9,7 +9,6 @@ namespace SAEON.Identity.Service.UI
     /// <summary>
     /// This controller processes the consent UI
     /// </summary>
-    [SecurityHeaders]
     public class ConsentController : Controller
     {
         private readonly ConsentService _consent;
