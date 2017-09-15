@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using SAEON.Logs;
 
 namespace SAEON.Identity.Service
 {
@@ -28,6 +29,7 @@ namespace SAEON.Identity.Service
                 }
 
                 var csp = _config["ContentSecurityPolicy:Policy"];
+                //Logging.Verbose("ContentSecurityPolicy: {csp}", csp);
                 // once for standards compliant browsers
                 if (!context.HttpContext.Response.Headers.ContainsKey("Content-Security-Policy"))
                 {

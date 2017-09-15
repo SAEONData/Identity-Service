@@ -117,7 +117,6 @@ namespace SAEON.Identity.Service
 
                 if (env.IsDevelopment())
                 {
-                    Logging.Information("Environment: {environment}", env.EnvironmentName);
                     app.UseDeveloperExceptionPage();
                     app.UseDatabaseErrorPage();
                     app.UseBrowserLink();
@@ -126,6 +125,8 @@ namespace SAEON.Identity.Service
                 {
                     app.UseExceptionHandler("/Home/Error");
                 }
+                Logging.Information("Environment: {environment}", env.EnvironmentName);
+                Logging.Information("ContentSecurityPolicy: {csp}", Configuration["ContentSecurityPolicy:Policy"]);
 
                 InitializeDbAsync(app).Wait();
 

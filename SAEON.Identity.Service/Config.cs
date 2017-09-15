@@ -19,7 +19,7 @@ namespace SAEON.Identity.Service
             return new List<IdentityResource> {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Email(),
+                new IdentityResources.Email { Required=true},
                 new IdentityResource {
                     Name = "role",
                     UserClaims = new List<string> {"role"}
@@ -108,7 +108,6 @@ namespace SAEON.Identity.Service
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
-                        IdentityServerConstants.StandardScopes.OfflineAccess,
                         "SAEON.Observations.WebAPI"
                     },
                     AllowOfflineAccess = true,

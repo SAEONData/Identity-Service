@@ -21,6 +21,12 @@
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/css/SAEON.min.css" asp-append-version="true" />
     </environment>
+    <link href="~/lib/syncfusion-javascript/Content/ej/web/bootstrap-theme/ej.web.all.min.css" rel="stylesheet" />
+    <link href="~/lib/syncfusion-javascript/Content/ej/web/responsive-css/ej.responsive.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jsrender/jsrender.min.js"></script>
+    <script src="~/lib/syncfusion-javascript/Scripts/ej/web/ej.web.all.min.js"></script>
+
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
@@ -99,6 +105,8 @@
     </environment>
 
     @RenderSection("Scripts", required: false)
+
+    <ej-script-manager></ej-script-manager>
 </body>
 
 </html>
