@@ -97,6 +97,7 @@ namespace SAEON.Identity.Service
                     options.Filters.Add(typeof(SecurityHeadersAttribute));
                 });
                 services.AddLogging();
+                services.AddCors();
 
                 services.AddSingleton<IConfiguration>(Configuration);
                 // Add application services.
@@ -130,6 +131,7 @@ namespace SAEON.Identity.Service
 
                 InitializeDbAsync(app).Wait();
 
+                app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
                 app.UseStaticFiles();
 
                 app.UseIdentity();

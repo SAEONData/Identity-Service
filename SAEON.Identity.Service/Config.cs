@@ -55,6 +55,11 @@ namespace SAEON.Identity.Service
                     AccessTokenLifetime = (int)new TimeSpan(7, 0, 0).TotalSeconds,
                     ClientSecrets = new List<Secret> { new Secret("81g5wyGSC89a".Sha256()) },
                     AllowedScopes = new List<string> { "SAEON.Observations.WebAPI" },
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        $"http://localhost:{QuerySitePort}",
+                        "http://observations.saeon.ac.za",
+                    },
                 },
                 new Client {
                     ClientId = "SAEON.Observations.QuerySite",
@@ -81,6 +86,11 @@ namespace SAEON.Identity.Service
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "SAEON.Observations.WebAPI"
+                    },
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        $"http://localhost:{QuerySitePort}",
+                        "http://observations.saeon.ac.za",
                     },
                     AllowOfflineAccess = true,
                     AllowAccessTokensViaBrowser = true
@@ -109,6 +119,11 @@ namespace SAEON.Identity.Service
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "SAEON.Observations.WebAPI"
+                    },
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        $"http://localhost:{QuerySitePort}",
+                        "http://observations.saeon.ac.za",
                     },
                     AllowOfflineAccess = true,
                     AllowAccessTokensViaBrowser = true
