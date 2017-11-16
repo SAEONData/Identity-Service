@@ -23,9 +23,13 @@
 
     <ItemGroup>
         <Compile Remove="Logs\**" />
+        <Compile Remove="wwwroot\lib\bootstrap\**" />
         <Content Remove="Logs\**" />
+        <Content Remove="wwwroot\lib\bootstrap\**" />
         <EmbeddedResource Remove="Logs\**" />
+        <EmbeddedResource Remove="wwwroot\lib\bootstrap\**" />
         <None Remove="Logs\**" />
+        <None Remove="wwwroot\lib\bootstrap\**" />
     </ItemGroup>
 
     <ItemGroup>
