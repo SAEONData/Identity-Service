@@ -10,9 +10,11 @@ namespace SAEON.Identity.Service
 {
     internal class Config
     {
-        private static readonly int WebAPIPort = 54330;
-        private static readonly int QuerySitePort = 54340;
-        private static readonly int AdminSitePort = 54350;
+        private static readonly int ObservationsWebAPIPort = 54330;
+        private static readonly int ObservationsQuerySitePort = 54340;
+        private static readonly int ObservationsAdminSitePort = 54350;
+        //private static readonly int EasiCATWebAPIPort = 55330;
+        private static readonly int EasiCATWebSitePort = 55340;
 
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
@@ -39,28 +41,38 @@ namespace SAEON.Identity.Service
                     Scopes = new List<Scope> {
                         new Scope("SAEON.Observations.WebAPI","SAEON Observations WebAPI")
                     }
-                }
+                },
+                new ApiResource {
+                    Name = "SAEON.EasiCAT.WebAPI",
+                    DisplayName = "SAEON EasiCAT WebAPI",
+                    Description = "The SAEON EasiCAT WebAPI",
+                    UserClaims = new List<string> {"role", JwtClaimTypes.ClientId},
+                    ApiSecrets = new List<Secret> {new Secret("d86stWfX*kWc".Sha256())},
+                    Scopes = new List<Scope> {
+                        new Scope("SAEON.EasiCAT.WebAPI","SAEON EasiCAT WebAPI")
+                    }
+                },
             };
         }
 
         public static IEnumerable<Client> GetClients()
         {
             return new List<Client> {
-                new Client
-                {
-                    ClientId = "SAEON.Observations.WebAPI",
-                    ClientName = "SAEON Observations WebAPI",
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    IdentityTokenLifetime = (int)new TimeSpan(14, 0, 0).TotalSeconds,
-                    AccessTokenLifetime = (int)new TimeSpan(7, 0, 0).TotalSeconds,
-                    ClientSecrets = new List<Secret> { new Secret("81g5wyGSC89a".Sha256()) },
-                    AllowedScopes = new List<string> { "SAEON.Observations.WebAPI" },
-                    AllowedCorsOrigins = new List<string>
-                    {
-                        $"http://localhost:{QuerySitePort}",
-                        "http://observations.saeon.ac.za",
-                    },
-                },
+                //new Client
+                //{
+                //    ClientId = "SAEON.Observations.WebAPI",
+                //    ClientName = "SAEON Observations WebAPI",
+                //    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                //    IdentityTokenLifetime = (int)new TimeSpan(14, 0, 0).TotalSeconds,
+                //    AccessTokenLifetime = (int)new TimeSpan(7, 0, 0).TotalSeconds,
+                //    ClientSecrets = new List<Secret> { new Secret("81g5wyGSC89a".Sha256()) },
+                //    AllowedScopes = new List<string> { "SAEON.Observations.WebAPI" },
+                //    AllowedCorsOrigins = new List<string>
+                //    {
+                //        $"http://localhost:{QuerySitePort}",
+                //        "http://observations.saeon.ac.za",
+                //    },
+                //},
                 new Client {
                     ClientId = "SAEON.Observations.QuerySite",
                     ClientName = "SAEON Observations QuerySite",
@@ -72,12 +84,12 @@ namespace SAEON.Identity.Service
                     AllowRememberConsent = true,
                     RedirectUris = new List<string>
                     {
-                        $"http://localhost:{QuerySitePort}",
+                        $"http://localhost:{ObservationsQuerySitePort}",
                         "http://observations.saeon.ac.za",
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
-                        $"http://localhost:{QuerySitePort}",
+                        $"http://localhost:{ObservationsQuerySitePort}",
                         "http://observations.saeon.ac.za",
                     },
                     AllowedScopes = new List<string>
@@ -89,7 +101,7 @@ namespace SAEON.Identity.Service
                     },
                     AllowedCorsOrigins = new List<string>
                     {
-                        $"http://localhost:{QuerySitePort}",
+                        $"http://localhost:{ObservationsQuerySitePort}",
                         "http://observations.saeon.ac.za",
                     },
                     AllowOfflineAccess = true,
@@ -105,12 +117,12 @@ namespace SAEON.Identity.Service
                     AllowRememberConsent = true,
                     RedirectUris = new List<string>
                     {
-                        $"http://localhost:{AdminSitePort}",
+                        $"http://localhost:{ObservationsAdminSitePort}",
                         "http://observations.saeon.ac.za",
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
-                        $"http://localhost:{AdminSitePort}",
+                        $"http://localhost:{ObservationsAdminSitePort}",
                         "http://observations.saeon.ac.za",
                     },
                     AllowedScopes = new List<string>
@@ -122,8 +134,42 @@ namespace SAEON.Identity.Service
                     },
                     AllowedCorsOrigins = new List<string>
                     {
-                        $"http://localhost:{QuerySitePort}",
+                        $"http://localhost:{ObservationsQuerySitePort}",
                         "http://observations.saeon.ac.za",
+                    },
+                    AllowOfflineAccess = true,
+                    AllowAccessTokensViaBrowser = true
+                },
+                new Client {
+                    ClientId = "SAEON.EasiCAT.WebSite",
+                    ClientName = "SAEON EasiCAT WebSite",
+                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                    ClientSecrets = new List<Secret> { new Secret("It6fWPU5J708".Sha256()) },
+                    IdentityTokenLifetime = (int)new TimeSpan(14, 0, 0).TotalSeconds,
+                    AccessTokenLifetime = (int)new TimeSpan(7, 0, 0).TotalSeconds,
+                    RequireConsent = true,
+                    AllowRememberConsent = true,
+                    RedirectUris = new List<string>
+                    {
+                        $"http://localhost:{EasiCATWebSitePort}",
+                        //"http://observations.saeon.ac.za",
+                    },
+                    PostLogoutRedirectUris = new List<string>
+                    {
+                        $"http://localhost:{EasiCATWebSitePort}",
+                        //"http://observations.saeon.ac.za",
+                    },
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "SAEON.EasiCAT.WebAPI"
+                    },
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        $"http://localhost:{EasiCATWebSitePort}",
+                        //"http://observations.saeon.ac.za",
                     },
                     AllowOfflineAccess = true,
                     AllowAccessTokensViaBrowser = true
@@ -167,7 +213,7 @@ namespace SAEON.Identity.Service
                     },
                     RedirectUris = new List<string>
                     {
-                        $"http://localhost:{WebAPIPort}/swagger/ui/o2c-html",
+                        $"http://localhost:{ObservationsWebAPIPort}/swagger/ui/o2c-html",
                         "http://observationsapi.saeon.ac.za/swagger/ui/o2c-html",
                     },
                     AllowAccessTokensViaBrowser = true

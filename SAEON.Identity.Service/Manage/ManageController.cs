@@ -9,6 +9,7 @@ using SAEON.Identity.Service.Data;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 namespace SAEON.Identity.Service.UI
 {
@@ -24,13 +25,14 @@ namespace SAEON.Identity.Service.UI
            IIdentityServerInteractionService interaction,
            IClientStore clientStore,
            IHttpContextAccessor httpContextAccessor,
+           IAuthenticationSchemeProvider schemeProvider,
            IEventService events,
            UserManager<SAEONUser> userManager)
         {
             _userManager = userManager;
             _interaction = interaction;
-            _events = events;
-            _account = new AccountService(interaction, httpContextAccessor, clientStore);
+             _events = events;
+            _account = new AccountService(interaction, httpContextAccessor, schemeProvider, clientStore);
         }
 
         //

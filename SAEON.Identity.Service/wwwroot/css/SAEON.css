@@ -54,3 +54,7 @@ body {
 .ErrorRow {
     color: red;
 }
+
+.body-content {
+    padding-right: 50px;
+}

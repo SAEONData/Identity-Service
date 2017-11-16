@@ -23,28 +23,15 @@ namespace SAEON.Identity.Service
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddJsonFile("connectionStrings.json", optional: false, reloadOnChange: true);
-
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see https://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets<Startup>();
-            }
-
-            builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
             Logging
-                .CreateConfiguration("Logs/SAEON.Identity.Service {Date}.txt", Configuration)
+                .CreateConfiguration("Logs/SAEON.Identity.Service {Date}.txt", configuration)
                 .Create();
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -74,7 +61,7 @@ namespace SAEON.Identity.Service
                             RequiredLength = 8,
                         };
                     })
-                    .AddEntityFrameworkStores<SAEONDbContext, Guid>()
+                    .AddEntityFrameworkStores<SAEONDbContext>()
                     .AddDefaultTokenProviders();
                 services
                     .AddIdentityServer(config =>
@@ -87,10 +74,22 @@ namespace SAEON.Identity.Service
                             RaiseSuccessEvents = true
                         };
                     })
-                    .AddOperationalStore(builder => builder.UseSqlServer(connectionString, options => options.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure()))
-                    .AddConfigurationStore(builder => builder.UseSqlServer(connectionString, options => options.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure()))
+                    .AddConfigurationStore(options =>
+                    {
+                        options.ConfigureDbContext = builder =>
+                            builder.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure());
+                    })
+                    .AddOperationalStore(options =>
+                    {
+                        options.ConfigureDbContext = builder =>
+                            builder.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure());
+
+                        // this enables automatic token cleanup. this is optional.
+                        options.EnableTokenCleanup = true;
+                        options.TokenCleanupInterval = 30; // interval in seconds
+                    })
                     .AddAspNetIdentity<SAEONUser>()
-                    .AddTemporarySigningCredential();
+                    .AddDeveloperSigningCredential();
 
                 services.AddMvc(options =>
                 {
@@ -129,13 +128,11 @@ namespace SAEON.Identity.Service
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
                 Logging.Information("ContentSecurityPolicy: {csp}", Configuration["ContentSecurityPolicy:Policy"]);
 
-                InitializeDbAsync(app).Wait();
-
                 app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
                 app.UseStaticFiles();
 
-                app.UseIdentity();
                 app.UseIdentityServer();
+                app.UseAuthentication();
 
                 // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 
@@ -149,86 +146,5 @@ namespace SAEON.Identity.Service
             }
         }
 
-        private async Task AddUserAsync(string firstName, string surname, string email, string password, string[] roles, UserManager<SAEONUser> userManager)
-        {
-            using (Logging.MethodCall(GetType(), new ParameterList { { "FirstName", firstName }, { "Surname", surname }, { "Email", email } }))
-            {
-
-                if (await userManager.FindByNameAsync(email) == null)
-                {
-                    await userManager.CreateAsync(new SAEONUser { UserName = email, Email = email, FirstName = firstName, Surname = surname, EmailConfirmed = true }, password);
-                }
-                var user = await userManager.FindByNameAsync(email);
-                if ((user != null) && (roles != null))
-                    foreach (var role in roles)
-                    {
-                        if (!await userManager.IsInRoleAsync(user, role))
-                        {
-                            await userManager.AddToRoleAsync(user, role);
-                        }
-                    }
-            }
-        }
-
-        private async Task InitializeDbAsync(IApplicationBuilder app)
-        {
-            using (Logging.MethodCall(GetType()))
-            {
-                using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-                {
-                    scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-                    scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>().Database.Migrate();
-                    scope.ServiceProvider.GetRequiredService<SAEONDbContext>().Database.Migrate();
-
-                    var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-
-                    if (!context.Clients.Any())
-                    {
-                        foreach (var client in Config.GetClients())
-                        {
-                            context.Clients.Add(client.ToEntity());
-                        }
-                        context.SaveChanges();
-                    }
-
-                    if (!context.IdentityResources.Any())
-                    {
-                        foreach (var resource in Config.GetIdentityResources())
-                        {
-                            context.IdentityResources.Add(resource.ToEntity());
-                        }
-                        context.SaveChanges();
-                    }
-
-                    if (!context.ApiResources.Any())
-                    {
-                        foreach (var resource in Config.GetApiResources())
-                        {
-                            context.ApiResources.Add(resource.ToEntity());
-                        }
-                        context.SaveChanges();
-                    }
-
-                    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<SAEONRole>>();
-                    string[] roles = new string[] { "SAEON.Admin", "SAEON.Identity.Service", "SAEON.Observations.Admin"};
-                    foreach (var role in roles)
-                    {
-                        if (!await roleManager.RoleExistsAsync(role))
-                        {
-                            var identityRole = new SAEONRole { Name = role };
-                            await roleManager.CreateAsync(identityRole);
-                            await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role));
-                        }
-                    }
-                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<SAEONUser>>();
-                    await AddUserAsync("Administrator", "SAEON", "admin@saeon.ac.za", "0d3DHCClCsAh", roles, userManager);
-                    await AddUserAsync("Tim", "Parker-Nance", "timpn@saeon.ac.za", "T1mS@E0N", roles, userManager);
-                    //await AddUserAsync("Mike", "Metcalfe", "mike@webtide.co.za", "M1keWebT1de", null, userManager);
-                    //await AddUserAsync("Lunga", "WebTide", "lunga@webtide.co.za", "Lung@WebT1de", null, userManager);
-                    //await AddUserAsync("Guest", "SAEON", "guest@saeon.ac.za", "S@E0NGue$t", new string[] { "Observations.Reader" }, userManager);
-                    //await AddUserAsync("Admin", "SAEON", "admin@saeon.ac.za", "S@E0N@dm1n", new string[] { "Observations.Admin" }, userManager);
-                }
-            }
-        }
     }
 }
