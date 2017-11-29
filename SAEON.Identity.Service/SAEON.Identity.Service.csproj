@@ -17,8 +17,8 @@
         <Product>SAEON Identity Service</Product>
         <Description>The SAEON Identity Service provides OpenID Connect single signon to all SAEON web site</Description>
         <Copyright>© 2017 South African Environmental Observation Network (SAEON)</Copyright>
-        <ApplicationInsightsResourceId>/subscriptions/53cea979-29f9-43db-aa3d-8349a5bd3452/resourcegroups/SAEONNorthEurope/providers/microsoft.insights/components/SAEON.Identity.Service</ApplicationInsightsResourceId>
-        <ApplicationInsightsAnnotationResourceId>/subscriptions/53cea979-29f9-43db-aa3d-8349a5bd3452/resourcegroups/SAEONNorthEurope/providers/microsoft.insights/components/SAEON.Identity.Service</ApplicationInsightsAnnotationResourceId>
+        <ApplicationInsightsResourceId>/subscriptions/53cea979-29f9-43db-aa3d-8349a5bd3452/resourcegroups/SAEON.Identity/providers/microsoft.insights/components/SAEON.Identity.Service</ApplicationInsightsResourceId>
+        <ApplicationInsightsAnnotationResourceId>/subscriptions/53cea979-29f9-43db-aa3d-8349a5bd3452/resourceGroups/SAEON.Identity/providers/microsoft.insights/components/SAEON.Identity.Service</ApplicationInsightsAnnotationResourceId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -33,11 +33,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
         <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
         <PackageReference Include="BuildBundlerMinifier" Version="2.6.362" />
-        <PackageReference Include="IdentityServer4" Version="2.0.3" />
+        <PackageReference Include="IdentityServer4" Version="2.0.4" />
         <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.0.0" />
-        <PackageReference Include="IdentityServer4.EntityFramework" Version="2.0.0" />
+        <PackageReference Include="IdentityServer4.EntityFramework" Version="2.1.0" />
         <PackageReference Include="SAEON.Logs" Version="1.0.10" />
         <PackageReference Include="Serilog" Version="2.5.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
