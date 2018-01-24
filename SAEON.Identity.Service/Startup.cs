@@ -1,6 +1,4 @@
 ﻿using IdentityServer4.Configuration;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,30 +6,27 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SAEON.Identity.Service.Config;
 using SAEON.Identity.Service.Data;
-using SAEON.Identity.Service.Services;
+using SAEON.Identity.Service.UI;
 using SAEON.Logs;
 using Serilog;
 using System;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service
 {
     public class Startup
     {
+        protected IConfiguration Configuration { get; private set; }
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
             Logging
                 .CreateConfiguration("Logs/SAEON.Identity.Service {Date}.txt", configuration)
                 .Create();
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -41,7 +36,6 @@ namespace SAEON.Identity.Service
                 var connectionString = Configuration.GetConnectionString("IdentityService");
                 var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
                 services.AddDbContext<SAEONDbContext>(options => options.UseSqlServer(connectionString, b => b.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure()));
-
                 services
                     .AddIdentity<SAEONUser, SAEONRole>(config =>
                     {
@@ -89,7 +83,8 @@ namespace SAEON.Identity.Service
                         options.TokenCleanupInterval = 30; // interval in seconds
                     })
                     .AddAspNetIdentity<SAEONUser>()
-                    .AddDeveloperSigningCredential();
+                    .AddSigningCredential(Cert.Load());
+                    //.AddDeveloperSigningCredential();
 
                 services.AddMvc(options =>
                 {
@@ -100,8 +95,7 @@ namespace SAEON.Identity.Service
 
                 services.AddSingleton<IConfiguration>(Configuration);
                 // Add application services.
-                services.AddTransient<IEmailSender, AuthMessageSender>();
-                services.AddTransient<ISmsSender, AuthMessageSender>();
+                services.AddTransient<IEmailSender, EmailSender>();
             }
         }
 
