@@ -1,8 +1,33 @@
-﻿.page-header {
+﻿.bg-SAEON {
+    background-color: #567baf;
+}
+
+#Body {
+    padding: 15px;
+}
+
+/*#Page {
+    padding: 10px;
+    margin: 10px;
+}*/
+
+/*#Header {
+    margin: 5px;
+    padding: 5px;
+}*/
+
+.Logo {
+    margin: 5px;
+}
+
+#Footer {
+    font-size: x-small;
+}
+
+/*
+.page-header {
     margin-top: 0;
     padding-top: 0;
-    /*padding-bottom: 0;
-    border-bottom: 0;*/
 }
 
 body {
@@ -23,6 +48,11 @@ body {
     color: black;
 }
 
+#Footer
+{
+    font-size: x-small;
+}
+
 .Logo {
     margin-bottom: 10px;
 }
@@ -32,16 +62,6 @@ body {
     border-color: #567baf;
 }
 
-/*.listViewSelectedLocations {
-    width: auto;
-    height: auto;
-}
-
-.listViewSelectedFeatures {
-    width: auto;
-    height: auto;
-}*/
-
 .ButtonRow {
     padding-top: 5px;
 }
@@ -49,3 +69,8 @@ body {
 .ErrorRow {
     color: red;
 }
+
+.body-content {
+    padding-right: 50px;
+}
+*/

@@ -1,20 +1,22 @@
-﻿<ul class="nav navbar-nav navbar-right">
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span>  Account<b class="caret"></b></a>
-        <ul class="dropdown-menu" role="menu">
+﻿<ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="glyphicon glyphicon-cog"></span>Account
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             @if (User.Identity.IsAuthenticated)
             {
-                <li><a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage you account">@User.Identity.Name</a></li>
-                <li><a asp-area="" asp-controller="Manage" asp-action="ChangePassword" title="Change your password">Change password</a></li>
-                <li><a asp-area="" asp-controller="Grants" asp-action="Index" title="Client Application Access">Client Application Access</a></li>
-                <li><a asp-area="" asp-controller="Account" asp-action="Logout" title="Log out from all sites">Log out</a></li>
+                <a class="dropdown-item" asp-area="" asp-controller="Manage" asp-action="Index" title="Manage you account">@User.Identity.Name</a>
+                <a class="dropdown-item" asp-area="" asp-controller="Manage" asp-action="ChangePassword" title="Change your password">Change password</a>
+                <a class="dropdown-item" asp-area="" asp-controller="Grants" asp-action="Index" title="Client Application Access">Client Application Access</a>
+                <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout" title="Log out from all sites">Log out</a>
             }
             else
             {
-                <li><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
-                <li><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
-                <li>@*<a asp-area="" asp-controller="Account" asp-action="ResetPassword" title="Reset your password">Reset password</a>*@</li>
+                <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Login">Log in</a>
+                <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+                @*<a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="ResetPassword" title="Reset your password">Reset password</a>*@
             }
-        </ul>
+        </div>
     </li>
 </ul>

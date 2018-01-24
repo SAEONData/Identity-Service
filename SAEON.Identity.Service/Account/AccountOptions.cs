@@ -9,16 +9,12 @@ namespace SAEON.Identity.Service.UI
         public static TimeSpan RememberMeLoginDuration = TimeSpan.FromDays(30);
 
         public static bool ShowLogoutPrompt = true;
-        public static bool AutomaticRedirectAfterSignOut = true;
+        public static bool AutomaticRedirectAfterSignOut = false;
 
-        // to enable windows authentication, the host (IIS or IIS Express) also must have 
-        // windows auth enabled.
-        public static bool WindowsAuthenticationEnabled = false;
+        // specify the Windows authentication scheme being used
+        public static readonly string WindowsAuthenticationSchemeName = Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme;
+        // if user uses windows auth, should we load the groups from windows
         public static bool IncludeWindowsGroups = false;
-        // specify the Windows authentication schemes you want to use for authentication
-        public static readonly string[] WindowsAuthenticationSchemes = new string[] { "Negotiate", "NTLM" };
-        public static readonly string WindowsAuthenticationProviderName = "Windows";
-        public static readonly string WindowsAuthenticationDisplayName = "Windows";
 
         public static string InvalidCredentialsErrorMessage = "Invalid username or password";
     }
