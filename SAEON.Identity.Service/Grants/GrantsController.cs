@@ -11,8 +11,7 @@ namespace SAEON.Identity.Service.UI
     /// <summary>
     /// This sample controller allows a user to revoke grants given to clients
     /// </summary>
-    [SecurityHeaders]
-    //[Authorize(ActiveAuthenticationSchemes = IdentityServer4.IdentityServerConstants.DefaultCookieAuthenticationScheme)]
+    //[SecurityHeaders]
     [Authorize]
     public class GrantsController : Controller
     {
@@ -49,7 +48,7 @@ namespace SAEON.Identity.Service.UI
             return RedirectToAction("Index");
         }
 
-        async Task<GrantsViewModel> BuildViewModelAsync()
+        private async Task<GrantsViewModel> BuildViewModelAsync()
         {
             var grants = await _interaction.GetAllUserConsentsAsync();
 
@@ -70,7 +69,7 @@ namespace SAEON.Identity.Service.UI
                         Created = grant.CreationTime,
                         Expires = grant.Expiration,
                         IdentityGrantNames = resources.IdentityResources.Select(x => x.DisplayName ?? x.Name).ToArray(),
-                        ApiGrantNames = resources.ApiResources.Select(x => x.DisplayName ?? x.Name).ToArray(),
+                        ApiGrantNames = resources.ApiResources.Select(x => x.DisplayName ?? x.Name).ToArray()
                     };
 
                     list.Add(item);

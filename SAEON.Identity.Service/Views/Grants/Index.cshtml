@@ -2,14 +2,16 @@
 @{
     ViewData["Title"] = "Client Application Access";
 }
+
 <div class="grants">
     <div class="row page-header">
         <div class="col-sm-10">
-            Below is the list of applications you have given access to and the names of the resources they have access to.
+            <div>Below is the list of applications you have given access to and the names of the resources they have access to.</div>
         </div>
     </div>
+
     @if (Model.Grants.Any() == false)
-            {
+    {
         <div class="row">
             <div class="col-sm-8">
                 <div class="alert alert-info">
@@ -46,7 +48,7 @@
                             <div class="granttype">Identity Grants</div>
                             <ul>
                                 @foreach (var name in grant.IdentityGrantNames)
-                        {
+                                {
                                     <li>@name</li>
                                 }
                             </ul>

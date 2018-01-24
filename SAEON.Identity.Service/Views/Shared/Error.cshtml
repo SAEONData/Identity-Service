@@ -1,7 +1,41 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Hosting
+@model ErrorViewModel
+@inject IHostingEnvironment host
+@{
+    var error = Model?.Error?.Error;
+    var errorDescription = host.IsDevelopment() ? Model?.Error?.ErrorDescription : null;
+    var request_id = Model?.Error?.RequestId;
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="error-page">
+    <div class="page-header">
+        <h2 class="text-danger">An error occurred while processing your request.</h2>
+    </div>
 
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="alert alert-danger">
+                @if (error != null)
+                {
+                    <strong>
+                        <em>
+                            : @error
+                        </em>
+                    </strong>
+
+                    if (errorDescription != null)
+                    {
+                        <div>@errorDescription</div>
+                    }
+                }
+            </div>
+
+            @if (request_id != null)
+            {
+                <div class="request-id">Request Id: @request_id</div>
+            }
+        </div>
+    </div>
+</div>
