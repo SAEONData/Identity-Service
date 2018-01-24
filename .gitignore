@@ -312,3 +312,4 @@ Logs/
 [mM]achine[kK]ey.config
 [sS]mtp.config
 [cC]onnection[sS]trings.json
+[cC]onfig/*.json
