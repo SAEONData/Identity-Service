@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting.Internal;
 using SAEON.Logs;
 using System;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
 namespace SAEON.Identity.Service.Config
@@ -14,7 +15,7 @@ namespace SAEON.Identity.Service.Config
                 {
                     //Logging.Information("RootFolder: {RootFolder}", rootFolder);
                     //var fileName = rootFolder + "/bin/config/saeon.ac.za.pfx";
-                    var fileName = "Config/saeon.ac.za.pfx";
+                    var fileName = Path.Combine(Directory.GetCurrentDirectory(), "Config\\saeon.ac.za.pfx");
                     Logging.Information($"Loading {fileName}");
                     return new X509Certificate2(fileName, "S@E0N.Cert");
                 }
