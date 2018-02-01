@@ -23,12 +23,16 @@
 
     <ItemGroup>
         <Compile Remove="Logs\**" />
+        <Compile Remove="wwwroot\lib\boostrap\**" />
         <Compile Remove="wwwroot\lib\bootstrap\**" />
         <Content Remove="Logs\**" />
+        <Content Remove="wwwroot\lib\boostrap\**" />
         <Content Remove="wwwroot\lib\bootstrap\**" />
         <EmbeddedResource Remove="Logs\**" />
+        <EmbeddedResource Remove="wwwroot\lib\boostrap\**" />
         <EmbeddedResource Remove="wwwroot\lib\bootstrap\**" />
         <None Remove="Logs\**" />
+        <None Remove="wwwroot\lib\boostrap\**" />
         <None Remove="wwwroot\lib\bootstrap\**" />
     </ItemGroup>
 
@@ -59,6 +63,9 @@
     </ItemGroup>
     <ItemGroup>
         <WCFMetadata Include="Connected Services" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="wwwroot\lib\" />
     </ItemGroup>
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
       <TypeScriptTarget>ES5</TypeScriptTarget>
