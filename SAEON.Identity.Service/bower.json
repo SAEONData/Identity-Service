@@ -1,7 +1,0 @@
-{
-  "name": "asp.net",
-  "private": true,
-  "dependencies": {
-    "MDBootstrap": "4.4.5"
-  }
-}
