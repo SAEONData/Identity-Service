@@ -1,0 +1,15 @@
+{
+  "name": "saeon.identity.service",
+  "version": "1.0.0",
+  "description": "The SAEON Identity Service",
+  "author": "Tim Parker-Nance",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SAEON-Data/Identity-Service.git"
+  },
+  "dependencies": {
+    "jquery-validation-unobtrusive": "^3.2.6",
+    "mdbootstrap": "^4.5.0"
+  }
+}

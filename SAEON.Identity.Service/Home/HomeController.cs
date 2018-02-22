@@ -19,11 +19,13 @@ namespace SAEON.Identity.Service.UI
             return View();
         }
 
+        [Route("About")]
         public IActionResult About()
         {
             return View();
         }
 
+        [Route("Contact")]
         public IActionResult Contact()
         {
             return View();

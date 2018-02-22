@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using SAEON.Identity.Service.Config;
 using SAEON.Identity.Service.Data;
@@ -12,6 +13,7 @@ using SAEON.Identity.Service.UI;
 using SAEON.Logs;
 using Serilog;
 using System;
+using System.IO;
 using System.Reflection;
 
 namespace SAEON.Identity.Service
@@ -84,7 +86,7 @@ namespace SAEON.Identity.Service
                     })
                     .AddAspNetIdentity<SAEONUser>()
                     .AddSigningCredential(Cert.Load());
-                    //.AddDeveloperSigningCredential();
+                //.AddDeveloperSigningCredential();
 
                 services.AddMvc(options =>
                 {
@@ -124,6 +126,12 @@ namespace SAEON.Identity.Service
 
                 app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
                 app.UseStaticFiles();
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(Directory.GetCurrentDirectory(), "node_modules")),
+                        RequestPath = "/node_modules"
+                });
 
                 app.UseIdentityServer();
                 app.UseAuthentication();
