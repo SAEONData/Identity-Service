@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "jquery-validation-unobtrusive": "^3.2.6",
-    "mdbootstrap": "^4.4.4",
-    "popper.js": "^1.12.9"
+    "mdbootstrap": "^4.5.0"
   }
 }
