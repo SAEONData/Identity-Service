@@ -93,8 +93,8 @@
         "PostLogoutRedirectURIs": [ "http://localhost:54340", "http://observations.saeon.ac.za" ]
       },
       {
-        "Id": "Postman",
-        "Name": "Postman client",
+        "Id": "SAEON.Observations.WebAPI.Postman",
+        "Name": "Postman client for the SAEON Observations WebAPI",
         "GrantType": "ClientCredentials",
         "RequireConsent": true,
         "RememberConsent": true,
@@ -105,8 +105,8 @@
         "RedirectURIs": [ "https://www.getpostman.com/oauth2/callback" ]
       },
       {
-        "Id": "Swagger",
-        "Name": "Swagger client",
+        "Id": "SAEON.Observations.WebAPI.Swagger",
+        "Name": "Swagger client for the SAEON Observations WebAPI",
         "GrantType": "Implicit",
         "RequireConsent": true,
         "RememberConsent": true,
