@@ -22,22 +22,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="Logs\**" />
-        <Compile Remove="wwwroot\lib\boostrap\**" />
-        <Compile Remove="wwwroot\lib\bootstrap\**" />
-        <Content Remove="Logs\**" />
-        <Content Remove="wwwroot\lib\boostrap\**" />
-        <Content Remove="wwwroot\lib\bootstrap\**" />
-        <EmbeddedResource Remove="Logs\**" />
-        <EmbeddedResource Remove="wwwroot\lib\boostrap\**" />
-        <EmbeddedResource Remove="wwwroot\lib\bootstrap\**" />
         <None Remove="Logs\**" />
-        <None Remove="wwwroot\lib\boostrap\**" />
-        <None Remove="wwwroot\lib\bootstrap\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.2.0" />
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.2.1" />
         <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
         <PackageReference Include="BuildBundlerMinifier" Version="2.6.362" />
         <PackageReference Include="IdentityServer4" Version="2.1.2" />
@@ -56,10 +45,6 @@
     </ItemGroup>
     <ItemGroup>
       <None Include="Properties\PublishProfiles\Afrihost.pubxml.user" />
-      <None Include="Views\Consent\Index.cshtml" />
-      <None Include="Views\Consent\_ScopeListItem.cshtml" />
-      <None Include="Views\Grants\Index.cshtml" />
-      <None Include="wwwroot\images\SAEON logo.png" />
     </ItemGroup>
     <ItemGroup>
         <WCFMetadata Include="Connected Services" />
