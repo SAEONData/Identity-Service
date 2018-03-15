@@ -22,7 +22,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Remove="wwwroot\lib\**" />
+        <Content Remove="wwwroot\lib\**" />
+        <EmbeddedResource Remove="wwwroot\lib\**" />
         <None Remove="Logs\**" />
+        <None Remove="wwwroot\lib\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -48,9 +52,6 @@
     </ItemGroup>
     <ItemGroup>
         <WCFMetadata Include="Connected Services" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="wwwroot\lib\" />
     </ItemGroup>
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
       <TypeScriptTarget>ES5</TypeScriptTarget>
