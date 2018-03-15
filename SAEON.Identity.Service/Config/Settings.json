@@ -1,6 +1,5 @@
 ﻿{
   "IdentityService": {
-    "Test": "This is a test",
     "Roles": [
       "SAEON.Admin",
       "SAEON.Identity.Service",
@@ -30,7 +29,7 @@
         ]
       },
       {
-        "Name": "Andre",
+        "Name": "André",
         "Surname": "Engelbrecht",
         "Email": "andre@saeon.ac.za",
         "Password": "@ndreS@E0N",
