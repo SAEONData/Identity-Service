@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using SAEON.AspNet.Core;
 using SAEON.Identity.Service.Config;
 using SAEON.Identity.Service.Data;
 using SAEON.Identity.Service.UI;
@@ -90,7 +91,7 @@ namespace SAEON.Identity.Service
 
                 services.AddMvc(options =>
                 {
-                    options.Filters.Add(typeof(SecurityHeadersAttribute));
+                    options.Filters.Add<SecurityHeadersAttribute>();
                 });
                 services.AddLogging();
                 services.AddCors();
