@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SAEON.Identity.Service.Config;
+using Serilog;
 using System;
 
 namespace SAEON.Identity.Service
@@ -36,12 +37,14 @@ namespace SAEON.Identity.Service
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost
                 .CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
+                .UseApplicationInsights()
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.AddJsonFile("connectionStrings.json", optional: false, reloadOnChange: true);
                     config.AddJsonFile("Config/Settings.json", optional: false, reloadOnChange: true);
                 })
+                .UseStartup<Startup>()
+                .UseSerilog()
                 .Build();
 
     }
