@@ -22,9 +22,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="wwwroot\lib\**" />
-        <Content Remove="wwwroot\lib\**" />
-        <EmbeddedResource Remove="wwwroot\lib\**" />
         <None Remove="Logs\**" />
         <None Remove="wwwroot\lib\**" />
     </ItemGroup>
@@ -38,7 +35,7 @@
         <PackageReference Include="IdentityServer4.EntityFramework" Version="2.1.1" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
         <PackageReference Include="SAEON.AspNet.Core" Version="1.0.7" />
-        <PackageReference Include="SAEON.Logs" Version="1.0.13" />
+        <PackageReference Include="SAEON.Logs" Version="1.0.14" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
         <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="2.6.1" />
@@ -47,9 +44,6 @@
         <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.1" />
         <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
         <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Include="Properties\PublishProfiles\Afrihost.pubxml.user" />
     </ItemGroup>
     <ItemGroup>
         <WCFMetadata Include="Connected Services" />
