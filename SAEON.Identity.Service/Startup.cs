@@ -93,7 +93,7 @@ namespace SAEON.Identity.Service
                 {
                     options.Filters.Add<SecurityHeadersAttribute>();
                 });
-                services.AddLogging();
+                //services.AddLogging();
                 services.AddCors();
 
                 services.AddSingleton<IConfiguration>(Configuration);
@@ -107,11 +107,6 @@ namespace SAEON.Identity.Service
         {
             using (Logging.MethodCall(GetType()))
             {
-                loggerFactory
-                    .AddConsole(Configuration.GetSection("Logging"))
-                    .AddDebug()
-                    .AddSerilog();
-
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();
