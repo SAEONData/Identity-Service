@@ -57,14 +57,6 @@
     ],
     "Clients": [
       {
-        "Id": "SAEON.Observations.WebAPI",
-        "Name": "SAEON Observations WebAPI",
-        "GrantType": "ClientCredentials",
-        "Secrets": [ "81g5wyGSC89a" ],
-        "Scopes": [ "SAEON.Observations.WebAPI" ],
-        "CorsOrigins": [ "http://localhost:54340", "http://observations.saeon.ac.za" ]
-      },
-      {
         "Id": "SAEON.Observations.QuerySite",
         "Name": "SAEON Observations Query Site",
         "GrantType": "HybridAndClientCredentials",
