@@ -54,19 +54,6 @@
           }
         ]
       },
-      {
-        "Name": "SAEON.EasiCAT.WebAPI",
-        "DisplayName": "SAEON EasiCAT WebAPI",
-        "Description": "The SAEON EasiCAT WebAPI",
-        "Claims": [ "role", "client_id" ],
-        "Secrets": [ "d86stWfX*kWc" ],
-        "Scopes": [
-          {
-            "Name": "SAEON.EasiCAT.WebAPI",
-            "DisplayName": "SAEON EasiCAT WebAPI"
-          }
-        ]
-      }
     ],
     "Clients": [
       {
