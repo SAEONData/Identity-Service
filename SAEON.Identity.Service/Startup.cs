@@ -25,7 +25,7 @@ namespace SAEON.Identity.Service
 
         public Startup(IConfiguration configuration)
         {
-            this.Configuration = configuration;
+            Configuration = configuration;
             Logging
                 .CreateConfiguration("Logs/SAEON.Identity.Service {Date}.txt", configuration)
                 .Create();
