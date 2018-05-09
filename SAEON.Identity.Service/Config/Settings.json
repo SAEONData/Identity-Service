@@ -54,29 +54,8 @@
           }
         ]
       },
-      {
-        "Name": "SAEON.EasiCAT.WebAPI",
-        "DisplayName": "SAEON EasiCAT WebAPI",
-        "Description": "The SAEON EasiCAT WebAPI",
-        "Claims": [ "role", "client_id" ],
-        "Secrets": [ "d86stWfX*kWc" ],
-        "Scopes": [
-          {
-            "Name": "SAEON.EasiCAT.WebAPI",
-            "DisplayName": "SAEON EasiCAT WebAPI"
-          }
-        ]
-      }
     ],
     "Clients": [
-      {
-        "Id": "SAEON.Observations.WebAPI",
-        "Name": "SAEON Observations WebAPI",
-        "GrantType": "ClientCredentials",
-        "Secrets": [ "81g5wyGSC89a" ],
-        "Scopes": [ "SAEON.Observations.WebAPI" ],
-        "CorsOrigins": [ "http://localhost:54340", "http://observations.saeon.ac.za" ]
-      },
       {
         "Id": "SAEON.Observations.QuerySite",
         "Name": "SAEON Observations Query Site",

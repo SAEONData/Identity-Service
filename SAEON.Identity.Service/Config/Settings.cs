@@ -133,6 +133,30 @@ namespace SAEON.Identity.Service.Config
                     case "ClientCredentials":
                         isClient.AllowedGrantTypes = GrantTypes.ClientCredentials;
                         break;
+                    case "Code":
+                        isClient.AllowedGrantTypes = GrantTypes.Code;
+                        break;
+                    case "CodeAndClientCredentials":
+                        isClient.AllowedGrantTypes = GrantTypes.CodeAndClientCredentials;
+                        break;
+                    case "Hybrid":
+                        isClient.AllowedGrantTypes = GrantTypes.Hybrid;
+                        break;
+                    case "HybridAndClientCredentials":
+                        isClient.AllowedGrantTypes = GrantTypes.HybridAndClientCredentials;
+                        break;
+                    case "Implicit":
+                        isClient.AllowedGrantTypes = GrantTypes.Implicit;
+                        break;
+                    case "ImplicitAndClientCredentials":
+                        isClient.AllowedGrantTypes = GrantTypes.ImplicitAndClientCredentials;
+                        break;
+                    case "ResourceOwnerPassword":
+                        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPassword;
+                        break;
+                    case "ResourceOwnerPasswordAndClientCredentials":
+                        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials;
+                        break;
                 }
                 foreach (var secret in client.Secrets)
                 {
