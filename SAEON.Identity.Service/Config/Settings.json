@@ -38,6 +38,17 @@
           "SAEON.Identity.Service",
           "SAEON.Observations.Admin"
         ]
+      },
+      {
+        "Name": "Mark",
+        "Surname": "Jacobsom",
+        "Email": "Mark@saeon.ac.za",
+        "Password": "M@rkS@E0N",
+        "Roles": [
+          "SAEON.Admin",
+          "SAEON.Identity.Service",
+          "SAEON.Observations.Admin"
+        ]
       }
     ],
     "APIs": [
@@ -54,6 +65,19 @@
           }
         ]
       },
+      {
+        "Name": "SAEON.NCCRD.Web.API",
+        "DisplayName": "SAEON NCCRD WebAPI",
+        "Description": "The SAEON NCCRD WebAPI",
+        "Claims": [ "role", "client_id" ],
+        "Secrets": [ "E30F5163-510F-4D95-877D-2F470CAD3ADB" ],
+        "Scopes": [
+          {
+            "Name": "SAEON.NCCRD.Web.API",
+            "DisplayName": "SAEON NCCRD WebAPI"
+          }
+        ]
+      }
     ],
     "Clients": [
       {
@@ -94,6 +118,20 @@
         "Secrets": [ "Swagger" ],
         "Scopes": [ "openid", "profile", "email", "SAEON.Observations.WebAPI" ],
         "RedirectURIs": [ "http://localhost:54330/swagger/ui/o2c-html", "http://observationsapi.saeon.ac.za/swagger/ui/o2c-html" ]
+      },
+      {
+        "Id": "NCCRD_React_Client",
+        "Name": "SAEON NCCRD React Website",
+        "GrantType": "Implicit",
+        "AccessTokensViaBrowser": true,
+        //"Secrets": [ "5FB072EFC225" ],
+        "Scopes": [ "openid", "profile", "email", "SAEON.NCCRD.Web.API" ],
+        "RedirectURIs": [ "http://localhost:8080/#/callback#", "http://app01.saeon.ac.za/nccrdsite/#/callback#" ],
+        "PostLogoutRedirectURIs": [ "http://localhost:8080/#/loggedout", "http://app01.saeon.ac.za/nccrdsite/#/loggedout" ]
+        //"RequireConsent": true,
+        //"RememberConsent": true,
+        //"OfflineAccess": true,
+        //"CorsOrigins": [ "http://localhost:8080/#/login", "http://app01.saeon.ac.za/nccrdsite/#/login" ]
       }
     ]
   }
