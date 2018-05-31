@@ -157,6 +157,9 @@ namespace SAEON.Identity.Service.Config
                     case "ResourceOwnerPasswordAndClientCredentials":
                         isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials;
                         break;
+                    default:
+                        Logging.Error("Unknown GrantType: {GranType}", client.GrantType);
+                        continue;
                 }
                 foreach (var secret in client.Secrets)
                 {
