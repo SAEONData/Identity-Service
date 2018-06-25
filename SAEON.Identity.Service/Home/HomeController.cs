@@ -1,6 +1,5 @@
 ﻿using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
-using SAEON.AspNet.Core;
 using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.UI
