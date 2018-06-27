@@ -1,0 +1,50 @@
+﻿@model List<IdentityServer4.EntityFramework.Entities.Client>
+
+@{
+    ViewData["Title"] = "Client Resources";
+}
+
+<hr style="margin-top: -8px" />
+
+<div class="row">
+    @foreach (var client in Model)
+    {
+        <div class="col-md-4">
+            <div class="card" style="width: 100%; min-height: 175px;">
+                <div class="card-body">
+                    <h5 class="card-title"><b>@client.ClientId</b></h5>
+                    <p class="card-text">@Html.DisplayFor(x => @client.ClientName)</p>
+
+                    <button type="button" class="btn btn-primary btn-sm"
+                            style="margin-left:0px; margin-right: 5px;"
+                            onclick="location.href='@Url.Action("ClientResourceEdit", "Config", new { client.ClientId })'">
+                        <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                        Edit
+                    </button>
+
+                    <button type="button" class="btn btn-warning btn-sm" style="margin-left:0px;">
+                        <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <br />
+        </div>
+    }
+
+    <div class="col-md-4">
+        <div class="card" style="width: 100%; min-height: 175px;">
+            <div class="card-body">
+                <button type="button" class="btn btn-success"
+                        style="position: absolute;top: 50%;left: 50%;transform: translateX(-55%) translateY(-60%);"
+                        onclick="location.href='@Url.Action("ClientResourceAdd", "Config")'">
+                    <i class="fa fa-plus mr-2" aria-hidden="true"></i>
+                    Add new
+                </button>
+            </div>
+        </div>
+        <br />
+    </div>
+</div>
+
+<hr />

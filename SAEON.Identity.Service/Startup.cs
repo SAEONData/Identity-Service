@@ -92,6 +92,9 @@ namespace SAEON.Identity.Service
                 //{
                 //    options.Filters.Add<SecurityHeadersAttribute>();
                 //});
+
+                services.AddMvc();
+
                 //services.AddLogging();
                 services.AddCors();
 

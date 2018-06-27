@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewData["Title"] = "Resource configuration";
+}
+
+<hr style="margin-top: -8px" />
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card" style="width: 100%; min-height: 175px;">
+            <div class="card-body">
+                <h5 class="card-title">Client Resources</h5>
+                <p class="card-text">Manage Client resources configuration</p>
+                <button type="button" class="btn btn-primary btn-sm" 
+                        style="position:absolute; bottom: 10px; right: 10px;"
+                        onclick="nav('/Config/ClientResources')" >
+                    <i class="fa fa-wrench mr-2" aria-hidden="true"></i>
+                    Manage
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card" style="width: 100%; min-height: 175px;">
+            <div class="card-body">
+                <h5 class="card-title">API Resources</h5>
+                <p class="card-text">Manage API resources configuration</p>
+                <button type="button" class="btn btn-primary btn-sm" 
+                        style="position:absolute; bottom: 10px; right: 10px;"
+                        onclick="nav('/Config/ApiResources')" >
+                    <i class="fa fa-wrench mr-2" aria-hidden="true"></i>
+                    Manage
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<script type="text/javascript">
+    function nav(href) {
+        location.href = href
+    }
+</script>
+

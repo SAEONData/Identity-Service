@@ -1,0 +1,35 @@
+﻿@model IdentityServer4.EntityFramework.Entities.Client
+
+@{
+    ViewData["Title"] = Model.ClientId == null ? "Add client resource" : "Edit client resource";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <form>
+            <div class="md-form">
+                <input type="text" id="Id" class="form-control" value="@Model.ClientId">
+                <label for="Id">Id:</label>
+            </div>
+
+            <div class="md-form">
+                <input type="text" id="Name" class="form-control" value="@Model.ClientName">
+                <label for="Name">Name:</label>
+            </div>
+
+            <br />
+            AccessTokensViaBrowser:
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary btn-sm">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> Allowed
+                </label>
+                <label class="btn btn-primary btn-sm">
+                    <input type="radio" name="options" id="option3" autocomplete="off"> Not Allowed
+                </label>
+            </div>
+
+            <br />
+            <br />
+        </form>
+    </div>
+</div>

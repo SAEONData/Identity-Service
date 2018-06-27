@@ -12,9 +12,11 @@ namespace SAEON.Identity.Service
 {
     public class Program
     {
+        public static IWebHost host;
+
         public static void Main(string[] args)
         {
-            var host = BuildWebHost(args);
+            host = BuildWebHost(args);
             using (var scope = host.Services.CreateScope())
             {
                 var serviceProvider = scope.ServiceProvider;
