@@ -1,35 +1,150 @@
-﻿@model IdentityServer4.EntityFramework.Entities.Client
+﻿@model SAEON.Identity.Service.Config.ClientViewModel
 
 @{
     ViewData["Title"] = Model.ClientId == null ? "Add client resource" : "Edit client resource";
 }
 
-<div class="row">
-    <div class="col-md-6">
-        <form>
-            <div class="md-form">
-                <input type="text" id="Id" class="form-control" value="@Model.ClientId">
-                <label for="Id">Id:</label>
+<hr style="margin-top: 0px"/>
+
+<div class="row" style="margin-left:-10px">
+    <div class="col-lg-6">
+        @using (Html.BeginForm())
+        {
+
+            @*ID*@
+            <div class="editor-label">
+                <label><b>Id:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(m => m.ClientId, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(m => m.ClientId)*@
             </div>
 
-            <div class="md-form">
-                <input type="text" id="Name" class="form-control" value="@Model.ClientName">
-                <label for="Name">Name:</label>
+            @*Name*@
+            <br />
+            <div class="editor-label">
+                <label><b>Name:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(m => m.ClientName, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(m => m.ClientName)*@
+            </div>
+
+            @*IdentityTokenLifetime*@
+            <br />
+            <div class="editor-label">
+                <label><b>Identity Token Lifetime:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(m => m.IdentityTokenLifetime, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(m => m.IdentityTokenLifetime)*@
+            </div>
+
+            @*AccessTokenLifetime*@
+            <br />
+            <div class="editor-label">
+                <label><b>Access Token Lifetime:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(m => m.AccessTokenLifetime, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(m => m.AccessTokenLifetime)*@
+            </div>
+
+            @*AllowedGrantTypes*@
+            <br />
+            <div class="editor-label">
+                <label><b>Allowed Grant Type(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.AllowedGrantTypes, new { @class = "form-control", @rows = (Model.AllowedGrantTypes.Split("\n").Length + 1) })
+                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+            </div>
+
+            @*ClientSecrets*@
+            <br />
+            <div class="editor-label">
+                <label><b>Client Secret(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.ClientSecrets, new { @class = "form-control", @rows = (Model.ClientSecrets.Split("\n").Length + 1) })
+                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+            </div>
+
+            @*AllowedScopes*@
+            <br />
+            <div class="editor-label">
+                <label><b>Allowed Scope(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.AllowedScopes, new { @class = "form-control", @rows = (Model.AllowedScopes.Split("\n").Length + 1) })
+                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+            </div>
+
+            @*AllowedCorsOrigins*@
+            <br />
+            <div class="editor-label">
+                <label><b>Allowed Cors Origin(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.AllowedCorsOrigins, new { @class = "form-control", @rows = (Model.AllowedCorsOrigins.Split("\n").Length + 1) })
+                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+            </div>
+
+            @*RedirectUris*@
+            <br />
+            <div class="editor-label">
+                <label><b>Redirect Uri(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.RedirectUris, new { @class = "form-control", @rows = (Model.RedirectUris.Split("\n").Length + 1) })
+                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+            </div>
+
+            @*PostLogoutRedirectUris*@
+            <br />
+            <div class="editor-label">
+                <label><b>Post Logout Redirect Uri(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.PostLogoutRedirectUris, new { @class = "form-control", @rows = (Model.PostLogoutRedirectUris.Split("\n").Length + 1) })
+                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+            </div>
+
+            @*RequireConsent*@
+            <br />
+            <div class="custom-control custom-checkbox">
+                @Html.CheckBox("RequireConsent", Model.RequireConsent, new { @class = "custom-control-input", @type = "checkbox", @id = "RequireConsent" })
+                <label style="font-weight:400" class="custom-control-label" for="RequireConsent"> Require Consent</label>
+            </div>
+
+            @*AllowRememberConsent*@
+            <br />
+            <div class="custom-control custom-checkbox">
+                @Html.CheckBox("AllowRememberConsent", Model.AllowRememberConsent, new { @class = "custom-control-input", @type = "checkbox", @id = "AllowRememberConsent" })
+                <label style="font-weight:400" class="custom-control-label" for="AllowRememberConsent"> Allow Remember Consent</label>
+            </div>
+
+            @*AllowOfflineAccess*@
+            <br />
+            <div class="custom-control custom-checkbox">
+                @Html.CheckBox("AllowOfflineAccess", Model.AllowOfflineAccess, new { @class = "custom-control-input", @type = "checkbox", @id = "AllowOfflineAccess" })
+                <label style="font-weight:400" class="custom-control-label" for="AllowOfflineAccess"> Allow Offline Access</label>
+            </div>
+
+            @*AllowAccessTokensViaBrowser*@
+            <br />
+            <div class="custom-control custom-checkbox">
+                @Html.CheckBox("AllowAccessTokensViaBrowser", Model.AllowAccessTokensViaBrowser, new { @class = "custom-control-input", @type = "checkbox", @id = "AllowAccessTokensViaBrowser" })
+                <label style="font-weight:400" class="custom-control-label" for="AllowAccessTokensViaBrowser"> Allow Access Tokens Via Browser</label>
             </div>
 
             <br />
-            AccessTokensViaBrowser:
-            <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-primary btn-sm">
-                    <input type="radio" name="options" id="option2" autocomplete="off"> Allowed
-                </label>
-                <label class="btn btn-primary btn-sm">
-                    <input type="radio" name="options" id="option3" autocomplete="off"> Not Allowed
-                </label>
-            </div>
-
             <br />
-            <br />
-        </form>
+            <button type="submit" style="margin-left:0px; min-width: 125px" id="btnSave" class="btn btn-warning">Save</button>
+            <button style="margin-left:0px; min-width: 125px" id="btnDiscard" class="btn btn-secondary">Discard</button>
+        }
     </div>
 </div>
+
+<hr/>
+
