@@ -73,7 +73,10 @@ namespace SAEON.Identity.Service.Config
             var result = new List<IdentityServer4.Models.Client>();
             var configuration = config.GetSection("IdentityService");
             var clients = new List<Client>();
+            var _logic = new ConfigControllerLogic();
+
             configuration.GetSection("Clients").Bind(clients);
+
             foreach (var client in clients)
             {
                 var isClient = new IdentityServer4.Models.Client
@@ -85,61 +88,69 @@ namespace SAEON.Identity.Service.Config
                     AllowOfflineAccess = client.OfflineAccess,
                     AllowAccessTokensViaBrowser = client.AccessTokensViaBrowser,
                     IdentityTokenLifetime = client.IdentityTokenLifetime,
-                    AccessTokenLifetime = client.AccessTokenLifetime
+                    AccessTokenLifetime = client.AccessTokenLifetime,
+                    AllowedGrantTypes = _logic.StringToGrantType(client.GrantType)
                 };
-                switch (client.GrantType)
-                {
-                    case "ClientCredentials":
-                        isClient.AllowedGrantTypes = GrantTypes.ClientCredentials;
-                        break;
-                    case "Code":
-                        isClient.AllowedGrantTypes = GrantTypes.Code;
-                        break;
-                    case "CodeAndClientCredentials":
-                        isClient.AllowedGrantTypes = GrantTypes.CodeAndClientCredentials;
-                        break;
-                    case "Hybrid":
-                        isClient.AllowedGrantTypes = GrantTypes.Hybrid;
-                        break;
-                    case "HybridAndClientCredentials":
-                        isClient.AllowedGrantTypes = GrantTypes.HybridAndClientCredentials;
-                        break;
-                    case "Implicit":
-                        isClient.AllowedGrantTypes = GrantTypes.Implicit;
-                        break;
-                    case "ImplicitAndClientCredentials":
-                        isClient.AllowedGrantTypes = GrantTypes.ImplicitAndClientCredentials;
-                        break;
-                    case "ResourceOwnerPassword":
-                        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPassword;
-                        break;
-                    case "ResourceOwnerPasswordAndClientCredentials":
-                        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials;
-                        break;
-                    default:
-                        Logging.Error("Unknown GrantType: {GranType}", client.GrantType);
-                        continue;
-                }
+
+                //switch (client.GrantType)
+                //{
+                //    case "ClientCredentials":
+                //        isClient.AllowedGrantTypes = GrantTypes.ClientCredentials;
+                //        break;
+                //    case "Code":
+                //        isClient.AllowedGrantTypes = GrantTypes.Code;
+                //        break;
+                //    case "CodeAndClientCredentials":
+                //        isClient.AllowedGrantTypes = GrantTypes.CodeAndClientCredentials;
+                //        break;
+                //    case "Hybrid":
+                //        isClient.AllowedGrantTypes = GrantTypes.Hybrid;
+                //        break;
+                //    case "HybridAndClientCredentials":
+                //        isClient.AllowedGrantTypes = GrantTypes.HybridAndClientCredentials;
+                //        break;
+                //    case "Implicit":
+                //        isClient.AllowedGrantTypes = GrantTypes.Implicit;
+                //        break;
+                //    case "ImplicitAndClientCredentials":
+                //        isClient.AllowedGrantTypes = GrantTypes.ImplicitAndClientCredentials;
+                //        break;
+                //    case "ResourceOwnerPassword":
+                //        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPassword;
+                //        break;
+                //    case "ResourceOwnerPasswordAndClientCredentials":
+                //        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials;
+                //        break;
+                //    default:
+                //        Logging.Error("Unknown GrantType: {GranType}", client.GrantType);
+                //        continue;
+                //}
+
                 foreach (var secret in client.Secrets)
                 {
                     isClient.ClientSecrets.Add(new Secret(secret.Sha256()));
                 }
+
                 foreach (var scope in client.Scopes)
                 {
                     isClient.AllowedScopes.Add(scope);
                 }
+
                 foreach (var corsOrigin in client.CorsOrigins)
                 {
                     isClient.AllowedCorsOrigins.Add(corsOrigin);
                 }
+
                 foreach (var uri in client.RedirectURIs)
                 {
                     isClient.RedirectUris.Add(uri);
                 }
+
                 foreach (var uri in client.PostLogoutRedirectURIs)
                 {
                     isClient.PostLogoutRedirectUris.Add(uri);
                 }
+
                 result.Add(isClient);
             }
             return result;
