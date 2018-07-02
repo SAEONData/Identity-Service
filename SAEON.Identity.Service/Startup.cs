@@ -93,6 +93,7 @@ namespace SAEON.Identity.Service
                 //    options.Filters.Add<SecurityHeadersAttribute>();
                 //});
                 //services.AddLogging();
+                services.AddMvc();
                 services.AddCors();
 
                 services.AddSingleton<IConfiguration>(Configuration);
@@ -133,13 +134,13 @@ namespace SAEON.Identity.Service
 
                 // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 
-                app.UseMvcWithDefaultRoute();
-                //app.UseMvc(routes =>
-                //{
-                //    routes.MapRoute(
-                //        name: "default",
-                //        template: "{controller=Home}/{action=Index}/{id?}");
-                //});
+                //app.UseMvcWithDefaultRoute();
+                app.UseMvc(routes =>
+                {
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller=Home}/{action=Index}/{id?}");
+                });
             }
         }
 
