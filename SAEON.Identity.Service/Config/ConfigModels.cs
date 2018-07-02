@@ -28,6 +28,12 @@ namespace SAEON.Identity.Service.Config
         public List<string> Claims { get; set; } = new List<string>();
         public List<string> Secrets { get; set; } = new List<string>();
         public List<Scope> Scopes { get; set; } = new List<Scope>();
+
+        public string Scopes_Combined
+        {
+            get => Utils.value_combine(Scopes);
+            set => Scopes = Utils.value_split(value);
+        }
     }
 
     public class Client
@@ -51,36 +57,41 @@ namespace SAEON.Identity.Service.Config
 
         public string Secrets_Combined
         {
-            get => value_combine(Secrets);
-            set => Secrets = value_split(value);
+            get => Utils.value_combine(Secrets);
+            set => Secrets = Utils.value_split(value);
         }
 
         public string Scopes_Combined
         {
-            get => value_combine(Scopes);
-            set => Scopes = value_split(value);
+            get => Utils.value_combine(Scopes);
+            set => Scopes = Utils.value_split(value);
         }
 
         public string CorsOrigins_Combined
         {
-            get => value_combine(CorsOrigins);
-            set => CorsOrigins = value_split(value);
+            get => Utils.value_combine(CorsOrigins);
+            set => CorsOrigins = Utils.value_split(value);
         }
 
         public string RedirectURIs_Combined
         {
-            get => value_combine(RedirectURIs);
-            set => RedirectURIs = value_split(value);
+            get => Utils.value_combine(RedirectURIs);
+            set => RedirectURIs = Utils.value_split(value);
         }
 
         public string PostLogoutRedirectURIs_Combined
         {
-            get => value_combine(PostLogoutRedirectURIs);
-            set => PostLogoutRedirectURIs = value_split(value);
+            get => Utils.value_combine(PostLogoutRedirectURIs);
+            set => PostLogoutRedirectURIs = Utils.value_split(value);
         }
 
 
-        private string value_combine(List<string> values)
+
+    }
+
+    internal static class Utils
+    {
+        internal static string value_combine(List<string> values)
         {
             if (values != null && values.Count > 0)
             {
@@ -92,7 +103,7 @@ namespace SAEON.Identity.Service.Config
             }
         }
 
-        private List<string> value_split(string value)
+        internal static List<string> value_split(string value)
         {
             if (!string.IsNullOrEmpty(value))
             {

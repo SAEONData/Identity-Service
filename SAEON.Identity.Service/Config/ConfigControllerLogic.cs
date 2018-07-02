@@ -298,5 +298,64 @@ namespace SAEON.Identity.Service.Config
 
             return result;
         }
+
+        public List<IdentityServer4.EntityFramework.Entities.ApiResource> GetAPIResources()
+        {
+            var apiResources = new List<IdentityServer4.EntityFramework.Entities.ApiResource>();
+
+            var host = Program.host;
+            using (var scope = host.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+
+                using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
+                {
+                    try
+                    {
+                        apiResources = context.ApiResources
+                            .OrderBy(c => c.Name).ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "Unabled to get APIResources from DB.");
+                    }
+
+                }
+            }
+
+            return apiResources;
+        }
+
+        public API GetAPIResource(string name)
+        {
+            API apiResource = new API();
+
+            var data = GetAPIResources().FirstOrDefault(x => x.Name == name);
+            var dataModel = data.ToModel();
+            if (data != null)
+            {
+                apiResource = new API()
+                {
+                    dbid = data.Id,
+                    Id = dataModel.ClientId,
+                    Name = dataModel.ClientName,
+                    IdentityTokenLifetime = dataModel.IdentityTokenLifetime,
+                    AccessTokenLifetime = dataModel.AccessTokenLifetime,
+                    GrantType = GrantTypeToString(dataModel.AllowedGrantTypes),
+                    Secrets = data.ClientSecrets.Select(x => x.Value).ToList(),
+                    Scopes = data.AllowedScopes.Select(x => x.Scope).ToList(),
+                    CorsOrigins = data.AllowedCorsOrigins.Select(x => x.Origin).ToList(),
+                    RedirectURIs = data.RedirectUris.Select(x => x.RedirectUri).ToList(),
+                    PostLogoutRedirectURIs = data.PostLogoutRedirectUris.Select(x => x.PostLogoutRedirectUri).ToList(),
+                    RequireConsent = data.RequireConsent,
+                    RememberConsent = data.AllowRememberConsent,
+                    OfflineAccess = data.AllowOfflineAccess,
+                    AccessTokensViaBrowser = data.AllowAccessTokensViaBrowser
+                };
+            }
+
+            return apiResource;
+        }
     }
 }
