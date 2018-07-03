@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -110,6 +111,11 @@ namespace SAEON.Identity.Service
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();
+                    app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                    {
+                        HotModuleReplacement = true,
+                        ReactHotModuleReplacement = true
+                    });
                     app.UseDatabaseErrorPage();
                     app.UseBrowserLink();
                 }
@@ -117,6 +123,7 @@ namespace SAEON.Identity.Service
                 {
                     app.UseExceptionHandler("/Home/Error");
                 }
+
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
                 Logging.Information("ContentSecurityPolicy: {csp}", Configuration["ContentSecurityPolicy:Policy"]);
 
@@ -126,7 +133,7 @@ namespace SAEON.Identity.Service
                 {
                     FileProvider = new PhysicalFileProvider(
                         Path.Combine(Directory.GetCurrentDirectory(), "node_modules")),
-                        RequestPath = "/node_modules"
+                    RequestPath = "/node_modules"
                 });
 
                 app.UseIdentityServer();
@@ -140,6 +147,10 @@ namespace SAEON.Identity.Service
                     routes.MapRoute(
                         name: "default",
                         template: "{controller=Home}/{action=Index}/{id?}");
+
+                    routes.MapSpaFallbackRoute(
+                        name: "spa-fallback",
+                        defaults: new { controller = "Home", action = "Index" });
                 });
             }
         }

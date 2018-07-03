@@ -28,6 +28,13 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="ClientApp\boot.tsx" />
+      <None Remove="ClientApp\components\Home.tsx" />
+      <None Remove="ClientApp\components\Layout.tsx" />
+      <None Remove="ClientApp\routes.tsx" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.3.0" />
       <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
         <PackageReference Include="IdentityServer4" Version="2.2.0" />
@@ -56,6 +63,15 @@
     </ItemGroup>
     <ItemGroup>
         <WCFMetadata Include="Connected Services" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="ClientApp\css\" />
+    </ItemGroup>
+    <ItemGroup>
+      <TypeScriptCompile Include="ClientApp\boot.tsx" />
+      <TypeScriptCompile Include="ClientApp\components\Home.tsx" />
+      <TypeScriptCompile Include="ClientApp\components\Layout.tsx" />
+      <TypeScriptCompile Include="ClientApp\routes.tsx" />
     </ItemGroup>
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
       <TypeScriptTarget>ES5</TypeScriptTarget>
