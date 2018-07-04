@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,19 +14,19 @@ namespace SAEON.Identity.Service.Config
 {
     public class ConfigControllerLogic
     {
-        public Client GetClientResource(string clientId)
+        public Client GetClientResource(int Id)
         {
             Client clientResource = new Client();
 
-            var data = GetClientResources().FirstOrDefault(x => x.ClientId == clientId);
+            var data = GetClientResources().FirstOrDefault(x => x.Id == Id);
             var dataModel = data.ToModel();
             if (data != null)
             {
                 clientResource = new Client()
                 {
                     dbid = data.Id,
-                    Id = dataModel.ClientId,
-                    Name = dataModel.ClientName,
+                    Name = dataModel.ClientId,
+                    DisplayName = dataModel.ClientName,
                     IdentityTokenLifetime = dataModel.IdentityTokenLifetime,
                     AccessTokenLifetime = dataModel.AccessTokenLifetime,
                     GrantType = GrantTypeToString(dataModel.AllowedGrantTypes),
@@ -82,8 +83,8 @@ namespace SAEON.Identity.Service.Config
         {
             var isClient = new IdentityServer4.Models.Client
             {
-                ClientId = client.Id,
-                ClientName = client.Name,
+                ClientId = client.Name,
+                ClientName = client.DisplayName,
                 RequireConsent = client.RequireConsent,
                 AllowRememberConsent = client.RememberConsent,
                 AllowOfflineAccess = client.OfflineAccess,
@@ -93,12 +94,25 @@ namespace SAEON.Identity.Service.Config
                 AllowedGrantTypes = StringToGrantType(client.GrantType)
             };
 
-            if (client.Secrets != null)
+            if (client.NewSecrets != null)
             {
-                foreach (var secret in client.Secrets)
+                if (!client.Secrets.OrderBy(x => x).SequenceEqual(client.NewSecrets.Select(x => x.Sha256()).OrderBy(x => x)))
                 {
-                    isClient.ClientSecrets.Add(new Secret(secret.Sha256()));
+                    //Replace existing secrets is any values changed
+                    foreach (var secret in client.NewSecrets)
+                    {
+                        isClient.ClientSecrets.Add(new IdentityServer4.Models.Secret(secret.Sha256()));
+                    }
                 }
+                else
+                {
+                    //Keep existing secrets
+                    foreach (var secret in client.Secrets)
+                    {
+                        isClient.ClientSecrets.Add(new IdentityServer4.Models.Secret(secret));
+                    }
+                }
+
             }
 
             if (client.Scopes != null)
@@ -167,7 +181,7 @@ namespace SAEON.Identity.Service.Config
         }
 
         public string GrantTypeToString(ICollection<string> value)
-        {        
+        {
             if (value.OrderBy(x => x).SequenceEqual(GrantTypes.ClientCredentials.OrderBy(x => x)))
                 return "ClientCredentials";
             else if (value.OrderBy(x => x).SequenceEqual(GrantTypes.Code.OrderBy(x => x)))
@@ -242,7 +256,7 @@ namespace SAEON.Identity.Service.Config
                         catch (Exception ex)
                         {
                             var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                            logger.LogError(ex, "Unabled to get ClientResources from DB.");
+                            logger.LogError(ex, "Unabled to save ClientResources to DB.");
 
                             throw ex;
                         }
@@ -259,7 +273,7 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        public bool DeleteClient(string clientId)
+        public bool DeleteClient(int Id)
         {
             bool result = false;
 
@@ -279,7 +293,7 @@ namespace SAEON.Identity.Service.Config
                             .Include(c => c.AllowedCorsOrigins)
                             .Include(c => c.RedirectUris)
                             .Include(c => c.PostLogoutRedirectUris)
-                            .FirstOrDefault(x => x.ClientId == clientId);
+                            .FirstOrDefault(x => x.Id == Id);
 
                         if (client != null)
                         {
@@ -290,7 +304,7 @@ namespace SAEON.Identity.Service.Config
                     catch (Exception ex)
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to get ClientResources from DB.");
+                        logger.LogError(ex, "Unabled to delete ClientResource from DB.");
                     }
 
                 }
@@ -299,7 +313,7 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        public List<IdentityServer4.EntityFramework.Entities.ApiResource> GetAPIResources()
+        public List<IdentityServer4.EntityFramework.Entities.ApiResource> GetApiResources()
         {
             var apiResources = new List<IdentityServer4.EntityFramework.Entities.ApiResource>();
 
@@ -313,6 +327,9 @@ namespace SAEON.Identity.Service.Config
                     try
                     {
                         apiResources = context.ApiResources
+                            .Include(x => x.UserClaims)
+                            .Include(x => x.Secrets)
+                            .Include(x => x.Scopes)
                             .OrderBy(c => c.Name).ToList();
                     }
                     catch (Exception ex)
@@ -327,35 +344,174 @@ namespace SAEON.Identity.Service.Config
             return apiResources;
         }
 
-        public API GetAPIResource(string name)
+        public API GetApiResource(int Id)
         {
             API apiResource = new API();
 
-            var data = GetAPIResources().FirstOrDefault(x => x.Name == name);
+            var data = GetApiResources().FirstOrDefault(x => x.Id == Id);
             var dataModel = data.ToModel();
             if (data != null)
             {
                 apiResource = new API()
                 {
                     dbid = data.Id,
-                    Id = dataModel.ClientId,
-                    Name = dataModel.ClientName,
-                    IdentityTokenLifetime = dataModel.IdentityTokenLifetime,
-                    AccessTokenLifetime = dataModel.AccessTokenLifetime,
-                    GrantType = GrantTypeToString(dataModel.AllowedGrantTypes),
-                    Secrets = data.ClientSecrets.Select(x => x.Value).ToList(),
-                    Scopes = data.AllowedScopes.Select(x => x.Scope).ToList(),
-                    CorsOrigins = data.AllowedCorsOrigins.Select(x => x.Origin).ToList(),
-                    RedirectURIs = data.RedirectUris.Select(x => x.RedirectUri).ToList(),
-                    PostLogoutRedirectURIs = data.PostLogoutRedirectUris.Select(x => x.PostLogoutRedirectUri).ToList(),
-                    RequireConsent = data.RequireConsent,
-                    RememberConsent = data.AllowRememberConsent,
-                    OfflineAccess = data.AllowOfflineAccess,
-                    AccessTokensViaBrowser = data.AllowAccessTokensViaBrowser
+                    Name = dataModel.Name,
+                    DisplayName = dataModel.DisplayName,
+                    Description = dataModel.Description,
+                    Claims = dataModel.UserClaims.ToList(),
+                    Secrets = dataModel.ApiSecrets.Select(x => x.Value).ToList(),
+                    Scopes = dataModel.Scopes.Select(x => new Scope() { Name = x.Name, DisplayName = x.DisplayName }).ToList()
                 };
             }
 
             return apiResource;
+        }
+
+        public IdentityServer4.EntityFramework.Entities.ApiResource BuildApi(API api)
+        {
+            var isApi = new IdentityServer4.Models.ApiResource
+            {
+                Name = api.Name,
+                DisplayName = api.DisplayName,
+                Description = api.Description
+            };
+
+            if (api.Claims != null)
+            {
+                foreach (var claim in api.Claims)
+                {
+                    isApi.UserClaims.Add(claim);
+                }
+            }
+
+            if (api.NewSecrets != null)
+            {
+                if (!api.Secrets.OrderBy(x => x).SequenceEqual(api.NewSecrets.Select(x => x.Sha256()).OrderBy(x => x)))
+                {
+                    //Replace existing secrets is any values changed
+                    foreach (var secret in api.NewSecrets)
+                    {
+                        isApi.ApiSecrets.Add(new IdentityServer4.Models.Secret(secret.Sha256()));
+                    }
+                }
+                else
+                {
+                    //Keep existing secrets
+                    foreach (var secret in api.Secrets)
+                    {
+                        isApi.ApiSecrets.Add(new IdentityServer4.Models.Secret(secret));
+                    }
+                }
+
+            }
+
+            if (api.Scopes != null)
+            {
+                foreach (var scope in api.Scopes)
+                {
+                    isApi.Scopes.Add(new IdentityServer4.Models.Scope(scope.Name, scope.DisplayName));
+                }
+            }
+
+            var isEntApi = isApi.ToEntity();
+            isEntApi.Id = api.dbid;
+
+            return isEntApi;
+        }
+
+        internal object SaveApi(IdentityServer4.EntityFramework.Entities.ApiResource api)
+        {
+            bool result = false;
+
+            try
+            {
+                var host = Program.host;
+                using (var scope = host.Services.CreateScope())
+                {
+                    var serviceProvider = scope.ServiceProvider;
+                    using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
+                    {
+                        try
+                        {
+                            var dbApi = context.ApiResources
+                                .Include(c => c.UserClaims)
+                                .Include(c => c.Secrets)
+                                .Include(c => c.Scopes)
+                                .FirstOrDefault(x => x.Id == api.Id);
+
+                            if (dbApi != null)
+                            {
+                                //UPDATE
+                                dbApi.Name = api.Name;
+                                dbApi.DisplayName = api.DisplayName;
+                                dbApi.Description = api.Description;
+                                dbApi.UserClaims = api.UserClaims;
+                                dbApi.Secrets = api.Secrets;
+                                dbApi.Scopes = api.Scopes;
+                            }
+                            else
+                            {
+                                //ADD
+                                context.ApiResources.Add(api);
+                            }
+
+                            context.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                            logger.LogError(ex, "Unabled to save ApiResources to DB.");
+
+                            throw ex;
+                        }
+                    }
+                }
+
+                result = true;
+            }
+            catch
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        public bool DeleteApi(int Id)
+        {
+            bool result = false;
+
+            var host = Program.host;
+            using (var scope = host.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+
+                using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
+                {
+                    try
+                    {
+                        var api = context.ApiResources
+                            .Include(c => c.UserClaims)
+                            .Include(c => c.Secrets)
+                            .Include(c => c.Scopes)
+                            .FirstOrDefault(x => x.Id == Id);
+
+                        if (api != null)
+                        {
+                            context.ApiResources.Remove(api);
+                            context.SaveChanges();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "Unabled to delete ApiResource from DB.");
+                    }
+
+                }
+            }
+
+            return result;
         }
     }
 }

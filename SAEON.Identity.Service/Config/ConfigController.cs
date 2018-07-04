@@ -35,17 +35,17 @@ namespace SAEON.Identity.Service.Config
 
         public ActionResult ClientResourceAdd()
         {
-            return View("ClientResourceEdit", _logic.GetClientResource(""));
+            return View("ClientResourceEdit", _logic.GetClientResource(0));
         }
 
-        public ActionResult ClientResourceEdit(string clientId)
+        public ActionResult ClientResourceEdit(int Id)
         {
-            return View(_logic.GetClientResource(clientId));
+            return View(_logic.GetClientResource(Id));
         }
 
-        public ActionResult ClientResourceDelete(string clientId)
+        public ActionResult ClientResourceDelete(int Id)
         {
-            bool result = _logic.DeleteClient(clientId);
+            bool result = _logic.DeleteClient(Id);
 
             return RedirectToAction("ClientResources");
         }
@@ -86,7 +86,58 @@ namespace SAEON.Identity.Service.Config
 
         public ActionResult ApiResources()
         {
-            return View();
+            return View(_logic.GetApiResources());
+        }
+
+        public ActionResult ApiResourceEdit(int Id)
+        {
+            return View(_logic.GetApiResource(Id));
+        }
+
+        public ActionResult ApiResourceAdd()
+        {
+            return View("ApiResourceEdit", _logic.GetApiResource(0));
+        }
+
+        [HttpPost]
+        public ActionResult ApiResourceEdit(API api)
+        {
+            if (ModelState.IsValid)
+            {
+                //Convert back to IS Client
+                var isApi = _logic.BuildApi(api);
+
+                //Save changes to DB
+                var result = _logic.SaveApi(isApi);
+
+                return RedirectToAction("ApiResources");
+            }
+
+            return View(api);
+        }
+
+        [HttpPost]
+        public ActionResult ApiResourceAdd(API api)
+        {
+            if (ModelState.IsValid)
+            {
+                //Convert back to IS Client
+                var isApi = _logic.BuildApi(api);
+
+                //Save changes to DB
+                var result = _logic.SaveApi(isApi);
+
+                return RedirectToAction("ApiResources");
+            }
+
+            return View(api);
+        }
+
+        public ActionResult ApiResourceDelete(int Id)
+        {
+            bool result = _logic.DeleteApi(Id);
+
+            return RedirectToAction("ApiResources");
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿@model SAEON.Identity.Service.Config.Client
 
 @{
-    ViewData["Title"] = Model.Id == null ? "Add client resource" : "Edit client resource";
+    ViewData["Title"] = Model.dbid == 0 ? "Add client resource" : "Edit client resource";
 }
 
 <hr style="margin-top: 0px" />
@@ -18,7 +18,7 @@
                 <label><b>Id:</b></label>
             </div>
             <div class="editor-field">
-                @Html.EditorFor(m => m.Id, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
                 @*@Html.ValidationMessageFor(m => m.ClientId)*@
             </div>
 
@@ -28,7 +28,7 @@
                 <label><b>Name:</b></label>
             </div>
             <div class="editor-field">
-                @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(m => m.DisplayName, new { htmlAttributes = new { @class = "form-control" } })
                 @*@Html.ValidationMessageFor(m => m.ClientName)*@
             </div>
 
@@ -52,25 +52,24 @@
                 @*@Html.ValidationMessageFor(m => m.AccessTokenLifetime)*@
             </div>
 
-            //AllowedGrantType           
+            //AllowedGrantType
             var GrantTypesList = new List<string>() {
-                "ClientCredentials",
-                "Code",
-                "CodeAndClientCredentials",
-                "Hybrid",
-                "HybridAndClientCredentials",
-                "Implicit",
-                "ImplicitAndClientCredentials",
-                "ResourceOwnerPassword",
-                "ResourceOwnerPasswordAndClientCredentials"
-            };
+            "ClientCredentials",
+            "Code",
+            "CodeAndClientCredentials",
+            "Hybrid",
+            "HybridAndClientCredentials",
+            "Implicit",
+            "ImplicitAndClientCredentials",
+            "ResourceOwnerPassword",
+            "ResourceOwnerPasswordAndClientCredentials"
+        };
 
             <br />
             <div class="editor-label">
                 <label><b>Allowed Grant Type:</b></label>
             </div>
             <div class="editor-field">
-                @*@Html.EditorFor(m => m.GrantType, new { htmlAttributes = new { @class = "form-control" } })*@
                 @Html.DropDownListFor(m => m.GrantType,
                 new SelectList(GrantTypesList),
                 new { @class = "form-control", @style = "width: 99.9%" })
@@ -82,8 +81,17 @@
                 <label><b>Client Secret(s):</b></label>
             </div>
             <div class="editor-field">
-                @Html.TextAreaFor(m => m.Secrets_Combined, new { @class = "form-control", @rows = (Model.Secrets.Count + 1) })
-                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+                @Html.HiddenFor(m => m.Secrets_Combined)
+                @Html.TextAreaFor(m => m.NewSecrets_Combined, new { @class = "form-control", @rows = (Model.NewSecrets.Count + 1), @wrap = "off" })
+                <label style="font-size: small; color:steelblue">
+                    <i>
+                        <p>
+                            * secrets can't be edited, but you can set new value(s) here
+                            <br />
+                            * one value per line
+                        </p>
+                    </i>
+                </label>
             </div>
 
             //AllowedScopes
@@ -92,7 +100,7 @@
                 <label><b>Allowed Scope(s):</b></label>
             </div>
             <div class="editor-field">
-                @Html.TextAreaFor(m => m.Scopes_Combined, new { @class = "form-control", @rows = (Model.Scopes.Count + 1) })
+                @Html.TextAreaFor(m => m.Scopes_Combined, new { @class = "form-control", @rows = (Model.Scopes.Count + 1), @wrap = "off" })
                 <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
             </div>
 
@@ -102,7 +110,7 @@
                 <label><b>Allowed Cors Origin(s):</b></label>
             </div>
             <div class="editor-field">
-                @Html.TextAreaFor(m => m.CorsOrigins_Combined, new { @class = "form-control", @rows = (Model.CorsOrigins.Count + 1) })
+                @Html.TextAreaFor(m => m.CorsOrigins_Combined, new { @class = "form-control", @rows = (Model.CorsOrigins.Count + 1), @wrap = "off" })
                 <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
             </div>
 
@@ -112,7 +120,7 @@
                 <label><b>Redirect Uri(s):</b></label>
             </div>
             <div class="editor-field">
-                @Html.TextAreaFor(m => m.RedirectURIs_Combined, new { @class = "form-control", @rows = (Model.RedirectURIs.Count + 1) })
+                @Html.TextAreaFor(m => m.RedirectURIs_Combined, new { @class = "form-control", @rows = (Model.RedirectURIs.Count + 1), @wrap = "off" })
                 <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
             </div>
 
@@ -122,7 +130,7 @@
                 <label><b>Post Logout Redirect Uri(s):</b></label>
             </div>
             <div class="editor-field">
-                @Html.TextAreaFor(m => m.PostLogoutRedirectURIs_Combined, new { @class = "form-control", @rows = (Model.PostLogoutRedirectURIs.Count + 1) })
+                @Html.TextAreaFor(m => m.PostLogoutRedirectURIs_Combined, new { @class = "form-control", @rows = (Model.PostLogoutRedirectURIs.Count + 1), @wrap = "off" })
                 <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
             </div>
 
@@ -157,9 +165,54 @@
             <br />
             <br />
             <button type="submit" style="margin-left:0px; min-width: 125px" id="btnSave" class="btn btn-warning">Save</button>
-            <button style="margin-left:0px; min-width: 125px" id="btnCancel" class="btn btn-secondary">Cancel</button>
+            <button type="button" style="margin-left:0px; min-width: 125px" class="btn btn-secondary"
+                    onclick="location.href='@Url.Action("ClientResources", "Config")'">
+                Cancel
+            </button>
         }
     </div>
 </div>
 
 <hr />
+
+<script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+
+    function replaceSpaceOrDot(value) {
+        while (value.indexOf(".") > 0 || value.indexOf(" ") > 0) {
+            value = value.replace(" ", "_").replace(".", "_")
+        }
+        return value
+    }
+
+    $("#Id").keyup(() => {
+        $("#Id").val(replaceSpaceOrDot($("#Id").val()))
+    })
+
+    $("#Scopes_Combined").keyup(() => {
+        let value = $("#Scopes_Combined").val()
+        $("#Scopes_Combined").val(replaceSpaceOrDot(value))
+        $("#Scopes_Combined").attr("rows", (value.split("\n").length + 1).toString())
+    })
+
+    $("#NewSecrets_Combined").keyup(() => {
+        let value = $("#NewSecrets_Combined").val()
+        $("#NewSecrets_Combined").attr("rows", (value.split("\n").length + 1).toString())
+    })
+
+    $("#CorsOrigins_Combined").keyup(() => {
+        let value = $("#CorsOrigins_Combined").val()
+        $("#CorsOrigins_Combined").attr("rows", (value.split("\n").length + 1).toString())
+    })
+
+    $("#RedirectURIs_Combined").keyup(() => {
+        let value = $("#RedirectURIs_Combined").val()
+        $("#RedirectURIs_Combined").attr("rows", (value.split("\n").length + 1).toString())
+    })
+
+    $("#PostLogoutRedirectURIs_Combined").keyup(() => {
+        let value = $("#PostLogoutRedirectURIs_Combined").val()
+        $("#PostLogoutRedirectURIs_Combined").attr("rows", (value.split("\n").length + 1).toString())
+    })
+
+</script>

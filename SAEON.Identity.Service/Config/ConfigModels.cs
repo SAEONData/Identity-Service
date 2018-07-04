@@ -7,32 +7,53 @@ namespace SAEON.Identity.Service.Config
 {
     public class User
     {
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Name { get; set; } = "";
+        public string Surname { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
         public List<string> Roles { get; set; } = new List<string>();
     }
 
     public class Scope
     {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
+        public string Name { get; set; } = "";
+        public string DisplayName { get; set; } = "";
     }
 
     public class API
     {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
+        public int dbid { get; set; } = 0;
+
+        public string Name { get; set; } = "";
+        public string DisplayName { get; set; } = "";
+        public string Description { get; set; } = "";
         public List<string> Claims { get; set; } = new List<string>();
         public List<string> Secrets { get; set; } = new List<string>();
+        public List<string> NewSecrets { get; set; } = new List<string>();
         public List<Scope> Scopes { get; set; } = new List<Scope>();
+
+        public string Claims_Combined
+        {
+            get => Utils.value_combine(Claims);
+            set => Claims = Utils.value_split(value);
+        }
+
+        public string Secrets_Combined
+        {
+            get => Utils.value_combine(Secrets);
+            set => Secrets = Utils.value_split(value);
+        }
+
+        public string NewSecrets_Combined
+        {
+            get => Utils.value_combine(NewSecrets);
+            set => NewSecrets = Utils.value_split(value);
+        }
 
         public string Scopes_Combined
         {
-            get => Utils.value_combine(Scopes);
-            set => Scopes = Utils.value_split(value);
+            get => Utils.value_combine(Scopes.Select(x => x.Name).ToList());
+            set => Scopes = Utils.value_split(value).Select(x => new Scope() { Name = x, DisplayName = x.Replace("_", " ") }).ToList();
         }
     }
 
@@ -40,8 +61,8 @@ namespace SAEON.Identity.Service.Config
     {
         public int dbid { get; set; } = 0;
 
-        public string Id { get; set; } = "";
         public string Name { get; set; } = "";
+        public string DisplayName { get; set; } = "";
         public string GrantType { get; set; } = "";
         public bool RequireConsent { get; set; } = false;
         public bool RememberConsent { get; set; } = false;
@@ -50,6 +71,7 @@ namespace SAEON.Identity.Service.Config
         public int IdentityTokenLifetime { get; set; } = (int)new TimeSpan(14, 0, 0).TotalSeconds;
         public int AccessTokenLifetime { get; set; } = (int)new TimeSpan(7, 0, 0).TotalSeconds;
         public List<string> Secrets { get; set; } = new List<string>();
+        public List<string> NewSecrets { get; set; } = new List<string>();
         public List<string> Scopes { get; set; } = new List<string>();
         public List<string> CorsOrigins { get; set; } = new List<string>();
         public List<string> RedirectURIs { get; set; } = new List<string>();
@@ -59,6 +81,12 @@ namespace SAEON.Identity.Service.Config
         {
             get => Utils.value_combine(Secrets);
             set => Secrets = Utils.value_split(value);
+        }
+
+        public string NewSecrets_Combined
+        {
+            get => Utils.value_combine(NewSecrets);
+            set => NewSecrets = Utils.value_split(value);
         }
 
         public string Scopes_Combined
@@ -95,7 +123,7 @@ namespace SAEON.Identity.Service.Config
         {
             if (values != null && values.Count > 0)
             {
-                return string.Join(Environment.NewLine, values);
+                return string.Join(Environment.NewLine, values.Where(x => !string.IsNullOrEmpty(x)));
             }
             else
             {
@@ -107,7 +135,7 @@ namespace SAEON.Identity.Service.Config
         {
             if (!string.IsNullOrEmpty(value))
             {
-                return value.Split(Environment.NewLine).ToList();
+                return value.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
             }
             else
             {

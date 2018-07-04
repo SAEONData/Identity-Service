@@ -17,21 +17,21 @@ namespace SAEON.Identity.Service
         public static void Main(string[] args)
         {
             host = BuildWebHost(args);
-            using (var scope = host.Services.CreateScope())
-            {
-                var serviceProvider = scope.ServiceProvider;
+            //using (var scope = host.Services.CreateScope())
+            //{
+            //    var serviceProvider = scope.ServiceProvider;
 
-                try
-                {
-                    // Requires using RazorPagesMovie.Models;
-                    Settings.InitializeDbAsync(serviceProvider).Wait();
-                }
-                catch (Exception ex)
-                {
-                    var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
-                }
-            }
+            //    try
+            //    {
+            //        // Requires using RazorPagesMovie.Models;
+            //        Settings.InitializeDbAsync(serviceProvider).Wait();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+            //        logger.LogError(ex, "An error occurred seeding the DB.");
+            //    }
+            //}
 
             host.Run();
         }

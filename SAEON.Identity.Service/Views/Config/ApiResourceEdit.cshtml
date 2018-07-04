@@ -1,0 +1,122 @@
+﻿@model SAEON.Identity.Service.Config.API
+
+@{
+    ViewData["Title"] = Model.dbid == 0 ? "Add api resource" : "Edit api resource";
+}
+
+<hr style="margin-top: 0px" />
+
+<div class="row" style="margin-left:-10px">
+    <div class="col-lg-6">
+
+        @using (Html.BeginForm())
+        {
+
+            //Id
+            @Html.HiddenFor(m => m.dbid)
+
+            //Name
+            <div class="editor-label">
+                <label><b>Name:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(m => m.Name)*@
+            </div>
+
+            //DisplayName
+            <br />
+            <div class="editor-label">
+                <label><b>Display Name:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(m => m.DisplayName, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(m => m.DisplayName)*@
+            </div>
+
+            //Description
+            <br />
+            <div class="editor-label">
+                <label><b>Description:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", @rows = 3 })
+                @*@Html.ValidationMessageFor(m => m.Description)*@
+            </div>
+
+            //Claims
+            <br />
+            <div class="editor-label">
+                <label><b>Claim(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.Claims_Combined, new { @class = "form-control", @rows = (Model.Claims.Count + 1), @wrap = "off" })
+                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+            </div>
+
+            //CSecrets
+            <br />
+            <div class="editor-label">
+                <label><b>Secret(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.HiddenFor(m => m.Secrets_Combined)
+                @Html.TextAreaFor(m => m.NewSecrets_Combined, new { @class = "form-control", @rows = (Model.NewSecrets.Count + 1), @wrap = "off" })
+                <label style="font-size: small; color:steelblue">
+                    <i>
+                        <p>
+                            * secrets can't be edited, but you can set new value(s) here
+                            <br />
+                            * one value per line
+                        </p>
+                    </i>
+                </label>
+            </div>
+
+            //Scopes
+            <br />
+            <div class="editor-label">
+                <label><b>Scope(s):</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.Scopes_Combined, new { @class = "form-control", @rows = (Model.Scopes.Count + 1), @wrap = "off" })
+                <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
+            </div>
+
+            <br />
+            <br />
+            <button type="submit" style="margin-left:0px; min-width: 125px" id="btnSave" class="btn btn-warning">Save</button>
+            <button type="button" style="margin-left:0px; min-width: 125px" id="btnCancel" class="btn btn-secondary"
+                    onclick="location.href='@Url.Action("ApiResources", "Config")'">
+                Cancel
+            </button>
+
+        }
+
+    </div>
+</div>
+
+<hr />
+
+<script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+
+    function replaceSpaceOrDot(value) {
+        while (value.indexOf(".") > 0 || value.indexOf(" ") > 0) {
+            value = value.replace(" ", "_").replace(".", "_")
+        }
+        return value
+    }
+
+    $("#Name").keyup(() => {
+        let value = $("#Name").val()
+        $("#Name").val(replaceSpaceOrDot(value))
+    })
+
+    $("#NewSecrets_Combined").keyup(() => {
+        let value = $("#NewSecrets_Combined").val()
+        $("#NewSecrets_Combined").val(replaceSpaceOrDot(value))
+        $("#NewSecrets_Combined").attr("rows", (value.split("\n").length + 1).toString())
+    })
+
+</script>

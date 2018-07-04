@@ -81,8 +81,8 @@ namespace SAEON.Identity.Service.Config
             {
                 var isClient = new IdentityServer4.Models.Client
                 {
-                    ClientId = client.Id,
-                    ClientName = client.Name,
+                    ClientId = client.Name,
+                    ClientName = client.DisplayName,
                     RequireConsent = client.RequireConsent,
                     AllowRememberConsent = client.RememberConsent,
                     AllowOfflineAccess = client.OfflineAccess,

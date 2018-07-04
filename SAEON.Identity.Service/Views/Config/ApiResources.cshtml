@@ -1,7 +1,56 @@
-﻿
+﻿@model List<IdentityServer4.EntityFramework.Entities.ApiResource>
+
 @{
     ViewData["Title"] = "API Resources";
 }
 
-<h2>API Resources...</h2>
+<div class="row">
+    @foreach (var api in Model)
+    {
+        <div class="col-md-4">
+            <div class="card" style="width: 100%; min-height: 200px; height: 90%">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@api.Name</h5>
+                    <p class="card-text">@Html.DisplayFor(x => api.DisplayName)</p>
+
+                    <div class="mt-auto  row">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary btn-sm"
+                                    style="margin-left:0px; margin-right: 5px; min-width: 100px"
+                                    onclick="location.href='@Url.Action("ApiResourceEdit", "Config", new { api.Id })'">
+                                <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                                Edit
+                            </button>
+
+                            <button type="button" class="btn btn-warning btn-sm"
+                                    style="margin-left:0px; min-width: 100px"
+                                    onclick="location.href='@Url.Action("ApiResourceDelete", "Config", new { api.Id })'">
+                                <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <br />
+        </div>
+    }
+
+    <div class="col-md-4">
+        <div class="card" style="width: 100%; min-height: 200px; height: 90%">
+            <div class="card-body">
+                <button type="button" class="btn btn-success"
+                        style="position: absolute;top: 50%;left: 50%;transform: translateX(-55%) translateY(-60%);"
+                        onclick="location.href='@Url.Action("ApiResourceAdd", "Config")'">
+                    <i class="fa fa-plus mr-2" aria-hidden="true"></i>
+                    Add new
+                </button>
+            </div>
+        </div>
+        <br />
+    </div>
+</div>
+
+<hr />
 

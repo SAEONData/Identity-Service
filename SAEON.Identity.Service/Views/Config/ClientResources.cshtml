@@ -18,15 +18,15 @@
                     <div class="mt-auto  row">
                         <div class="col-md-12" >
                             <button type="button" class="btn btn-primary btn-sm"
-                                    style="margin-left:0px; margin-right: 5px;"
-                                    onclick="location.href='@Url.Action("ClientResourceEdit", "Config", new { client.ClientId })'">
+                                    style="margin-left:0px; margin-right: 5px; min-width: 100px"
+                                    onclick="location.href='@Url.Action("ClientResourceEdit", "Config", new { client.Id })'">
                                 <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
                                 Edit
                             </button>
 
                             <button type="button" class="btn btn-warning btn-sm" 
-                                    style="margin-left:0px;"
-                                    onclick="location.href='@Url.Action("ClientResourceDelete", "Config", new { client.ClientId })'">
+                                    style="margin-left:0px; min-width: 100px"
+                                    onclick="location.href='@Url.Action("ClientResourceDelete", "Config", new { client.Id })'">
                                 <i class="fa fa-trash mr-2" aria-hidden="true"></i>
                                 Delete
                             </button>
