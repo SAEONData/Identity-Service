@@ -7,7 +7,7 @@ const bundleOutputDir = './wwwroot/dist';
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
     return [{
-        mode: 'development',
+        mode: isDevBuild ? 'development' : 'production',
         stats: { modules: false },
         entry: { 'main': './ClientApp/boot.tsx' },
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
