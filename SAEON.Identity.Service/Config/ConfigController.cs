@@ -139,6 +139,41 @@ namespace SAEON.Identity.Service.Config
 
             return RedirectToAction("ApiResources");
         }
+
+        public ActionResult UserRoleManagement()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult UserRoleManagement(List<Role> roles)
+        {
+            if (ModelState.IsValid)
+            {
+                //Save changes to DB
+                //var result = _logic.SaveRoles(roles);
+
+                //return RedirectToAction("UserRoleManagement");
+            }
+
+            return View(roles);
+        }
+
+        public ActionResult ManageUserRoles()
+        {
+            return View(_logic.GetRoles());
+        }
+
+        [HttpPost]
+        public ActionResult AddRole([FromBody] List<Role> roles)
+        {
+            return PartialView("RolesPartial", roles);
+        }
+
+        //public ActionResult AssignUserRoles()
+        //{
+        //    return View();
+        //}
     }
 
 }

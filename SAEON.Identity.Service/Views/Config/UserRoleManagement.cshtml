@@ -1,6 +1,7 @@
-﻿
+﻿@model List<SAEON.Identity.Service.Config.User>
+
 @{
-    ViewData["Title"] = "Resource configuration";
+    ViewData["Title"] = "User Resources";
 }
 
 <hr style="margin-top: -8px" />
@@ -9,26 +10,11 @@
     <div class="col-md-4">
         <div class="card" style="width: 100%; min-height: 175px;">
             <div class="card-body">
-                <h5 class="card-title">APIs</h5>
-                <p class="card-text">Manage API resource configuration</p>
+                <h5 class="card-title">Manage User-Roles</h5>
+                <p class="card-text">Add, Update and Delete User-Roles</p>
                 <button type="button" class="btn btn-primary btn-sm"
                         style="position:absolute; bottom: 10px; right: 10px;"
-                        onclick="nav('/Config/ApiResources')">
-                    <i class="fa fa-wrench mr-2" aria-hidden="true"></i>
-                    Manage
-                </button>
-            </div>
-        </div>
-        <br/>
-    </div>
-    <div class="col-md-4">
-        <div class="card" style="width: 100%; min-height: 175px;">
-            <div class="card-body">
-                <h5 class="card-title">Clients</h5>
-                <p class="card-text">Manage Client resource configuration</p>
-                <button type="button" class="btn btn-primary btn-sm"
-                        style="position:absolute; bottom: 10px; right: 10px;"
-                        onclick="nav('/Config/ClientResources')">
+                        onclick="nav('/Config/ManageUserRoles')">
                     <i class="fa fa-wrench mr-2" aria-hidden="true"></i>
                     Manage
                 </button>
@@ -39,11 +25,11 @@
     <div class="col-md-4">
         <div class="card" style="width: 100%; min-height: 175px;">
             <div class="card-body">
-                <h5 class="card-title">User-Roles</h5>
-                <p class="card-text">Manage User-Roles configuration</p>
+                <h5 class="card-title">Assign User-Roles</h5>
+                <p class="card-text">Assign Roles to User Accounts</p>
                 <button type="button" class="btn btn-primary btn-sm"
                         style="position:absolute; bottom: 10px; right: 10px;"
-                        onclick="nav('/Config/UserRoleManagement')">
+                        onclick="nav('/Config/AssignUserRoles')">
                     <i class="fa fa-wrench mr-2" aria-hidden="true"></i>
                     Manage
                 </button>

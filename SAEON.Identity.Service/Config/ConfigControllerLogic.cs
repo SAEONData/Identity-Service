@@ -2,9 +2,11 @@
 using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SAEON.Identity.Service.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +14,9 @@ using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.Config
 {
-    public class ConfigControllerLogic
+    internal class ConfigControllerLogic
     {
-        public Client GetClientResource(int Id)
+        internal Client GetClientResource(int Id)
         {
             Client clientResource = new Client();
 
@@ -45,7 +47,7 @@ namespace SAEON.Identity.Service.Config
             return clientResource;
         }
 
-        public List<IdentityServer4.EntityFramework.Entities.Client> GetClientResources()
+        internal List<IdentityServer4.EntityFramework.Entities.Client> GetClientResources()
         {
             var clientResources = new List<IdentityServer4.EntityFramework.Entities.Client>();
 
@@ -70,7 +72,7 @@ namespace SAEON.Identity.Service.Config
                     catch (Exception ex)
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to get ClientResources from DB.");
+                        logger.LogError(ex, "Unabled to get Client Resources from DB.");
                     }
 
                 }
@@ -79,7 +81,7 @@ namespace SAEON.Identity.Service.Config
             return clientResources;
         }
 
-        public IdentityServer4.EntityFramework.Entities.Client BuildClient(Client client)
+        internal IdentityServer4.EntityFramework.Entities.Client BuildClient(Client client)
         {
             var isClient = new IdentityServer4.Models.Client
             {
@@ -153,7 +155,7 @@ namespace SAEON.Identity.Service.Config
             return isEntClient;
         }
 
-        public ICollection<string> StringToGrantType(string value)
+        internal ICollection<string> StringToGrantType(string value)
         {
             switch (value.ToLower())
             {
@@ -180,7 +182,7 @@ namespace SAEON.Identity.Service.Config
             }
         }
 
-        public string GrantTypeToString(ICollection<string> value)
+        internal string GrantTypeToString(ICollection<string> value)
         {
             if (value.OrderBy(x => x).SequenceEqual(GrantTypes.ClientCredentials.OrderBy(x => x)))
                 return "ClientCredentials";
@@ -204,7 +206,7 @@ namespace SAEON.Identity.Service.Config
                 return "";
         }
 
-        public bool SaveClient(IdentityServer4.EntityFramework.Entities.Client client)
+        internal bool SaveClient(IdentityServer4.EntityFramework.Entities.Client client)
         {
             bool result = false;
 
@@ -273,7 +275,7 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        public bool DeleteClient(int Id)
+        internal bool DeleteClient(int Id)
         {
             bool result = false;
 
@@ -313,7 +315,7 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        public List<IdentityServer4.EntityFramework.Entities.ApiResource> GetApiResources()
+        internal List<IdentityServer4.EntityFramework.Entities.ApiResource> GetApiResources()
         {
             var apiResources = new List<IdentityServer4.EntityFramework.Entities.ApiResource>();
 
@@ -335,7 +337,7 @@ namespace SAEON.Identity.Service.Config
                     catch (Exception ex)
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to get APIResources from DB.");
+                        logger.LogError(ex, "Unabled to get API Resources from DB.");
                     }
 
                 }
@@ -344,7 +346,7 @@ namespace SAEON.Identity.Service.Config
             return apiResources;
         }
 
-        public API GetApiResource(int Id)
+        internal API GetApiResource(int Id)
         {
             API apiResource = new API();
 
@@ -367,7 +369,7 @@ namespace SAEON.Identity.Service.Config
             return apiResource;
         }
 
-        public IdentityServer4.EntityFramework.Entities.ApiResource BuildApi(API api)
+        internal IdentityServer4.EntityFramework.Entities.ApiResource BuildApi(API api)
         {
             var isApi = new IdentityServer4.Models.ApiResource
             {
@@ -477,7 +479,7 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        public bool DeleteApi(int Id)
+        internal bool DeleteApi(int Id)
         {
             bool result = false;
 
@@ -513,5 +515,83 @@ namespace SAEON.Identity.Service.Config
 
             return result;
         }
+
+        internal List<Role> GetRoles()
+        {
+            var roles = new List<Role>();
+
+            var host = Program.host;
+            using (var scope = host.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+
+                using (var roleManager = serviceProvider.GetRequiredService<RoleManager<SAEONRole>>())
+                {
+                    try
+                    {
+                        roles = roleManager.Roles.Select(x => new Role() { Id = x.Id, Name = x.Name }).ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "Unabled to get Roles from DB.");
+                    }
+                }
+            }
+
+            return roles;
+        }
+
+        //internal List<User> GetUserResources()
+        //{
+        //    var userResources = new List<User>();
+
+        //    var host = Program.host;
+        //    using (var scope = host.Services.CreateScope())
+        //    {
+        //        var serviceProvider = scope.ServiceProvider;
+
+        //        using (var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>())
+        //        {
+        //            try
+        //            {
+        //                var dbUsers = userManager.Users
+        //                    .OrderBy(x => (x.FirstName + " " + x.Surname))
+        //                    .ToList();
+
+        //                foreach(var dbUser in dbUsers)
+        //                {
+        //                    var dbRoles = userManager.GetRolesAsync(dbUser).Result.ToList();
+
+        //                    userResources.Add(new User()
+        //                    {
+        //                        Id = dbUser.Id,
+        //                        Name = dbUser.FirstName,
+        //                        Surname = dbUser.Surname,
+        //                        Email = dbUser.Email,
+        //                        Password = dbUser.PasswordHash,
+        //                        Roles = dbRoles
+        //                    });
+        //                }                    
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+        //                logger.LogError(ex, "Unabled to get User Resources from DB.");
+        //            }
+        //        }
+        //    }
+
+        //    return userResources;
+        //}
+
+        //internal User GetUserResource(Guid Id)
+        //{
+        //    var userResource = GetUserResources().FirstOrDefault(x => x.Id == Id);
+        //    userResource.AvailableRoles = new List<string>() { "Select Role to add..." };
+        //    userResource.AvailableRoles.AddRange(GetRoleResources());
+
+        //    return userResource;
+        //}
     }
 }

@@ -4,6 +4,8 @@
     ViewData["Title"] = "API Resources";
 }
 
+<hr style="margin-top: -8px" />
+
 <div class="row">
     @foreach (var api in Model)
     {
@@ -22,7 +24,7 @@
                                 Edit
                             </button>
 
-                            <button type="button" class="btn btn-warning btn-sm"
+                            <button type="button" class="btn red btn-sm"
                                     style="margin-left:0px; min-width: 100px"
                                     onclick="location.href='@Url.Action("ApiResourceDelete", "Config", new { api.Id })'">
                                 <i class="fa fa-trash mr-2" aria-hidden="true"></i>
@@ -52,5 +54,5 @@
     </div>
 </div>
 
-<hr />
+<hr style="margin-top: -2px" />
 

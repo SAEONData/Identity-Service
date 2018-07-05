@@ -5,13 +5,29 @@ using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.Config
 {
+    public class Role
+    {
+        public Guid Id { get; set; } = Guid.Empty;
+        public string Name { get; set; } = "";
+    }
+
     public class User
     {
+        public Guid Id { get; set; } = Guid.Empty;
         public string Name { get; set; } = "";
         public string Surname { get; set; } = "";
         public string Email { get; set; } = "";
         public string Password { get; set; } = "";
+        public string PasswordReset { get; set; } = "";
+        public string PasswordResetConfirm { get; set; } = "";
         public List<string> Roles { get; set; } = new List<string>();
+        public List<string> AvailableRoles { get; set; } = new List<string>();
+
+        public string Roles_Combined
+        {
+            get => Utils.value_combine(Roles);
+            set => Roles = Utils.value_split(value);
+        }
     }
 
     public class Scope

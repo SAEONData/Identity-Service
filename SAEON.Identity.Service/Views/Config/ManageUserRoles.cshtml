@@ -1,0 +1,75 @@
+﻿@model List<SAEON.Identity.Service.Config.Role>
+
+@{
+    ViewData["Title"] = "Manage User Roles";
+}
+
+<hr style="margin-top: 0px" />
+
+<div class="row" style="margin-left:-10px">
+    <div class="col-lg-6">
+
+        @*Add Role*@
+        <div class="editor-label">
+            <label><b>Add Role:</b></label>
+        </div>
+        <div class="editor-field">
+            <input type="text" id="AddRole" class="form-control">
+            <label style="font-size: small; color:steelblue"><i>* press Enter to add</i></label>
+        </div>
+
+        @using (Html.BeginForm())
+        {
+            //Edit Roles
+            <br />
+            <div class="editor-label">
+                <label><b>Edit Roles:</b></label>
+            </div>
+            <div id="RolesPartial">
+                @Html.Partial("RolesPartial")
+            </div>
+
+            <br />
+            <button type="submit" style="margin-left:0px; min-width: 125px" id="btnSave" class="btn btn-warning">
+                Save
+            </button>
+            <button type="button" style="margin-left:0px; min-width: 125px" class="btn btn-secondary" onclick="location.href='@Url.Action("UserRoleManagement", "Config")'">
+                Cancel
+            </button>
+        }
+    </div>
+</div>
+
+<hr />
+
+<script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+
+    var jsModel = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@Model) as String);
+
+    $("#AddRole").change(() => {
+
+        let value = $("#AddRole").val()
+
+        //Get data from Model
+        //let model = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@Model) as String);
+
+        //Add new role to list (if it does not exist)
+        if (jsModel.filter(x => x.Name === value).length === 0) {
+            jsModel.push({ Name: value })
+        }
+
+        //Post data to Controller
+        $.ajax({
+            type: "POST",
+            data: JSON.stringify(jsModel),
+            url: "/Config/AddRole",
+            contentType: "application/json"
+        }).done(function (res) {
+            //Update partial view
+            $("#RolesPartial").html(res);
+            $("#AddRole").val("")
+        });
+    })
+
+</script>

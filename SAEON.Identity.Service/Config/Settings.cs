@@ -27,7 +27,7 @@ namespace SAEON.Identity.Service.Config
 
         public static List<string> Roles { get; private set; } = new List<string>();
         public static List<User> Users { get; private set; } = new List<User>();
-        public static List<API> APIs { get; private set; } = new List<API>();
+        //public static List<API> APIs { get; private set; } = new List<API>();
 
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
@@ -42,119 +42,119 @@ namespace SAEON.Identity.Service.Config
             };
         }
 
-        public static IEnumerable<ApiResource> GetApiResources(IConfiguration config)
-        {
-            var result = new List<ApiResource>();
-            var configuration = config.GetSection("IdentityService");
-            var apis = new List<API>();
-            configuration.GetSection("APIs").Bind(apis);
-            foreach (var api in apis)
-            {
-                var apiResource = new ApiResource { Name = api.Name, DisplayName = api.DisplayName, Description = api.Description };
-                foreach (var claim in api.Claims)
-                {
-                    apiResource.UserClaims.Add(claim);
-                }
-                foreach (var secret in api.Secrets)
-                {
-                    apiResource.ApiSecrets.Add(new Secret(secret.Sha256()));
-                }
-                foreach (var scope in api.Scopes)
-                {
-                    apiResource.Scopes.Add(new IdentityServer4.Models.Scope(scope.Name, scope.DisplayName));
-                }
-                result.Add(apiResource);
-            }
-            return result;
-        }
+        //public static IEnumerable<ApiResource> GetApiResources(IConfiguration config)
+        //{
+        //    var result = new List<ApiResource>();
+        //    var configuration = config.GetSection("IdentityService");
+        //    var apis = new List<API>();
+        //    configuration.GetSection("APIs").Bind(apis);
+        //    foreach (var api in apis)
+        //    {
+        //        var apiResource = new ApiResource { Name = api.Name, DisplayName = api.DisplayName, Description = api.Description };
+        //        foreach (var claim in api.Claims)
+        //        {
+        //            apiResource.UserClaims.Add(claim);
+        //        }
+        //        foreach (var secret in api.Secrets)
+        //        {
+        //            apiResource.ApiSecrets.Add(new Secret(secret.Sha256()));
+        //        }
+        //        foreach (var scope in api.Scopes)
+        //        {
+        //            apiResource.Scopes.Add(new IdentityServer4.Models.Scope(scope.Name, scope.DisplayName));
+        //        }
+        //        result.Add(apiResource);
+        //    }
+        //    return result;
+        //}
 
-        public static IEnumerable<IdentityServer4.Models.Client> GetClients(IConfiguration config)
-        {
-            var result = new List<IdentityServer4.Models.Client>();
-            var configuration = config.GetSection("IdentityService");
-            var clients = new List<Client>();
-            var _logic = new ConfigControllerLogic();
+        //public static IEnumerable<IdentityServer4.Models.Client> GetClients(IConfiguration config)
+        //{
+        //    var result = new List<IdentityServer4.Models.Client>();
+        //    var configuration = config.GetSection("IdentityService");
+        //    var clients = new List<Client>();
+        //    var _logic = new ConfigControllerLogic();
 
-            configuration.GetSection("Clients").Bind(clients);
+        //    configuration.GetSection("Clients").Bind(clients);
 
-            foreach (var client in clients)
-            {
-                var isClient = new IdentityServer4.Models.Client
-                {
-                    ClientId = client.Name,
-                    ClientName = client.DisplayName,
-                    RequireConsent = client.RequireConsent,
-                    AllowRememberConsent = client.RememberConsent,
-                    AllowOfflineAccess = client.OfflineAccess,
-                    AllowAccessTokensViaBrowser = client.AccessTokensViaBrowser,
-                    IdentityTokenLifetime = client.IdentityTokenLifetime,
-                    AccessTokenLifetime = client.AccessTokenLifetime,
-                    AllowedGrantTypes = _logic.StringToGrantType(client.GrantType)
-                };
+        //    foreach (var client in clients)
+        //    {
+        //        var isClient = new IdentityServer4.Models.Client
+        //        {
+        //            ClientId = client.Name,
+        //            ClientName = client.DisplayName,
+        //            RequireConsent = client.RequireConsent,
+        //            AllowRememberConsent = client.RememberConsent,
+        //            AllowOfflineAccess = client.OfflineAccess,
+        //            AllowAccessTokensViaBrowser = client.AccessTokensViaBrowser,
+        //            IdentityTokenLifetime = client.IdentityTokenLifetime,
+        //            AccessTokenLifetime = client.AccessTokenLifetime,
+        //            AllowedGrantTypes = _logic.StringToGrantType(client.GrantType)
+        //        };
 
-                //switch (client.GrantType)
-                //{
-                //    case "ClientCredentials":
-                //        isClient.AllowedGrantTypes = GrantTypes.ClientCredentials;
-                //        break;
-                //    case "Code":
-                //        isClient.AllowedGrantTypes = GrantTypes.Code;
-                //        break;
-                //    case "CodeAndClientCredentials":
-                //        isClient.AllowedGrantTypes = GrantTypes.CodeAndClientCredentials;
-                //        break;
-                //    case "Hybrid":
-                //        isClient.AllowedGrantTypes = GrantTypes.Hybrid;
-                //        break;
-                //    case "HybridAndClientCredentials":
-                //        isClient.AllowedGrantTypes = GrantTypes.HybridAndClientCredentials;
-                //        break;
-                //    case "Implicit":
-                //        isClient.AllowedGrantTypes = GrantTypes.Implicit;
-                //        break;
-                //    case "ImplicitAndClientCredentials":
-                //        isClient.AllowedGrantTypes = GrantTypes.ImplicitAndClientCredentials;
-                //        break;
-                //    case "ResourceOwnerPassword":
-                //        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPassword;
-                //        break;
-                //    case "ResourceOwnerPasswordAndClientCredentials":
-                //        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials;
-                //        break;
-                //    default:
-                //        Logging.Error("Unknown GrantType: {GranType}", client.GrantType);
-                //        continue;
-                //}
+        //        //switch (client.GrantType)
+        //        //{
+        //        //    case "ClientCredentials":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.ClientCredentials;
+        //        //        break;
+        //        //    case "Code":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.Code;
+        //        //        break;
+        //        //    case "CodeAndClientCredentials":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.CodeAndClientCredentials;
+        //        //        break;
+        //        //    case "Hybrid":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.Hybrid;
+        //        //        break;
+        //        //    case "HybridAndClientCredentials":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.HybridAndClientCredentials;
+        //        //        break;
+        //        //    case "Implicit":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.Implicit;
+        //        //        break;
+        //        //    case "ImplicitAndClientCredentials":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.ImplicitAndClientCredentials;
+        //        //        break;
+        //        //    case "ResourceOwnerPassword":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPassword;
+        //        //        break;
+        //        //    case "ResourceOwnerPasswordAndClientCredentials":
+        //        //        isClient.AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials;
+        //        //        break;
+        //        //    default:
+        //        //        Logging.Error("Unknown GrantType: {GranType}", client.GrantType);
+        //        //        continue;
+        //        //}
 
-                foreach (var secret in client.Secrets)
-                {
-                    isClient.ClientSecrets.Add(new Secret(secret.Sha256()));
-                }
+        //        foreach (var secret in client.Secrets)
+        //        {
+        //            isClient.ClientSecrets.Add(new Secret(secret.Sha256()));
+        //        }
 
-                foreach (var scope in client.Scopes)
-                {
-                    isClient.AllowedScopes.Add(scope);
-                }
+        //        foreach (var scope in client.Scopes)
+        //        {
+        //            isClient.AllowedScopes.Add(scope);
+        //        }
 
-                foreach (var corsOrigin in client.CorsOrigins)
-                {
-                    isClient.AllowedCorsOrigins.Add(corsOrigin);
-                }
+        //        foreach (var corsOrigin in client.CorsOrigins)
+        //        {
+        //            isClient.AllowedCorsOrigins.Add(corsOrigin);
+        //        }
 
-                foreach (var uri in client.RedirectURIs)
-                {
-                    isClient.RedirectUris.Add(uri);
-                }
+        //        foreach (var uri in client.RedirectURIs)
+        //        {
+        //            isClient.RedirectUris.Add(uri);
+        //        }
 
-                foreach (var uri in client.PostLogoutRedirectURIs)
-                {
-                    isClient.PostLogoutRedirectUris.Add(uri);
-                }
+        //        foreach (var uri in client.PostLogoutRedirectURIs)
+        //        {
+        //            isClient.PostLogoutRedirectUris.Add(uri);
+        //        }
 
-                result.Add(isClient);
-            }
-            return result;
-        }
+        //        result.Add(isClient);
+        //    }
+        //    return result;
+        //}
 
         public static List<string> GetRoles(IConfiguration config)
         {
@@ -183,6 +183,7 @@ namespace SAEON.Identity.Service.Config
                     {
                         await userManager.CreateAsync(new SAEONUser { UserName = user.Email, Email = user.Email, FirstName = user.Name, Surname = user.Surname, EmailConfirmed = true }, user.Password);
                     }
+
                     var saeonUser = await userManager.FindByNameAsync(user.Email);
                     if ((saeonUser != null) && (user.Roles != null))
                         foreach (var role in user.Roles)
@@ -213,23 +214,23 @@ namespace SAEON.Identity.Service.Config
                 }
                 context.SaveChanges();
 
-                foreach (var resource in Settings.GetApiResources(config))
-                {
-                    if (!await context.ApiResources.AnyAsync(i => i.Name == resource.Name))
-                    {
-                        await context.ApiResources.AddAsync(resource.ToEntity());
-                    }
-                }
-                context.SaveChanges();
+                //foreach (var resource in Settings.GetApiResources(config))
+                //{
+                //    if (!await context.ApiResources.AnyAsync(i => i.Name == resource.Name))
+                //    {
+                //        await context.ApiResources.AddAsync(resource.ToEntity());
+                //    }
+                //}
+                //context.SaveChanges();
 
-                foreach (var client in Settings.GetClients(config))
-                {
-                    if (!await context.Clients.AnyAsync(i => i.ClientName == client.ClientName))
-                    {
-                        await context.Clients.AddAsync(client.ToEntity());
-                    }
-                }
-                context.SaveChanges();
+                //foreach (var client in Settings.GetClients(config))
+                //{
+                //    if (!await context.Clients.AnyAsync(i => i.ClientName == client.ClientName))
+                //    {
+                //        await context.Clients.AddAsync(client.ToEntity());
+                //    }
+                //}
+                //context.SaveChanges();
 
                 var roleManager = serviceProvider.GetRequiredService<RoleManager<SAEONRole>>();
                 foreach (var role in Settings.GetRoles(config))
