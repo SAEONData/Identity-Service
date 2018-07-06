@@ -25,8 +25,8 @@ namespace SAEON.Identity.Service.Config
         //private static readonly int EasiCATWebAPIPort = 55330;
         //private static readonly int EasiCATWebSitePort = 55340;
 
-        public static List<string> Roles { get; private set; } = new List<string>();
-        public static List<User> Users { get; private set; } = new List<User>();
+        //public static List<string> Roles { get; private set; } = new List<string>();
+        //public static List<User> Users { get; private set; } = new List<User>();
         //public static List<API> APIs { get; private set; } = new List<API>();
 
         public static IEnumerable<IdentityResource> GetIdentityResources()
@@ -156,45 +156,45 @@ namespace SAEON.Identity.Service.Config
         //    return result;
         //}
 
-        public static List<string> GetRoles(IConfiguration config)
-        {
-            var configuration = config.GetSection("IdentityService");
-            var roles = new List<string>();
-            configuration.GetSection("Roles").Bind(roles);
-            return roles;
-        }
+        //public static List<string> GetRoles(IConfiguration config)
+        //{
+        //    var configuration = config.GetSection("IdentityService");
+        //    var roles = new List<string>();
+        //    configuration.GetSection("Roles").Bind(roles);
+        //    return roles;
+        //}
 
-        public static List<User> GetUsers(IConfiguration config)
-        {
-            var configuration = config.GetSection("IdentityService");
-            var users = new List<User>();
-            configuration.GetSection("Users").Bind(users);
-            return users;
-        }
+        //public static List<User> GetUsers(IConfiguration config)
+        //{
+        //    var configuration = config.GetSection("IdentityService");
+        //    var users = new List<User>();
+        //    configuration.GetSection("Users").Bind(users);
+        //    return users;
+        //}
 
         internal static async Task InitializeDbAsync(IServiceProvider serviceProvider)
         {
-            async Task AddUserAsync(User user, UserManager<SAEONUser> userManager)
-            {
-                using (Logging.MethodCall(typeof(Program), new ParameterList { { "FirstName", user.Name }, { "Surname", user.Surname }, { "Email", user.Email } }))
-                {
+            //async Task AddUserAsync(User user, UserManager<SAEONUser> userManager)
+            //{
+            //    using (Logging.MethodCall(typeof(Program), new ParameterList { { "FirstName", user.Name }, { "Surname", user.Surname }, { "Email", user.Email } }))
+            //    {
 
-                    if (await userManager.FindByNameAsync(user.Email) == null)
-                    {
-                        await userManager.CreateAsync(new SAEONUser { UserName = user.Email, Email = user.Email, FirstName = user.Name, Surname = user.Surname, EmailConfirmed = true }, user.Password);
-                    }
+            //        if (await userManager.FindByNameAsync(user.Email) == null)
+            //        {
+            //            await userManager.CreateAsync(new SAEONUser { UserName = user.Email, Email = user.Email, FirstName = user.Name, Surname = user.Surname, EmailConfirmed = true }, user.Password);
+            //        }
 
-                    var saeonUser = await userManager.FindByNameAsync(user.Email);
-                    if ((saeonUser != null) && (user.Roles != null))
-                        foreach (var role in user.Roles)
-                        {
-                            if (!await userManager.IsInRoleAsync(saeonUser, role))
-                            {
-                                await userManager.AddToRoleAsync(saeonUser, role);
-                            }
-                        }
-                }
-            }
+            //        var saeonUser = await userManager.FindByNameAsync(user.Email);
+            //        if ((saeonUser != null) && (user.Roles != null))
+            //            foreach (var role in user.Roles)
+            //            {
+            //                if (!await userManager.IsInRoleAsync(saeonUser, role))
+            //                {
+            //                    await userManager.AddToRoleAsync(saeonUser, role);
+            //                }
+            //            }
+            //    }
+            //}
 
             using (Logging.MethodCall(typeof(Program)))
             {
@@ -232,21 +232,21 @@ namespace SAEON.Identity.Service.Config
                 //}
                 //context.SaveChanges();
 
-                var roleManager = serviceProvider.GetRequiredService<RoleManager<SAEONRole>>();
-                foreach (var role in Settings.GetRoles(config))
-                {
-                    if (!await roleManager.RoleExistsAsync(role))
-                    {
-                        var identityRole = new SAEONRole { Name = role };
-                        await roleManager.CreateAsync(identityRole);
-                        await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role));
-                    }
-                }
-                var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>();
-                foreach (var user in Settings.GetUsers(config))
-                {
-                    await AddUserAsync(user, userManager);
-                }
+                //var roleManager = serviceProvider.GetRequiredService<RoleManager<SAEONRole>>();
+                //foreach (var role in Settings.GetRoles(config))
+                //{
+                //    if (!await roleManager.RoleExistsAsync(role))
+                //    {
+                //        var identityRole = new SAEONRole { Name = role };
+                //        await roleManager.CreateAsync(identityRole);
+                //        await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role));
+                //    }
+                //}
+                //var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>();
+                //foreach (var user in Settings.GetUsers(config))
+                //{
+                //    await AddUserAsync(user, userManager);
+                //}
             }
         }
     }

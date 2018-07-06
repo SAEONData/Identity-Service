@@ -5,6 +5,14 @@ using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.Config
 {
+    public enum RoleState
+    {
+        Unchanged,
+        Added,
+        Modified,
+        Deleted
+    }
+
     public class Role
     {
         public Guid Id { get; set; } = Guid.Empty;

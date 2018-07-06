@@ -145,29 +145,29 @@ namespace SAEON.Identity.Service.Config
             return View();
         }
 
-        [HttpPost]
-        public ActionResult UserRoleManagement(List<Role> roles)
-        {
-            if (ModelState.IsValid)
-            {
-                //Save changes to DB
-                //var result = _logic.SaveRoles(roles);
-
-                //return RedirectToAction("UserRoleManagement");
-            }
-
-            return View(roles);
-        }
-
         public ActionResult ManageUserRoles()
         {
             return View(_logic.GetRoles());
         }
 
         [HttpPost]
-        public ActionResult AddRole([FromBody] List<Role> roles)
+        public ActionResult UpdateRoles([FromBody] List<Role> roles)
         {
             return PartialView("RolesPartial", roles);
+        }
+
+        [HttpPost]
+        public ActionResult ManageUserRoles(List<Role> roles)
+        {
+            if (ModelState.IsValid)
+            {
+                //Save changes to DB
+                var result = _logic.SaveRolesAsync(roles).Result;
+
+                return RedirectToAction("UserRoleManagement");
+            }
+
+            return View(roles);
         }
 
         //public ActionResult AssignUserRoles()

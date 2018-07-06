@@ -10,6 +10,7 @@ using SAEON.Identity.Service.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.Config
@@ -593,5 +594,112 @@ namespace SAEON.Identity.Service.Config
 
         //    return userResource;
         //}
+
+        internal async Task<bool> SaveRolesAsync(List<Role> roles)
+        {
+            bool result = false;
+
+            try
+            {
+                var host = Program.host;
+                using (var scope = host.Services.CreateScope())
+                {
+                    var serviceProvider = scope.ServiceProvider;
+                    using (var roleManager = serviceProvider.GetRequiredService<RoleManager<SAEONRole>>())
+                    {
+                        try
+                        {
+                            foreach (var role in roles)
+                            {
+                                var identityRole = roleManager.Roles.FirstOrDefault(x => x.Id == role.Id);
+                                if (identityRole != null)
+                                {
+                                    if (identityRole.Name != role.Name)
+                                    {
+                                        //UPDATE
+                                        //Update Role Name
+                                        identityRole.Name = role.Name;
+                                        var identityResult = await roleManager.UpdateAsync(identityRole);
+                                        if (!identityResult.Succeeded)
+                                        {
+                                            throw new Exception("Role Name updated failed");
+                                        }
+
+                                        //Remove Role Claim
+                                        identityResult = await roleManager.RemoveClaimAsync(identityRole, 
+                                            roleManager.GetClaimsAsync(identityRole).Result.FirstOrDefault(x => x.Type == ClaimTypes.Role));
+                                        if (!identityResult.Succeeded)
+                                        {
+                                            throw new Exception("Add Role-Claim failed");
+                                        }
+
+                                        //Add new Role Claim
+                                        identityResult = await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role.Name));
+                                        if (!identityResult.Succeeded)
+                                        {
+                                            throw new Exception("Add Role-Claim failed");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //ADD
+                                    identityRole = new SAEONRole() { Id = role.Id, Name = role.Name };
+                                    var identityResult = await roleManager.CreateAsync(identityRole);
+                                    if(!identityResult.Succeeded)
+                                    {
+                                        throw new Exception("Create Role failed");
+                                    }
+
+                                    identityResult = await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role.Name));
+                                    if (!identityResult.Succeeded)
+                                    {
+                                        throw new Exception("Add Role-Claim failed");
+                                    }
+                                }
+                            }
+
+                            foreach(var dbRole in roleManager.Roles)
+                            {
+                                if(!roles.Any(x => x.Id == dbRole.Id))
+                                {
+                                    //DELETE
+
+                                    //Remove claims
+                                    //var claims = await roleManager.GetClaimsAsync(dbRole);
+                                    //foreach (var claim in claims)
+                                    //{
+                                    //    await roleManager.RemoveClaimAsync(dbRole, claim);
+                                    //}
+
+                                    //Delete role
+                                    var identityResult = await roleManager.DeleteAsync(dbRole);
+                                    if (!identityResult.Succeeded)
+                                    {
+                                        throw new Exception("Delete Role failed");
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                            logger.LogError(ex, "Unabled to save Roles to DB.");
+
+                            throw ex;
+                        }
+                    }
+                }
+
+                result = true;
+            }
+            catch
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
     }
 }
