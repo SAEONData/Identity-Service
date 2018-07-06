@@ -170,10 +170,22 @@ namespace SAEON.Identity.Service.Config
             return View(roles);
         }
 
-        //public ActionResult AssignUserRoles()
-        //{
-        //    return View();
-        //}
+        public ActionResult AssignUserRoles()
+        {
+            return View(_logic.GetUserResources());
+        }
+
+        [HttpPost]
+        public IActionResult AvailableRolesPartial([FromBody] Guid userId)
+        {
+            return ViewComponent("UserAvailableRoles", new { userId });
+        }
+
+        [HttpPost]
+        public IActionResult AssignedRolesPartial([FromBody] Guid userId)
+        {
+            return ViewComponent("UserAssignedRoles", new { userId });
+        }
     }
 
 }

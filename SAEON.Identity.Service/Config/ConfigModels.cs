@@ -5,14 +5,6 @@ using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.Config
 {
-    public enum RoleState
-    {
-        Unchanged,
-        Added,
-        Modified,
-        Deleted
-    }
-
     public class Role
     {
         public Guid Id { get; set; } = Guid.Empty;
@@ -30,6 +22,8 @@ namespace SAEON.Identity.Service.Config
         public string PasswordResetConfirm { get; set; } = "";
         public List<string> Roles { get; set; } = new List<string>();
         public List<string> AvailableRoles { get; set; } = new List<string>();
+
+        public string DisplayName { get => $"{Name} {Surname} ({Email})"; }
 
         public string Roles_Combined
         {
@@ -136,9 +130,6 @@ namespace SAEON.Identity.Service.Config
             get => Utils.value_combine(PostLogoutRedirectURIs);
             set => PostLogoutRedirectURIs = Utils.value_split(value);
         }
-
-
-
     }
 
     internal static class Utils

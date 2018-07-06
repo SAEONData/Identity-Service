@@ -543,48 +543,48 @@ namespace SAEON.Identity.Service.Config
             return roles;
         }
 
-        //internal List<User> GetUserResources()
-        //{
-        //    var userResources = new List<User>();
+        internal List<User> GetUserResources()
+        {
+            var userResources = new List<User>();
 
-        //    var host = Program.host;
-        //    using (var scope = host.Services.CreateScope())
-        //    {
-        //        var serviceProvider = scope.ServiceProvider;
+            var host = Program.host;
+            using (var scope = host.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
 
-        //        using (var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>())
-        //        {
-        //            try
-        //            {
-        //                var dbUsers = userManager.Users
-        //                    .OrderBy(x => (x.FirstName + " " + x.Surname))
-        //                    .ToList();
+                using (var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>())
+                {
+                    try
+                    {
+                        var dbUsers = userManager.Users
+                            .OrderBy(x => (x.FirstName + " " + x.Surname))
+                            .ToList();
 
-        //                foreach(var dbUser in dbUsers)
-        //                {
-        //                    var dbRoles = userManager.GetRolesAsync(dbUser).Result.ToList();
+                        foreach (var dbUser in dbUsers)
+                        {
+                            var dbRoles = userManager.GetRolesAsync(dbUser).Result.ToList();
 
-        //                    userResources.Add(new User()
-        //                    {
-        //                        Id = dbUser.Id,
-        //                        Name = dbUser.FirstName,
-        //                        Surname = dbUser.Surname,
-        //                        Email = dbUser.Email,
-        //                        Password = dbUser.PasswordHash,
-        //                        Roles = dbRoles
-        //                    });
-        //                }                    
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-        //                logger.LogError(ex, "Unabled to get User Resources from DB.");
-        //            }
-        //        }
-        //    }
+                            userResources.Add(new User()
+                            {
+                                Id = dbUser.Id,
+                                Name = dbUser.FirstName,
+                                Surname = dbUser.Surname,
+                                Email = dbUser.Email,
+                                Password = dbUser.PasswordHash,
+                                Roles = dbRoles
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "Unabled to get User Resources from DB.");
+                    }
+                }
+            }
 
-        //    return userResources;
-        //}
+            return userResources;
+        }
 
         //internal User GetUserResource(Guid Id)
         //{
@@ -700,6 +700,8 @@ namespace SAEON.Identity.Service.Config
 
             return result;
         }
+
+
 
     }
 }

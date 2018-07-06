@@ -1,0 +1,10 @@
+﻿@model List<SAEON.Identity.Service.Config.Role>
+
+@*Available Roles*@
+<div class="editor-label">
+    <label style="margin-top: 10px"><b>Available Roles:</b></label>
+</div>
+<div class="editor-field">
+    @Html.TextArea("AvailableRoles", string.Join(Environment.NewLine, Model.Select(x => x.Name)),
+    new { @class = "form-control", @rows = "10", @wrap = "off", @style = "margin-bottom: 15px" })
+</div>

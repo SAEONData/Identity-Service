@@ -1,7 +1,83 @@
-﻿
+﻿@model List<SAEON.Identity.Service.Config.User>
+
 @{
-    ViewData["Title"] = "AssignUserRoles";
+    ViewData["Title"] = "Assign User Roles";
 }
 
-<h2>AssignUserRoles</h2>
+<hr style="margin-top: 0px" />
 
+<div class="row">
+    <div class="col-lg-6">
+
+        @*Select user dropdown*@
+        <div class="editor-label">
+            <label><b>Select User:</b></label>
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("SelectUser",
+                new SelectList(Model.OrderBy(x => x.DisplayName), "Id", "DisplayName"),
+                new { @class = "form-control", @style = "width: 99.9%" })
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <hr />
+    </div>
+</div>
+
+
+@using (Html.BeginForm())
+{
+    <div class="row" style="margin-left:auto">
+
+        <div id="AvailableRoles" class="col-lg-5" style="background-color: gainsboro">
+            @*Available Roles*@
+            @await Component.InvokeAsync("UserAvailableRoles", new { userId = Model[0].Id })
+        </div>
+
+        <div class="col-lg-1">
+
+        </div>
+
+        <div id="AssignedRoles" class="col-lg-5" style="background-color: gainsboro">
+            @*Assigned Roles*@
+            @await Component.InvokeAsync("UserAssignedRoles", new { userId = Model[0].Id })
+        </div>
+    </div>
+}
+
+<hr />
+
+<script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+
+    $("#SelectUser").change(function () {
+
+        let value = this.value
+        //console.log(this.value)
+
+        $.ajax({
+            type: "POST",
+            data: JSON.stringify(value),
+            url: "/Config/AvailableRolesPartial",
+            contentType: "application/json"
+        }).done(function (res) {
+            //Update partial view
+            $("#AvailableRoles").html(res);
+        });
+
+        $.ajax({
+            type: "POST",
+            data: JSON.stringify(value),
+            url: "/Config/AssignedRolesPartial",
+            contentType: "application/json"
+        }).done(function (res) {
+            //Update partial view
+            $("#AssignedRoles").html(res);
+        });
+
+    })
+
+</script>
