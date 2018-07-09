@@ -26,7 +26,7 @@ namespace SAEON.Identity.Service
         {
             Configuration = configuration;
             Logging
-                .CreateConfiguration("Logs/SAEON.Identity.Service {Date}.txt", configuration)
+                .CreateConfiguration("Logs/SAEON.Identity.Service.txt", configuration)
                 .Create();
         }
 
@@ -88,11 +88,11 @@ namespace SAEON.Identity.Service
                     .AddSigningCredential(Cert.Load());
                 //.AddDeveloperSigningCredential();
 
-                //services.AddMvc(options =>
-                //{
-                //    options.Filters.Add<SecurityHeadersAttribute>();
-                //});
-                //services.AddLogging();
+                services.AddMvc(options =>
+                {
+                    //options.Filters.Add<SecurityHeadersAttribute>();
+                });
+                services.AddLogging();
                 services.AddCors();
 
                 services.AddSingleton<IConfiguration>(Configuration);

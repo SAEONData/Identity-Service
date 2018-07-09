@@ -9,6 +9,7 @@ using SAEON.Identity.Service.Data;
 using SAEON.Logs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -126,7 +127,7 @@ namespace SAEON.Identity.Service.Config
                     AllowOfflineAccess = client.OfflineAccess,
                     AllowAccessTokensViaBrowser = client.AccessTokensViaBrowser,
                     IdentityTokenLifetime = client.IdentityTokenLifetime,
-                    AccessTokenLifetime = client.AccessTokenLifetime
+                    AccessTokenLifetime = client.AccessTokenLifetime,
                 };
                 switch (client.GrantType)
                 {
