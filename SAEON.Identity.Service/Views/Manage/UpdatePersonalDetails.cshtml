@@ -1,0 +1,44 @@
+﻿@model SAEON.Identity.Service.Data.SAEONUser
+
+@{
+    ViewData["Title"] = "Update Personal Details";
+}
+
+<hr style="margin-top: 0px" />
+
+<div class="row" style="margin-left: auto; margin-right:auto" >
+    <div class="col-lg-6">
+        @using (Html.BeginForm())
+        {
+            //Id
+            @Html.HiddenFor(m => m.Id)
+
+            //FirstName
+            <div class="editor-label">
+                <label><b>First Name:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            //Surname
+            <br />
+            <div class="editor-label">
+                <label><b>Surname:</b></label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(m => m.Surname, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <br />
+            <button type="submit" style="margin-left:0px; min-width: 125px" id="btnSave" class="btn btn-primary">
+                Save
+            </button>
+            <button type="button" style="margin-left:0px; min-width: 125px" class="btn btn-default" onclick="location.href='@Url.Action("Index", "Manage")'">
+                Cancel
+            </button>
+        }
+    </div>
+</div>
+
+<hr />

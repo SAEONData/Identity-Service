@@ -4,23 +4,15 @@
 }
 
 <p class="text-success">@ViewData["StatusMessage"]</p>
-<div>
-    <dl class="dl-horizontal">
-        <dt>Password:</dt>
-        <dd>
-            @if (Model.HasPassword)
-            {
-                <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">Change</a>
-            }
-            else
-            {
-                <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">Create</a>
-            }
-        </dd>
-        <dt>External Logins:</dt>
-        <dd>
 
-            @Model.Logins.Count <a asp-controller="Manage" asp-action="ManageLogins" class="btn-bracketed">Manage</a>
-        </dd>
-    </dl>
+<p><h3>Welcome back,<br />@Model.DisplayNnme</h3></p>
+
+<div style="margin-top: 25px">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Manage" asp-action="UpdatePersonalDetails">Update personal details</a></li>
+        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Manage" asp-action="Index">Change my email address</a></li>
+        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Manage" asp-action="Index">Change my secondary email address</a></li>
+        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Manage" asp-action="Index">Delete my account</a></li>
+    </ul>
+    <br />
 </div>

@@ -56,6 +56,8 @@ namespace SAEON.Identity.Service.UI
                 HasPassword = await _userManager.HasPasswordAsync(user),
                 Logins = await _userManager.GetLoginsAsync(user),
 
+                FirstName = user.FirstName,
+                Surname = user.Surname,
                 Username = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
@@ -464,6 +466,29 @@ namespace SAEON.Identity.Service.UI
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpdatePersonalDetails()
+        {
+            SAEONUser user = await _userManager.GetUserAsync(User);
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePersonalDetails(SAEONUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                //Save changes to DB
+                var result = await SaveUserInfo(user);
+                if (result)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return View(user);
+        }
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)
@@ -498,6 +523,23 @@ namespace SAEON.Identity.Service.UI
                 _urlEncoder.Encode("IdentityServerWithAspNetIdentity"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
+        }
+
+        private async Task<bool> SaveUserInfo(SAEONUser user)
+        {
+            bool result = false;
+
+            var dbUser = _userManager.Users.FirstOrDefault(x => x.Id == user.Id);
+            if(dbUser != null)
+            {
+                dbUser.FirstName = user.FirstName;
+                dbUser.Surname = user.Surname;
+
+                await _userManager.UpdateAsync(dbUser);
+                result = true;
+            }
+
+            return result;
         }
 
         #endregion
