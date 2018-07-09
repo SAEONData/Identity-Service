@@ -1,12 +1,20 @@
-﻿using Microsoft.AspNetCore;
+﻿using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Models;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SAEON.Identity.Service.Config;
+using SAEON.Identity.Service.Data;
+using SAEON.Logs;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service
 {
@@ -24,7 +32,7 @@ namespace SAEON.Identity.Service
                 try
                 {
                     // Requires using RazorPagesMovie.Models;
-                    Settings.InitializeDbAsync(serviceProvider).Wait();
+                    Configuration.InitializeDbAsync(serviceProvider).Wait();
                 }
                 catch (Exception ex)
                 {
@@ -43,12 +51,49 @@ namespace SAEON.Identity.Service
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.AddJsonFile("connectionStrings.json", optional: false, reloadOnChange: true);
-                    config.AddJsonFile("Config/Settings.json", optional: false, reloadOnChange: true);
                 })
                 .UseStartup<Startup>()
                 .UseSerilog()
                 .Build();
 
+    }
+
+    internal static class Configuration
+    {
+        internal static async Task InitializeDbAsync(IServiceProvider serviceProvider)
+        {
+            using (Logging.MethodCall(typeof(Program)))
+            {
+                Logging.Information("Seeding database");
+                serviceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+                serviceProvider.GetRequiredService<ConfigurationDbContext>().Database.Migrate();
+                serviceProvider.GetRequiredService<SAEONDbContext>().Database.Migrate();
+                var context = serviceProvider.GetRequiredService<ConfigurationDbContext>();
+                var config = serviceProvider.GetRequiredService<IConfiguration>();
+
+                foreach (var resource in GetIdentityResources())
+                {
+                    if (!await context.IdentityResources.AnyAsync(i => i.Name == resource.Name))
+                    {
+                        await context.IdentityResources.AddAsync(resource.ToEntity());
+                    }
+                }
+                context.SaveChanges();
+            }
+        }
+
+        internal static IEnumerable<IdentityResource> GetIdentityResources()
+        {
+            return new List<IdentityResource> {
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile(),
+                new IdentityResources.Email { Required=true},
+                new IdentityResource {
+                    Name = "role",
+                    UserClaims = new List<string> {"role"}
+                }
+            };
+        }
     }
 
 }
