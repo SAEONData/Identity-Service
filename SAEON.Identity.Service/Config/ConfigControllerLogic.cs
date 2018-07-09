@@ -531,6 +531,8 @@ namespace SAEON.Identity.Service.Config
                     try
                     {
                         roles = roleManager.Roles.Select(x => new Role() { Id = x.Id, Name = x.Name }).ToList();
+
+                        
                     }
                     catch (Exception ex)
                     {
@@ -541,6 +543,68 @@ namespace SAEON.Identity.Service.Config
             }
 
             return roles;
+        }
+
+        internal async Task<bool> AddUserRole(Guid userId, string roleName)
+        {
+            bool result = false;
+
+            var host = Program.host;
+            using (var scope = host.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+
+                using (var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>())
+                {
+                    try
+                    {
+                        var dbUser = userManager.Users.FirstOrDefault(x => x.Id == userId);
+                        if(dbUser != null)
+                        {
+                            await userManager.AddToRoleAsync(dbUser, roleName);
+                            result = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "Unabled to add User to Role.");
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        internal async Task<bool> RemoveUserRole(Guid userId, string roleName)
+        {
+            bool result = false;
+
+            var host = Program.host;
+            using (var scope = host.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+
+                using (var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>())
+                {
+                    try
+                    {
+                        var dbUser = userManager.Users.FirstOrDefault(x => x.Id == userId);
+                        if (dbUser != null)
+                        {
+                            await userManager.RemoveFromRoleAsync(dbUser, roleName);
+                            result = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "Unabled to remove User from Role.");
+                    }
+                }
+            }
+
+            return result;
         }
 
         internal List<User> GetUserResources()

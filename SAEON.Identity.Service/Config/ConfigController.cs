@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json.Linq;
 
 namespace SAEON.Identity.Service.Config
 {
@@ -21,11 +22,6 @@ namespace SAEON.Identity.Service.Config
         public ConfigController()
         {
             _logic = new ConfigControllerLogic();
-        }
-
-        public ActionResult Index()
-        {
-            return View();
         }
 
         public ActionResult ClientResources()
@@ -176,15 +172,21 @@ namespace SAEON.Identity.Service.Config
         }
 
         [HttpPost]
-        public IActionResult AvailableRolesPartial([FromBody] Guid userId)
+        public IActionResult AvailableRolesPartial([FromBody] JObject data)
         {
-            return ViewComponent("UserAvailableRoles", new { userId });
+            var userId = data["userId"].ToObject<Guid>();
+            var assignRole = data["assignRole"] != null ? data["assignRole"].ToObject<string>() : "";
+
+            return ViewComponent("UserAvailableRoles", new { userId, assignRole });
         }
 
         [HttpPost]
-        public IActionResult AssignedRolesPartial([FromBody] Guid userId)
+        public IActionResult AssignedRolesPartial([FromBody] JObject data)
         {
-            return ViewComponent("UserAssignedRoles", new { userId });
+            var userId = data["userId"].ToObject<Guid>();
+            var removeRole = data["removeRole"] != null ? data["removeRole"].ToObject<string>() : "";
+
+            return ViewComponent("UserAssignedRoles", new { userId, removeRole });
         }
     }
 

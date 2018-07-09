@@ -16,68 +16,136 @@
         <div class="editor-field">
             @Html.DropDownList("SelectUser",
                 new SelectList(Model.OrderBy(x => x.DisplayName), "Id", "DisplayName"),
-                new { @class = "form-control", @style = "width: 99.9%" })
+                new { @class = "form-control" })
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-12">
-        <hr />
+<br />
+<br />
+
+<div class="row" style="margin-left:auto; margin-right: auto">
+
+    <div id="AvailableRoles" class="col-lg-4" style="background-color: #eceff1; border: 1px solid lightgrey; margin-bottom: 10px">
+        @*Available Roles*@
+        @await Component.InvokeAsync("UserAvailableRoles", new { userId = Model[0].Id })
+    </div>
+
+    <div class="col-lg-2" style="margin-right: 10px; margin-left: 10px">
+        <button id="btnAssignRole" class="btn btn-primary marin" style="width: 100%; margin-left: 0px">Assign</button>
+        <button id="btnRemoveRole" class="btn btn-default" style="width: 100%; margin-left: 0px; margin-bottom: 15px">Remove</button>
+    </div>
+
+    <div id="AssignedRoles" class="col-lg-4 bg-SAEON" style="background-color: #eceff1; border: 1px solid lightgrey; margin-bottom: 10px">
+        @*Assigned Roles*@
+        @await Component.InvokeAsync("UserAssignedRoles", new { userId = Model[0].Id })
     </div>
 </div>
 
-
-@using (Html.BeginForm())
-{
-    <div class="row" style="margin-left:auto">
-
-        <div id="AvailableRoles" class="col-lg-5" style="background-color: gainsboro">
-            @*Available Roles*@
-            @await Component.InvokeAsync("UserAvailableRoles", new { userId = Model[0].Id })
-        </div>
-
-        <div class="col-lg-1">
-
-        </div>
-
-        <div id="AssignedRoles" class="col-lg-5" style="background-color: gainsboro">
-            @*Assigned Roles*@
-            @await Component.InvokeAsync("UserAssignedRoles", new { userId = Model[0].Id })
-        </div>
-    </div>
-}
+<br />
+<label style="font-size: small; color:steelblue"><i>* caution: changes are automatically saved to the database</i></label>
 
 <hr />
 
 <script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
 
+    var selectedUser = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@Model[0].Id) as String);
+    var selectedAvailableRole = ""
+    var selectedAssignedRole = ""
+    var availableRoles = []
+    var assignedRoles = []
+
     $("#SelectUser").change(function () {
 
-        let value = this.value
-        //console.log(this.value)
+        selectedUser = this.value
 
         $.ajax({
             type: "POST",
-            data: JSON.stringify(value),
+            data: JSON.stringify({ userId: selectedUser}),
             url: "/Config/AvailableRolesPartial",
             contentType: "application/json"
         }).done(function (res) {
+
             //Update partial view
             $("#AvailableRoles").html(res);
         });
 
         $.ajax({
             type: "POST",
-            data: JSON.stringify(value),
+            data: JSON.stringify({ userId: selectedUser }),
             url: "/Config/AssignedRolesPartial",
             contentType: "application/json"
         }).done(function (res) {
+
             //Update partial view
             $("#AssignedRoles").html(res);
         });
 
+    })
+
+    function listItemClick(id, value) {
+
+        value = value.trim()
+
+        if (id === "availableRolesList") {
+            selectedAvailableRole = value
+        }
+        else if (id === "assignedRolesList") {
+            selectedAssignedRole = value
+        }
+    }
+
+    $("#btnAssignRole").click(function () {
+
+        $.ajax({
+            type: "POST",
+            data: JSON.stringify({ userId: selectedUser, assignRole: selectedAvailableRole }),
+            url: "/Config/AvailableRolesPartial",
+            contentType: "application/json"
+        }).done(function (res) {
+
+            //Update assigned roles list
+            $.ajax({
+                type: "POST",
+                data: JSON.stringify({ userId: selectedUser }),
+                url: "/Config/AssignedRolesPartial",
+                contentType: "application/json"
+            }).done(function (res) {
+
+                //Update partial view
+                $("#AssignedRoles").html(res);
+            });
+
+            //Update partial view
+            $("#AvailableRoles").html(res);
+        });
+    })
+
+    $("#btnRemoveRole").click(function () {
+
+        $.ajax({
+            type: "POST",
+            data: JSON.stringify({ userId: selectedUser, removeRole: selectedAssignedRole }),
+            url: "/Config/AssignedRolesPartial",
+            contentType: "application/json"
+        }).done(function (res) {
+
+            //Update available roles list
+            $.ajax({
+                type: "POST",
+                data: JSON.stringify({ userId: selectedUser }),
+                url: "/Config/AvailableRolesPartial",
+                contentType: "application/json"
+            }).done(function (res) {
+
+                //Update partial view
+                $("#AvailableRoles").html(res);
+            });
+
+            //Update partial view
+            $("#AssignedRoles").html(res);
+        });
     })
 
 </script>
