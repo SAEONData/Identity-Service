@@ -13,7 +13,7 @@
     {
         <meta name="keywords" content="@ViewBag.MetaKeywords" />
     }
-    <title>@(ViewBag.Title == "Identity Service" ? "Identity Service" : "Identity Service - " + @ViewBag.Title)</title>
+    <title>@(ViewBag.Title == "Identity Service" || string.IsNullOrEmpty(ViewBag.Title) ? "Identity Service" : "Identity Service - " + @ViewBag.Title)</title>
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
     <environment names="Development">

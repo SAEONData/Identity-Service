@@ -86,12 +86,8 @@ namespace SAEON.Identity.Service
                     })
                     .AddAspNetIdentity<SAEONUser>()
                     .AddSigningCredential(Cert.Load());
-                //.AddDeveloperSigningCredential();
 
-                services.AddMvc(options =>
-                {
-                    //options.Filters.Add<SecurityHeadersAttribute>();
-                });
+                services.AddMvc();
                 services.AddLogging();
                 services.AddCors();
 
@@ -117,8 +113,6 @@ namespace SAEON.Identity.Service
                     app.UseExceptionHandler("/Home/Error");
                 }
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
-                Logging.Information("ContentSecurityPolicy: {csp}", Configuration["ContentSecurityPolicy:Policy"]);
-
                 app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
                 app.UseStaticFiles();
                 app.UseStaticFiles(new StaticFileOptions

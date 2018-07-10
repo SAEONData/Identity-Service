@@ -76,11 +76,8 @@ namespace SAEON.Identity.Service.Config
             return new List<IdentityResource> {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Email { Required=true},
-                new IdentityResource {
-                    Name = "role",
-                    UserClaims = new List<string> {"role"}
-                }
+                new IdentityResources.Email { Required = true},
+                new IdentityResource { Name = "roles", DisplayName="Your roles", Description="Roles assigned to you", UserClaims = new List<string> {"role"} }
             };
         }
 
