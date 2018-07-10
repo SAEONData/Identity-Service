@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SAEON.Identity.Service.Data;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,21 @@ namespace SAEON.Identity.Service.UI
     {
         private readonly UserManager<SAEONUser> _userManager;
         private readonly SignInManager<SAEONUser> _signInManager;
+        private readonly IEmailSender _emailSender;
+        private readonly ILogger _logger;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         public AccountController(
             UserManager<SAEONUser> userManager,
             SignInManager<SAEONUser> signInManager,
+            IEmailSender emailSender,
+            ILogger<ManageController> logger,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
@@ -38,6 +46,8 @@ namespace SAEON.Identity.Service.UI
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSender = emailSender;
+            _logger = logger;
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
@@ -267,23 +277,77 @@ namespace SAEON.Identity.Service.UI
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var identityUser = new SAEONUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(identityUser, model.Password);
+                var user = new SAEONUser { UserName = model.Email, Email = model.Email };
+                var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(identityUser, isPersistent: false);
-                    if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
+                    _logger.LogInformation("User created a new account with password.");
+
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.EmailConfirmationLink(user.Id.ToString(), code, Request.Scheme);
+                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+
+                    //await _signInManager.SignInAsync(user, isPersistent: false);
+                    //logger.LogInformation("User created a new account with password.");
+                    //return RedirectToLocal(returnUrl);
+                    return RedirectToAction("ConfirmEmail", new { userId = user.Id.ToString() });
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, re-display form
+            return View(model);
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            SAEONUser user = null;
+
+            if (userId == null || code == null)
+            {
+                if(!string.IsNullOrEmpty(userId))
+                {
+                    //Get user if ID available
+                    user = await _userManager.FindByIdAsync(userId);
+                    if (user == null)
                     {
-                        return Redirect(model.ReturnUrl);
+                        throw new ApplicationException($"Unable to load user with ID '{userId}'.");
                     }
-                    return RedirectToAction("Login");
+
+                    ViewBag.email = user.Email;
+                }
+
+                return View(false);
+            }
+
+            //Get user if still null
+            if (user == null)
+            {
+                user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new ApplicationException($"Unable to load user with ID '{userId}'.");
                 }
             }
-            return View(model);
+
+            //Confirm user email
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                return View(true);
+            }
+            else
+            {
+                return View("Error");
+            }      
         }
 
         /*****************************************/

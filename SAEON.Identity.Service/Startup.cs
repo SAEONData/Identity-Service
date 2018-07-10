@@ -9,6 +9,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using SAEON.Identity.Service.Config;
 using SAEON.Identity.Service.Data;
+using SAEON.Identity.Service.Services;
 using SAEON.Identity.Service.UI;
 using SAEON.Logs;
 using Serilog;
@@ -42,6 +43,7 @@ namespace SAEON.Identity.Service
                     .AddIdentity<SAEONUser, SAEONRole>(config =>
                     {
                         config.User.RequireUniqueEmail = true;
+                        config.SignIn.RequireConfirmedEmail = true; //prevents registered users from logging in until their email is confirmed
                         config.Lockout = new LockoutOptions
                         {
                             AllowedForNewUsers = true,
@@ -99,8 +101,10 @@ namespace SAEON.Identity.Service
                 services.AddCors();
 
                 services.AddSingleton<IConfiguration>(Configuration);
+
                 // Add application services.
                 services.AddTransient<IEmailSender, EmailSender>();
+                services.Configure<AuthMessageSenderOptions>(Configuration.GetSection("SendGrid"));
             }
         }
 

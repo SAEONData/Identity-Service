@@ -1,0 +1,42 @@
+﻿@model System.Boolean
+
+@{
+    ViewData["Title"] = Model ? "Account Confirmed" : "Confirm Account";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <hr />
+        <br />
+
+        @if (Model)
+        {
+            <h3>
+                Thank you for confirming your account.
+            </h3>
+        }
+        else
+        {
+            <h3>
+                Please confirm your account?
+            </h3>
+            <br />
+            <p>
+                @{ 
+                    if(ViewBag.email == null)
+                    {
+                        ViewBag.email = "[YOUR EMAIL ADDRESS]";
+                    }
+                }
+
+                An email was sent to <span style="color:steelblue; font-weight:bold">@ViewBag.email</span> to confirm your account.
+                <br />
+                You need to confirm your account before you can log into Identity-Service.
+            </p>
+        }
+
+        <br />
+        <hr />
+        <br />
+    </div>
+</div>

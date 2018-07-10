@@ -24,7 +24,7 @@
             <br />
             <div class="form-group">
                 <label>Confirm Password</label>
-                <input asp-for="PasswordHash" class="form-control" autocomplete="new-password" autofill="" />
+                <input type="password" asp-for="PasswordHash" class="form-control" autocomplete="new-password" autofill="" />
                 <span asp-validation-for="PasswordHash" class="text-danger"></span>
             </div>
             <button type="submit" class="btn red" style="margin-left:auto">Delete my account</button>
