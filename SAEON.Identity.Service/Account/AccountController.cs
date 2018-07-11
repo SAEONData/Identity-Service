@@ -283,7 +283,14 @@ namespace SAEON.Identity.Service.UI
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new SAEONUser { UserName = model.Email, Email = model.Email };
+                var user = new SAEONUser
+                {
+                    FirstName = model.FirstName,
+                    Surname = model.Surname,
+                    UserName = model.Email,
+                    Email = model.Email
+                };
+
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
