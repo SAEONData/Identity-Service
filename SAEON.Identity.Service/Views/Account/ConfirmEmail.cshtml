@@ -7,6 +7,8 @@
 <div class="row">
     <div class="col-md-12">
         <hr />
+    </div>
+    <div class="col-lg-7">
         <br />
 
         @if (Model)
@@ -22,8 +24,8 @@
             </h3>
             <br />
             <p>
-                @{ 
-                    if(ViewBag.email == null)
+                @{
+                    if (ViewBag.email == null)
                     {
                         ViewBag.email = "[YOUR EMAIL ADDRESS]";
                     }
@@ -31,10 +33,17 @@
 
                 An email was sent to <span style="color:steelblue; font-weight:bold">@ViewBag.email</span> to confirm your account.
                 <br />
+                <br />
                 You need to confirm your account before you can log into Identity-Service.
+                <br />
+                <br />
+                If you do not receive the confirmation message within a few minutes of signing up,
+                please check your Spam folder just in case the confirmation email got delivered there
+                instead of your inbox.
             </p>
         }
-
+    </div>
+    <div class="col-md-12">
         <br />
         <hr />
         <br />
