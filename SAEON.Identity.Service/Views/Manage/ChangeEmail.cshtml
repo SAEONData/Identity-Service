@@ -1,0 +1,29 @@
+﻿@model SAEON.Identity.Service.UI.ManageViewModel
+@{
+    ViewData["Title"] = "Change Email";
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.PasswordHash)
+
+            <div class="form-group">
+                <label asp-for="Email">New Email</label>
+                <input asp-for="Email" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ConfirmEmail">Confirm New Email</label>
+                <input asp-for="ConfirmEmail" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-left:auto">Change email</button>
+        </form>
+    </div>
+</div>
+<hr />
+

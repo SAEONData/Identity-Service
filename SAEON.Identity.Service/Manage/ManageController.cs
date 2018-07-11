@@ -515,7 +515,7 @@ namespace SAEON.Identity.Service.UI
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserSelfDelete(SAEONUser model)
         {
-            if(model.PasswordHash == null)
+            if (model.PasswordHash == null)
             {
                 model.PasswordHash = "";
             }
@@ -543,6 +543,91 @@ namespace SAEON.Identity.Service.UI
             await _userManager.DeleteAsync(user);
 
             return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangeEmail()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            //var saeonUser = new SAEONUser
+            //{
+            //    Id = user.Id,
+            //    PasswordHash = user.PasswordHash
+            //};
+
+            var vm = new ManageViewModel()
+            {
+                Id = user.Id,
+                PasswordHash = user.PasswordHash
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeEmail(ManageViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //Check new email address entered correctly
+                if (model.Email != model.ConfirmEmail)
+                {
+                    ModelState.AddModelError(string.Empty, "\"New Email\" and \"Confirm New Email\" must match.");
+                    throw new ApplicationException("\"New Email\" and \"Confirm New Email\" must match.");
+                }
+
+                //Check that email is unique
+                var emailExists = _userManager.Users.Any(x => x.Email == model.Email);
+                if (emailExists)
+                {
+                    throw new ApplicationException($"Email already registered: '{model.Email}'.");
+                }
+
+                //Get user from DB
+                var dbUser = _userManager.Users.FirstOrDefault(x => x.Id == model.Id);
+                if (dbUser == null)
+                {
+                    throw new ApplicationException($"Unable to load user with ID '{model.Id}'.");
+                }
+
+                //Update user props
+                dbUser.Email = model.Email;
+                dbUser.UserName = model.Email;
+                dbUser.EmailConfirmed = false;
+
+                //Sign user out until new email address confirmed
+                await _signInManager.SignOutAsync();
+
+                //Save to DB
+                var result = await _userManager.UpdateAsync(dbUser);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User email address changed.");
+
+                    try
+                    {
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(dbUser);
+                        var callbackUrl = Url.EmailConfirmationLink(model.Id.ToString(), code, Request.Scheme);
+                        await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    }
+                    catch (Exception ex)
+                    {
+                        //throw;
+                    }
+                   
+                    return RedirectToAction("ConfirmEmail", "Account", new { userId = model.Id.ToString() });
+                }
+
+                AddErrors(result);
+            }
+
+            return View(model);
         }
 
 
@@ -588,7 +673,7 @@ namespace SAEON.Identity.Service.UI
             bool result = false;
 
             var dbUser = _userManager.Users.FirstOrDefault(x => x.Id == user.Id);
-            if(dbUser != null)
+            if (dbUser != null)
             {
                 dbUser.FirstName = user.FirstName;
                 dbUser.Surname = user.Surname;

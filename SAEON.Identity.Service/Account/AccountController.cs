@@ -304,7 +304,6 @@ namespace SAEON.Identity.Service.UI
             return View(model);
         }
 
-
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
@@ -313,7 +312,7 @@ namespace SAEON.Identity.Service.UI
 
             if (userId == null || code == null)
             {
-                if(!string.IsNullOrEmpty(userId))
+                if (!string.IsNullOrEmpty(userId))
                 {
                     //Get user if ID available
                     user = await _userManager.FindByIdAsync(userId);
@@ -346,8 +345,17 @@ namespace SAEON.Identity.Service.UI
             }
             else
             {
-                return View("Error");
-            }      
+                var vm = new ErrorViewModel()
+                {
+                    Error = new ErrorMessage()
+                    {
+                        Error = result.Errors.First().Code,
+                        ErrorDescription = result.Errors.First().Description
+                    }
+                };
+
+                return View("Error", vm);
+            }
         }
 
         /*****************************************/
@@ -631,6 +639,8 @@ namespace SAEON.Identity.Service.UI
         private void ProcessLoginCallbackForSaml2p(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
         {
         }
+
+
 
         #region Helpers
 
