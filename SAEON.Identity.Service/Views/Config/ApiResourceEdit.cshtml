@@ -11,7 +11,6 @@
 
         @using (Html.BeginForm())
         {
-
             //Id
             @Html.HiddenFor(m => m.dbid)
 
@@ -54,7 +53,7 @@
                 <label style="font-size: small; color:steelblue"><i>* one value per line</i></label>
             </div>
 
-            //CSecrets
+            //Secrets
             <br />
             <div class="editor-label">
                 <label><b>Secret(s):</b></label>
@@ -85,7 +84,10 @@
 
             <br />
             <br />
-            <button type="submit" style="margin-left:0px; min-width: 125px" id="btnSave" class="btn btn-primary">Save</button>
+
+            <button type="button" style="margin-left:0px; min-width: 125px" id="btnSave" class="btn btn-primary">Save</button>
+            <button hidden type="submit" style="margin-left:0px; min-width: 125px" id="btnConfirm" class="btn btn-warning">Confirm</button>
+
             <button type="button" style="margin-left:0px; min-width: 125px" id="btnCancel" class="btn btn-default"
                     onclick="location.href='@Url.Action("ApiResources", "Config")'">
                 Cancel
@@ -117,6 +119,11 @@
         let value = $("#NewSecrets_Combined").val()
         $("#NewSecrets_Combined").val(replaceSpaceOrDot(value))
         $("#NewSecrets_Combined").attr("rows", (value.split("\n").length + 1).toString())
+    })
+
+    $("#btnSave").click(function () { 
+        $("#btnSave").attr("hidden", true)
+        $("#btnConfirm").removeAttr("hidden")
     })
 
 </script>

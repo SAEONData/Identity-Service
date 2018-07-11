@@ -12,9 +12,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SAEON.Identity.Service.Config
 {
+    [Authorize(Roles = "SAEON.Admin")]
     public class ConfigController : Controller
     {
         ConfigControllerLogic _logic;
