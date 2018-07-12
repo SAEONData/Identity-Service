@@ -28,7 +28,7 @@ namespace SAEON.Identity.Service
         {
             Configuration = configuration;
             Logging
-                .CreateConfiguration("Logs/SAEON.Identity.Service {Date}.txt", configuration)
+                .CreateConfiguration("Logs/SAEON.Identity.Service.txt", configuration)
                 .Create();
         }
 
@@ -89,7 +89,6 @@ namespace SAEON.Identity.Service
                     })
                     .AddAspNetIdentity<SAEONUser>()
                     .AddSigningCredential(Cert.Load());
-                //.AddDeveloperSigningCredential();
 
                 //services.AddMvc(options =>
                 //{
@@ -131,8 +130,6 @@ namespace SAEON.Identity.Service
                     app.UseExceptionHandler("/Home/Error");
                 }
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
-                Logging.Information("ContentSecurityPolicy: {csp}", Configuration["ContentSecurityPolicy:Policy"]);
-
                 app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
                 app.UseStaticFiles();
                 app.UseStaticFiles(new StaticFileOptions
