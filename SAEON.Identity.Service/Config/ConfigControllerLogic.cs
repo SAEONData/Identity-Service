@@ -17,40 +17,48 @@ namespace SAEON.Identity.Service.Config
 {
     internal class ConfigControllerLogic
     {
-        internal Client GetClientResource(int Id)
+        internal Client GetClientResource(int Id, out Exception error)
         {
             Client clientResource = new Client();
 
-            var data = GetClientResources().FirstOrDefault(x => x.Id == Id);
+            var data = GetClientResources(out error).FirstOrDefault(x => x.Id == Id);
             var dataModel = data.ToModel();
-            if (data != null)
+            if (data != null && error == null)
             {
-                clientResource = new Client()
+                try
                 {
-                    dbid = data.Id,
-                    Name = dataModel.ClientId,
-                    DisplayName = dataModel.ClientName,
-                    IdentityTokenLifetime = dataModel.IdentityTokenLifetime,
-                    AccessTokenLifetime = dataModel.AccessTokenLifetime,
-                    GrantType = GrantTypeToString(dataModel.AllowedGrantTypes),
-                    Secrets = data.ClientSecrets.Select(x => x.Value).ToList(),
-                    Scopes = data.AllowedScopes.Select(x => x.Scope).ToList(),
-                    CorsOrigins = data.AllowedCorsOrigins.Select(x => x.Origin).ToList(),
-                    RedirectURIs = data.RedirectUris.Select(x => x.RedirectUri).ToList(),
-                    PostLogoutRedirectURIs = data.PostLogoutRedirectUris.Select(x => x.PostLogoutRedirectUri).ToList(),
-                    RequireConsent = data.RequireConsent,
-                    RememberConsent = data.AllowRememberConsent,
-                    OfflineAccess = data.AllowOfflineAccess,
-                    AccessTokensViaBrowser = data.AllowAccessTokensViaBrowser
-                };
+                    clientResource = new Client()
+                    {
+                        dbid = data.Id,
+                        Name = dataModel.ClientId,
+                        DisplayName = dataModel.ClientName,
+                        IdentityTokenLifetime = dataModel.IdentityTokenLifetime,
+                        AccessTokenLifetime = dataModel.AccessTokenLifetime,
+                        GrantType = GrantTypeToString(dataModel.AllowedGrantTypes),
+                        Secrets = data.ClientSecrets.Select(x => x.Value).ToList(),
+                        Scopes = data.AllowedScopes.Select(x => x.Scope).ToList(),
+                        CorsOrigins = data.AllowedCorsOrigins.Select(x => x.Origin).ToList(),
+                        RedirectURIs = data.RedirectUris.Select(x => x.RedirectUri).ToList(),
+                        PostLogoutRedirectURIs = data.PostLogoutRedirectUris.Select(x => x.PostLogoutRedirectUri).ToList(),
+                        RequireConsent = data.RequireConsent,
+                        RememberConsent = data.AllowRememberConsent,
+                        OfflineAccess = data.AllowOfflineAccess,
+                        AccessTokensViaBrowser = data.AllowAccessTokensViaBrowser
+                    };
+                }
+                catch (Exception ex)
+                {
+                    error = ex;
+                }
             }
 
             return clientResource;
         }
 
-        internal List<IdentityServer4.EntityFramework.Entities.Client> GetClientResources()
+        internal List<IdentityServer4.EntityFramework.Entities.Client> GetClientResources(out Exception error)
         {
             var clientResources = new List<IdentityServer4.EntityFramework.Entities.Client>();
+            error = null;
 
             var host = Program.host;
             using (var scope = host.Services.CreateScope())
@@ -69,11 +77,17 @@ namespace SAEON.Identity.Service.Config
                             .Include(c => c.RedirectUris)
                             .Include(c => c.PostLogoutRedirectUris)
                             .OrderBy(c => c.ClientId).ToList();
+
+                        //TEST
+                        throw new Exception("test", new Exception("test_inner", new Exception("test_inner_inner")));
+                        //TEST
                     }
                     catch (Exception ex)
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
                         logger.LogError(ex, "Unabled to get Client Resources from DB.");
+
+                        error = ex;
                     }
 
                 }
@@ -276,9 +290,10 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        internal bool DeleteClient(int Id)
+        internal bool DeleteClient(int Id, out Exception error)
         {
             bool result = false;
+            error = null;
 
             var host = Program.host;
             using (var scope = host.Services.CreateScope())
@@ -308,6 +323,8 @@ namespace SAEON.Identity.Service.Config
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
                         logger.LogError(ex, "Unabled to delete ClientResource from DB.");
+
+                        error = ex;
                     }
 
                 }
@@ -316,9 +333,10 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        internal List<IdentityServer4.EntityFramework.Entities.ApiResource> GetApiResources()
+        internal List<IdentityServer4.EntityFramework.Entities.ApiResource> GetApiResources(out Exception error)
         {
             var apiResources = new List<IdentityServer4.EntityFramework.Entities.ApiResource>();
+            error = null;
 
             var host = Program.host;
             using (var scope = host.Services.CreateScope())
@@ -339,6 +357,8 @@ namespace SAEON.Identity.Service.Config
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
                         logger.LogError(ex, "Unabled to get API Resources from DB.");
+
+                        error = ex;
                     }
 
                 }
@@ -347,24 +367,32 @@ namespace SAEON.Identity.Service.Config
             return apiResources;
         }
 
-        internal API GetApiResource(int Id)
+        internal API GetApiResource(int Id, out Exception error)
         {
             API apiResource = new API();
+            error = null;
 
-            var data = GetApiResources().FirstOrDefault(x => x.Id == Id);
+            var data = GetApiResources(out error).FirstOrDefault(x => x.Id == Id);
             var dataModel = data.ToModel();
-            if (data != null)
+            if (data != null && error == null)
             {
-                apiResource = new API()
+                try
                 {
-                    dbid = data.Id,
-                    Name = dataModel.Name,
-                    DisplayName = dataModel.DisplayName,
-                    Description = dataModel.Description,
-                    Claims = dataModel.UserClaims.ToList(),
-                    Secrets = dataModel.ApiSecrets.Select(x => x.Value).ToList(),
-                    Scopes = dataModel.Scopes.Select(x => new Scope() { Name = x.Name, DisplayName = x.DisplayName }).ToList()
-                };
+                    apiResource = new API()
+                    {
+                        dbid = data.Id,
+                        Name = dataModel.Name,
+                        DisplayName = dataModel.DisplayName,
+                        Description = dataModel.Description,
+                        Claims = dataModel.UserClaims.ToList(),
+                        Secrets = dataModel.ApiSecrets.Select(x => x.Value).ToList(),
+                        Scopes = dataModel.Scopes.Select(x => new Scope() { Name = x.Name, DisplayName = x.DisplayName }).ToList()
+                    };
+                }
+                catch (Exception ex)
+                {
+                    error = ex;
+                }
             }
 
             return apiResource;
@@ -480,9 +508,10 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        internal bool DeleteApi(int Id)
+        internal bool DeleteApi(int Id, out Exception error)
         {
             bool result = false;
+            error = null;
 
             var host = Program.host;
             using (var scope = host.Services.CreateScope())
@@ -509,6 +538,8 @@ namespace SAEON.Identity.Service.Config
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
                         logger.LogError(ex, "Unabled to delete ApiResource from DB.");
+
+                        error = ex;
                     }
 
                 }
@@ -517,9 +548,10 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        internal List<Role> GetRoles()
+        internal List<Role> GetRoles(out Exception error)
         {
             var roles = new List<Role>();
+            error = null;
 
             var host = Program.host;
             using (var scope = host.Services.CreateScope())
@@ -538,6 +570,8 @@ namespace SAEON.Identity.Service.Config
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
                         logger.LogError(ex, "Unabled to get Roles from DB.");
+
+                        error = ex;
                     }
                 }
             }
@@ -607,9 +641,10 @@ namespace SAEON.Identity.Service.Config
             return result;
         }
 
-        internal List<User> GetUserResources()
+        internal List<User> GetUserResources(out Exception error)
         {
             var userResources = new List<User>();
+            error = null;
 
             var host = Program.host;
             using (var scope = host.Services.CreateScope())
@@ -643,21 +678,14 @@ namespace SAEON.Identity.Service.Config
                     {
                         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
                         logger.LogError(ex, "Unabled to get User Resources from DB.");
+
+                        error = ex;
                     }
                 }
             }
 
             return userResources;
         }
-
-        //internal User GetUserResource(Guid Id)
-        //{
-        //    var userResource = GetUserResources().FirstOrDefault(x => x.Id == Id);
-        //    userResource.AvailableRoles = new List<string>() { "Select Role to add..." };
-        //    userResource.AvailableRoles.AddRange(GetRoleResources());
-
-        //    return userResource;
-        //}
 
         internal async Task<bool> SaveRolesAsync(List<Role> roles)
         {
@@ -728,14 +756,6 @@ namespace SAEON.Identity.Service.Config
                                 if(!roles.Any(x => x.Id == dbRole.Id))
                                 {
                                     //DELETE
-
-                                    //Remove claims
-                                    //var claims = await roleManager.GetClaimsAsync(dbRole);
-                                    //foreach (var claim in claims)
-                                    //{
-                                    //    await roleManager.RemoveClaimAsync(dbRole, claim);
-                                    //}
-
                                     //Delete role
                                     var identityResult = await roleManager.DeleteAsync(dbRole);
                                     if (!identityResult.Succeeded)
@@ -764,8 +784,5 @@ namespace SAEON.Identity.Service.Config
 
             return result;
         }
-
-
-
     }
 }

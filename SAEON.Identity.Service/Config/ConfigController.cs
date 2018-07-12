@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Authorization;
+using SAEON.Identity.Service.Helpers;
 
 namespace SAEON.Identity.Service.Config
 {
@@ -28,23 +29,40 @@ namespace SAEON.Identity.Service.Config
 
         public ActionResult ClientResources()
         {
-            return View(_logic.GetClientResources());
+            var data = _logic.GetClientResources(out Exception error);
+            if(error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
+
+            return View(data);
         }
 
         public ActionResult ClientResourceAdd()
         {
-            return View("ClientResourceEdit", _logic.GetClientResource(0));
+            var data = _logic.GetClientResource(0, out Exception error);
+            if(error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
+
+            return View("ClientResourceEdit", data);
         }
 
         public ActionResult ClientResourceEdit(int Id)
         {
-            return View(_logic.GetClientResource(Id));
+            var data = _logic.GetClientResource(Id, out Exception error);
+            if (error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
+
+            return View(data);
         }
 
         public ActionResult ClientResourceDelete(int Id)
         {
-            bool result = _logic.DeleteClient(Id);
-
+            bool result = _logic.DeleteClient(Id, out Exception error);
             return RedirectToAction("ClientResources");
         }
 
@@ -53,13 +71,20 @@ namespace SAEON.Identity.Service.Config
         {
             if (ModelState.IsValid)
             {
-                //Convert back to IS Client
-                var isClient = _logic.BuildClient(client);
+                try
+                {
+                    //Convert back to IS Client
+                    var isClient = _logic.BuildClient(client);
 
-                //Save changes to DB
-                var result = _logic.SaveClient(isClient);
+                    //Save changes to DB
+                    var result = _logic.SaveClient(isClient);
 
-                return RedirectToAction("ClientResources");
+                    return RedirectToAction("ClientResources");
+                }
+                catch (Exception ex)
+                {
+                    HelperFunctions.AddErrors(ex, ModelState);
+                }
             }
 
             return View(client);
@@ -70,13 +95,20 @@ namespace SAEON.Identity.Service.Config
         {
             if (ModelState.IsValid)
             {
-                //Convert back to IS Client
-                var isClient = _logic.BuildClient(client);
+                try
+                {
+                    //Convert back to IS Client
+                    var isClient = _logic.BuildClient(client);
 
-                //Save changes to DB
-                var result = _logic.SaveClient(isClient);
+                    //Save changes to DB
+                    var result = _logic.SaveClient(isClient);
 
-                return RedirectToAction("ClientResources");
+                    return RedirectToAction("ClientResources");
+                }
+                catch (Exception ex)
+                {
+                    HelperFunctions.AddErrors(ex, ModelState);
+                }
             }
 
             return View(client);
@@ -84,17 +116,35 @@ namespace SAEON.Identity.Service.Config
 
         public ActionResult ApiResources()
         {
-            return View(_logic.GetApiResources());
+            var data = _logic.GetApiResources(out Exception error);
+            if(error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
+
+            return View(data);
         }
 
         public ActionResult ApiResourceEdit(int Id)
         {
-            return View(_logic.GetApiResource(Id));
+            var data = _logic.GetApiResource(Id, out Exception error);
+            if(error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
+
+            return View(data);
         }
 
         public ActionResult ApiResourceAdd()
         {
-            return View("ApiResourceEdit", _logic.GetApiResource(0));
+            var data = _logic.GetApiResource(0, out Exception error);
+            if(error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
+
+            return View("ApiResourceEdit", data);
         }
 
         [HttpPost]
@@ -102,13 +152,20 @@ namespace SAEON.Identity.Service.Config
         {
             if (ModelState.IsValid)
             {
-                //Convert back to IS Client
-                var isApi = _logic.BuildApi(api);
+                try
+                {
+                    //Convert back to IS Client
+                    var isApi = _logic.BuildApi(api);
 
-                //Save changes to DB
-                var result = _logic.SaveApi(isApi);
+                    //Save changes to DB
+                    var result = _logic.SaveApi(isApi);
 
-                return RedirectToAction("ApiResources");
+                    return RedirectToAction("ApiResources");
+                }
+                catch (Exception ex)
+                {
+                    HelperFunctions.AddErrors(ex, ModelState);
+                }
             }
 
             return View(api);
@@ -120,12 +177,19 @@ namespace SAEON.Identity.Service.Config
             if (ModelState.IsValid)
             {
                 //Convert back to IS Client
-                var isApi = _logic.BuildApi(api);
+                try
+                {
+                    var isApi = _logic.BuildApi(api);
 
-                //Save changes to DB
-                var result = _logic.SaveApi(isApi);
+                    //Save changes to DB
+                    var result = _logic.SaveApi(isApi);
 
-                return RedirectToAction("ApiResources");
+                    return RedirectToAction("ApiResources");
+                }
+                catch (Exception ex)
+                {
+                    HelperFunctions.AddErrors(ex, ModelState);
+                }
             }
 
             return View(api);
@@ -133,7 +197,11 @@ namespace SAEON.Identity.Service.Config
 
         public ActionResult ApiResourceDelete(int Id)
         {
-            bool result = _logic.DeleteApi(Id);
+            bool result = _logic.DeleteApi(Id, out Exception error);
+            if(error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
 
             return RedirectToAction("ApiResources");
         }
@@ -145,7 +213,13 @@ namespace SAEON.Identity.Service.Config
 
         public ActionResult ManageUserRoles()
         {
-            return View(_logic.GetRoles());
+            var data = _logic.GetRoles(out Exception error);
+            if(error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
+
+            return View(data);
         }
 
         [HttpPost]
@@ -159,10 +233,17 @@ namespace SAEON.Identity.Service.Config
         {
             if (ModelState.IsValid)
             {
-                //Save changes to DB
-                var result = _logic.SaveRolesAsync(roles).Result;
+                try
+                {
+                    //Save changes to DB
+                    var result = _logic.SaveRolesAsync(roles).Result;
 
-                return RedirectToAction("UserRoleManagement");
+                    return RedirectToAction("UserRoleManagement");
+                }
+                catch (Exception ex)
+                {
+                    HelperFunctions.AddErrors(ex, ModelState);
+                }
             }
 
             return View(roles);
@@ -170,7 +251,13 @@ namespace SAEON.Identity.Service.Config
 
         public ActionResult AssignUserRoles()
         {
-            return View(_logic.GetUserResources());
+            var data = _logic.GetUserResources(out Exception error);
+            if(error != null)
+            {
+                HelperFunctions.AddErrors(error, ModelState);
+            }
+
+            return View(data);
         }
 
         [HttpPost]
@@ -178,7 +265,6 @@ namespace SAEON.Identity.Service.Config
         {
             var userId = data["userId"].ToObject<Guid>();
             var assignRole = data["assignRole"] != null ? data["assignRole"].ToObject<string>() : "";
-
             return ViewComponent("UserAvailableRoles", new { userId, assignRole });
         }
 
@@ -187,7 +273,6 @@ namespace SAEON.Identity.Service.Config
         {
             var userId = data["userId"].ToObject<Guid>();
             var removeRole = data["removeRole"] != null ? data["removeRole"].ToObject<string>() : "";
-
             return ViewComponent("UserAssignedRoles", new { userId, removeRole });
         }
     }

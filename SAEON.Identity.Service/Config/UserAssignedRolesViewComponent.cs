@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SAEON.Identity.Service.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace SAEON.Identity.Service.Config
         {
             return await Task.Run(() => {
 
+                var assignedRoles = new List<Role>();
                 var _logic = new ConfigControllerLogic();
 
                 if (!string.IsNullOrEmpty(removeRole))
@@ -19,9 +21,24 @@ namespace SAEON.Identity.Service.Config
                     var result = _logic.RemoveUserRole(userId, removeRole).Result;
                 }
 
-                var roles = _logic.GetRoles();
-                var user = _logic.GetUserResources().FirstOrDefault(x => x.Id == userId);
-                var assignedRoles = roles.Where(x => user.Roles.Contains(x.Name)).OrderBy(x => x.Name).ToList();
+                var roles = _logic.GetRoles(out Exception error);
+                if (error != null)
+                {
+                    HelperFunctions.AddErrors(error, ModelState);
+                }
+                else
+                {
+                    var data = _logic.GetUserResources(out error);
+                    if (error != null)
+                    {
+                        HelperFunctions.AddErrors(error, ModelState);
+                    }
+                    else
+                    {
+                        var user = data.FirstOrDefault(x => x.Id == userId);
+                        assignedRoles = roles.Where(x => user.Roles.Contains(x.Name)).OrderBy(x => x.Name).ToList();
+                    }
+                }
 
                 return View("AssignedRolesPartial", assignedRoles);
             });
