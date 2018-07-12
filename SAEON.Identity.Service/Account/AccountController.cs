@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
 using SAEON.Identity.Service.Account;
 using SAEON.Identity.Service.Data;
 using System;
@@ -277,6 +278,7 @@ namespace SAEON.Identity.Service.UI
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
+        [ValidateRecaptcha]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {

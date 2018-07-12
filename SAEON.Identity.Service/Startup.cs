@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
 using SAEON.Identity.Service.Config;
 using SAEON.Identity.Service.Data;
 using SAEON.Identity.Service.Services;
@@ -97,7 +98,13 @@ namespace SAEON.Identity.Service
 
                 services.AddMvc();
 
-                //services.AddLogging();
+                services.AddRecaptcha(new RecaptchaOptions
+                {
+                    SiteKey = Configuration["Recaptcha:SiteKey"],
+                    SecretKey = Configuration["Recaptcha:SecretKey"]
+                });
+
+                services.AddLogging();
                 services.AddCors();
 
                 services.AddSingleton<IConfiguration>(Configuration);
