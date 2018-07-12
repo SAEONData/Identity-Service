@@ -77,10 +77,6 @@ namespace SAEON.Identity.Service.Config
                             .Include(c => c.RedirectUris)
                             .Include(c => c.PostLogoutRedirectUris)
                             .OrderBy(c => c.ClientId).ToList();
-
-                        //TEST
-                        throw new Exception("test", new Exception("test_inner", new Exception("test_inner_inner")));
-                        //TEST
                     }
                     catch (Exception ex)
                     {
