@@ -19,7 +19,7 @@
 
     <div class="row">
         <div class="col-sm-8">
-            @Html.Partial("_ValidationSummary")
+            @await Html.PartialAsync("_ValidationSummary")
 
             <form asp-action="Index" class="consent-form">
                 <input type="hidden" asp-for="ReturnUrl" />
@@ -36,7 +36,7 @@
                     <ul class="list-group">
                         @foreach (var scope in Model.IdentityScopes)
                         {
-                        @Html.Partial("_ScopeListItem", scope)
+                        @await Html.PartialAsync("_ScopeListItem", scope)
                         }
                     </ul>
                 </div>
@@ -52,7 +52,7 @@
                     <ul class="list-group">
                         @foreach (var scope in Model.ResourceScopes)
                         {
-                        @Html.Partial("_ScopeListItem", scope)
+                        @await Html.PartialAsync("_ScopeListItem", scope)
                         }
                     </ul>
                 </div>

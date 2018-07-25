@@ -9,6 +9,7 @@ using SAEON.Identity.Service.Data;
 using SAEON.Logs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -75,11 +76,8 @@ namespace SAEON.Identity.Service.Config
             return new List<IdentityResource> {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Email { Required=true},
-                new IdentityResource {
-                    Name = "role",
-                    UserClaims = new List<string> {"role"}
-                }
+                new IdentityResources.Email { Required = true},
+                new IdentityResource { Name = "roles", DisplayName="Your roles", Description="Roles assigned to you", UserClaims = new List<string> {"role"} }
             };
         }
 
@@ -126,7 +124,7 @@ namespace SAEON.Identity.Service.Config
                     AllowOfflineAccess = client.OfflineAccess,
                     AllowAccessTokensViaBrowser = client.AccessTokensViaBrowser,
                     IdentityTokenLifetime = client.IdentityTokenLifetime,
-                    AccessTokenLifetime = client.AccessTokenLifetime
+                    AccessTokenLifetime = client.AccessTokenLifetime,
                 };
                 switch (client.GrantType)
                 {
