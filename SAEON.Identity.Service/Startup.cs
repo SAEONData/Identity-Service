@@ -70,7 +70,7 @@ namespace SAEON.Identity.Service
                             RaiseErrorEvents = true,
                             RaiseFailureEvents = true,
                             RaiseInformationEvents = true,
-                            RaiseSuccessEvents = true
+                            //RaiseSuccessEvents = true
                         };
                     })
                     .AddConfigurationStore(options =>
