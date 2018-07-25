@@ -1,11 +1,11 @@
 @model LogoutViewModel
 @{
-    ViewData["Title"] = "Logout";
+    ViewData["Title"] = "Logout Confirmation";
 }
 <div class="logout-page">
     <div class="row">
         <div class="col-sm-6">
-            <p>Would you like to logout of the SAEON Identity Service?</p>
+            <p>Are you sure you want to logout of the SAEON Identity Service?</p>
             <form asp-action="Logout">
                 <input type="hidden" name="logoutId" value="@Model.LogoutId" />
                 <fieldset>

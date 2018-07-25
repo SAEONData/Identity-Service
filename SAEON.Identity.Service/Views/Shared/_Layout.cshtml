@@ -17,16 +17,21 @@
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
     <environment names="Development">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="~/node_modules/mdbootstrap/css/bootstrap.css" />
         <link rel="stylesheet" href="~/node_modules/mdbootstrap/css/mdb.css" />
         <link rel="stylesheet" href="~/css/SAEON.css" />
     </environment>
     <environment names="Staging,Production">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="~/node_modules/mdbootstrap/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/node_modules/mdbootstrap/css/mdb.min.css" />
         <link rel="stylesheet" href="~/css/SAEON.min.css" />
     </environment>
     @RenderSection("Styles", required: false)
+    <script type="text/javascript">var appInsights = window.appInsights || function (a) { function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c }({ instrumentationKey: "77705ff0-6cf8-4a45-88b6-b9dd87be99c6" }); window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();</script>
 </head>
 <body class="bg-SAEON" id="Body">
     <div id="Page" class="container-fluid bg-white text-dark rounded">
@@ -46,9 +51,17 @@
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     </ul>
-                    @await Html.PartialAsync("_LoginPartial")
+                    <ul class="navbar-nav ml-auto">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item"><span class="nav-link" style="padding-right: 15px;"><b><i>Welcome, @User.Identity.Name</i></b></span></li>
+                        }
+                        @await Html.PartialAsync("_ConfigPartial")
+                        @await Html.PartialAsync("_LoginPartial")
+                    </ul>
                 </div>
             </nav>
+            <br />
             <h1>
                 @if (ViewBag.Title == "Identity Service" || string.IsNullOrWhiteSpace(ViewBag.Title))
                 {
@@ -83,14 +96,14 @@
         </footer>
     </div>
     <environment names="Development">
-        <script src="~/node_modules/mdbootstrap/js/jquery-3.2.1.min.js"></script>
+        <script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
         <script src="~/node_modules/mdbootstrap/js/popper.min.js"></script>
         <script src="~/node_modules/mdbootstrap/js/bootstrap.js"></script>
         <script src="~/node_modules/mdbootstrap/js/mdb.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
-        <script src="~/node_modules/mdbootstrap/js/jquery-3.2.1.min.js"></script>
+        <script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
         <script src="~/node_modules/mdbootstrap/js/popper.min.js"></script>
         <script src="~/node_modules/mdbootstrap/js/bootstrap.min.js"></script>
         <script src="~/node_modules/mdbootstrap/js/mdb.min.js"></script>

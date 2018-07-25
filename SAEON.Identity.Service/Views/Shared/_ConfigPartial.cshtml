@@ -1,0 +1,20 @@
+﻿@if (User.Identity.IsAuthenticated && User.IsInRole("SAEON.Admin"))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" asp-controller="Config" asp-action="Index" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="glyphicon glyphicon-cog"></span>Configuration
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" asp-area="" asp-controller="Config" asp-action="ApiResources" title="APIs">APIs</a>
+            <a class="dropdown-item" asp-area="" asp-controller="Config" asp-action="ClientResources" title="Clients">Clients</a>
+
+            <a class="nav-link dropdown-toggle" href="/Config" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-cog"></span>User Roles
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" asp-area="" asp-controller="Config" asp-action="ManageUserRoles" title="Manage">&nbsp;-&nbsp;&nbsp;&nbsp;Manage</a>
+                <a class="dropdown-item" asp-area="" asp-controller="Config" asp-action="AssignUserRoles" title="Assign">&nbsp;-&nbsp;&nbsp;&nbsp;Assign</a>
+            </div>
+        </div>
+    </li>
+}

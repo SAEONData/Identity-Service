@@ -1,0 +1,29 @@
+﻿@model List<SAEON.Identity.Service.Config.Role>
+@*Available Roles*@
+<div class="editor-label">
+    <label style="margin-top: 10px"><b>Available Roles:</b></label>
+</div>
+<div class="editor-field" style="margin-bottom: 15px;">
+    <div class="list-group" role="tablist">
+
+        @foreach (var role in Model)
+        {
+            <a class="list-group-item list-group-item-action"
+               id="availableRolesList"
+               data-toggle="list"
+               href="#list-profile"
+               role="tab"
+               aria-controls="profile"
+               onclick="listItemClick(id, text)">
+                @role.Name
+            </a>
+        }
+
+    </div>
+</div>
+
+<script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+
+
+</script>
