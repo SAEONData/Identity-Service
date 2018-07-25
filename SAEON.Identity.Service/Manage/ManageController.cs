@@ -56,6 +56,8 @@ namespace SAEON.Identity.Service.UI
                 HasPassword = await _userManager.HasPasswordAsync(user),
                 Logins = await _userManager.GetLoginsAsync(user),
 
+                FirstName = user.FirstName,
+                Surname = user.Surname,
                 Username = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
@@ -464,6 +466,172 @@ namespace SAEON.Identity.Service.UI
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpdatePersonalDetails()
+        {
+            SAEONUser user = await _userManager.GetUserAsync(User);
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePersonalDetails(SAEONUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                //Save changes to DB
+                var result = await SaveUserInfo(user);
+                if (result)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return View(user);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UserSelfDelete()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // Validate business rules to ensure self-deletion is allowed, though it would
+            // be a good idea to tell the user why their account cannot be deleted
+            var userSelfDelete = new SAEONUser
+            {
+                FirstName = user.FirstName,
+                Surname = user.Surname,
+                Email = user.Email,
+                UserName = user.UserName
+            };
+
+            return View(userSelfDelete);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UserSelfDelete(SAEONUser model)
+        {
+            if (model.PasswordHash == null)
+            {
+                model.PasswordHash = "";
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (await _userManager.CheckPasswordAsync(user, model.PasswordHash) == false)
+            {
+                ModelState.AddModelError("PasswordHash", "Incorrect password.");
+                return View(model);
+            }
+
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out prior to account deletion.");
+
+            await _userManager.DeleteAsync(user);
+
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangeEmail()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            //var saeonUser = new SAEONUser
+            //{
+            //    Id = user.Id,
+            //    PasswordHash = user.PasswordHash
+            //};
+
+            var vm = new ManageViewModel()
+            {
+                Id = user.Id,
+                PasswordHash = user.PasswordHash
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeEmail(ManageViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //Check new email address entered correctly
+                if (model.Email != model.ConfirmEmail)
+                {
+                    ModelState.AddModelError(string.Empty, "\"New Email\" and \"Confirm New Email\" must match.");
+                    throw new ApplicationException("\"New Email\" and \"Confirm New Email\" must match.");
+                }
+
+                //Check that email is unique
+                var emailExists = _userManager.Users.Any(x => x.Email == model.Email);
+                if (emailExists)
+                {
+                    throw new ApplicationException($"Email already registered: '{model.Email}'.");
+                }
+
+                //Get user from DB
+                var dbUser = _userManager.Users.FirstOrDefault(x => x.Id == model.Id);
+                if (dbUser == null)
+                {
+                    throw new ApplicationException($"Unable to load user with ID '{model.Id}'.");
+                }
+
+                //Update user props
+                dbUser.Email = model.Email;
+                dbUser.UserName = model.Email;
+                dbUser.EmailConfirmed = false;
+
+                //Sign user out until new email address confirmed
+                await _signInManager.SignOutAsync();
+
+                //Save to DB
+                var result = await _userManager.UpdateAsync(dbUser);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User email address changed.");
+
+                    try
+                    {
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(dbUser);
+                        var callbackUrl = Url.EmailConfirmationLink(model.Id.ToString(), code, Request.Scheme);
+                        await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    }
+                    catch (Exception ex)
+                    {
+                        //throw;
+                    }
+                   
+                    return RedirectToAction("ConfirmEmail", "Account", new { userId = model.Id.ToString() });
+                }
+
+                AddErrors(result);
+            }
+
+            return View(model);
+        }
+
+
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)
@@ -498,6 +666,23 @@ namespace SAEON.Identity.Service.UI
                 _urlEncoder.Encode("IdentityServerWithAspNetIdentity"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
+        }
+
+        private async Task<bool> SaveUserInfo(SAEONUser user)
+        {
+            bool result = false;
+
+            var dbUser = _userManager.Users.FirstOrDefault(x => x.Id == user.Id);
+            if (dbUser != null)
+            {
+                dbUser.FirstName = user.FirstName;
+                dbUser.Surname = user.Surname;
+
+                await _userManager.UpdateAsync(dbUser);
+                result = true;
+            }
+
+            return result;
         }
 
         #endregion

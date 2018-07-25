@@ -7,8 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
 using SAEON.Identity.Service.Config;
 using SAEON.Identity.Service.Data;
+using SAEON.Identity.Service.Services;
 using SAEON.Identity.Service.UI;
 using SAEON.Logs;
 using Serilog;
@@ -42,6 +44,7 @@ namespace SAEON.Identity.Service
                     .AddIdentity<SAEONUser, SAEONRole>(config =>
                     {
                         config.User.RequireUniqueEmail = true;
+                        config.SignIn.RequireConfirmedEmail = true; //prevents registered users from logging in until their email is confirmed
                         config.Lockout = new LockoutOptions
                         {
                             AllowedForNewUsers = true,
@@ -87,13 +90,27 @@ namespace SAEON.Identity.Service
                     .AddAspNetIdentity<SAEONUser>()
                     .AddSigningCredential(Cert.Load());
 
+                //services.AddMvc(options =>
+                //{
+                //    options.Filters.Add<SecurityHeadersAttribute>();
+                //});
+
                 services.AddMvc();
+
+                services.AddRecaptcha(new RecaptchaOptions
+                {
+                    SiteKey = Configuration["Recaptcha:SiteKey"],
+                    SecretKey = Configuration["Recaptcha:SecretKey"]
+                });
+
                 services.AddLogging();
                 services.AddCors();
 
                 services.AddSingleton<IConfiguration>(Configuration);
+
                 // Add application services.
                 services.AddTransient<IEmailSender, EmailSender>();
+                services.Configure<AuthMessageSenderOptions>(Configuration.GetSection("SendGrid"));
             }
         }
 

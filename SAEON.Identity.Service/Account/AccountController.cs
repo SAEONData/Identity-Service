@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
+using SAEON.Identity.Service.Account;
 using SAEON.Identity.Service.Data;
 using System;
 using System.Collections.Generic;
@@ -23,14 +26,21 @@ namespace SAEON.Identity.Service.UI
     {
         private readonly UserManager<SAEONUser> _userManager;
         private readonly SignInManager<SAEONUser> _signInManager;
+        private readonly IEmailSender _emailSender;
+        private readonly ILogger _logger;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
         public AccountController(
             UserManager<SAEONUser> userManager,
             SignInManager<SAEONUser> signInManager,
+            IEmailSender emailSender,
+            ILogger<ManageController> logger,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
@@ -38,6 +48,8 @@ namespace SAEON.Identity.Service.UI
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSender = emailSender;
+            _logger = logger;
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
@@ -266,25 +278,181 @@ namespace SAEON.Identity.Service.UI
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
+        [ValidateRecaptcha]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var user = new SAEONUser
+                {
+                    FirstName = model.FirstName,
+                    Surname = model.Surname,
+                    UserName = model.Email,
+                    Email = model.Email
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User created a new account with password.");
+
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.EmailConfirmationLink(user.Id.ToString(), code, Request.Scheme);
+                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+
+                    //await _signInManager.SignInAsync(user, isPersistent: false);
+                    //logger.LogInformation("User created a new account with password.");
+                    //return RedirectToLocal(returnUrl);
+                    return RedirectToAction("ConfirmEmail", new { userId = user.Id.ToString() });
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, re-display form
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            SAEONUser user = null;
+
+            if (userId == null || code == null)
+            {
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    //Get user if ID available
+                    user = await _userManager.FindByIdAsync(userId);
+                    if (user == null)
+                    {
+                        throw new ApplicationException($"Unable to load user with ID '{userId}'.");
+                    }
+
+                    ViewBag.email = user.Email;
+                }
+
+                return View(false);
+            }
+
+            //Get user if still null
+            if (user == null)
+            {
+                user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new ApplicationException($"Unable to load user with ID '{userId}'.");
+                }
+            }
+
+            //Confirm user email
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                return View(true);
+            }
+            else
+            {
+                var vm = new ErrorViewModel()
+                {
+                    Error = new ErrorMessage()
+                    {
+                        Error = result.Errors.First().Code,
+                        ErrorDescription = result.Errors.First().Description
+                    }
+                };
+
+                return View("Error", vm);
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var identityUser = new SAEONUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(identityUser, model.Password);
-                if (result.Succeeded)
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
-                    await _signInManager.SignInAsync(identityUser, isPersistent: false);
-                    if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-                    return RedirectToAction("Login");
+                    // Don't reveal that the user does not exist or is not confirmed
+                    return RedirectToAction(nameof(ForgotPasswordConfirmation));
                 }
+
+                // For more information on how to enable account confirmation and password reset please
+                // visit https://go.microsoft.com/fwlink/?LinkID=532713
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.ResetPasswordCallbackLink(user.Id.ToString(), code, Request.Scheme);
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
+                   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+                return RedirectToAction(nameof(ForgotPasswordConfirmation));
             }
+
+            // If we got this far, something failed, redisplay form
             return View(model);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string code = null)
+        {
+            if (code == null)
+            {
+                throw new ApplicationException("A code must be supplied for password reset.");
+            }
+            var model = new ResetPasswordViewModel { Code = code };
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return RedirectToAction(nameof(ResetPasswordConfirmation));
+            }
+            var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(ResetPasswordConfirmation));
+            }
+            AddErrors(result);
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
+
 
         /*****************************************/
         /* helper APIs for the AccountController */
@@ -567,6 +735,8 @@ namespace SAEON.Identity.Service.UI
         private void ProcessLoginCallbackForSaml2p(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
         {
         }
+
+
 
         #region Helpers
 

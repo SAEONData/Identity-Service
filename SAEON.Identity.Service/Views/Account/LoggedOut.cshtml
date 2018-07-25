@@ -1,6 +1,6 @@
 ﻿@model LoggedOutViewModel
 @{
-    ViewData["Title"] = "Logged Out";
+    ViewData["Title"] = "Logging Out";
     // set this so the layout rendering sees an anonymous user
     ViewData["signed-out"] = true;
 }
@@ -10,7 +10,10 @@
 }
 <div class="page-header logged-out">
     <div>
-        You are now logged out
+        @*You are now logged out*@
+        Logging out...
+        <br />
+        <br />
     </div>
 
     @if (Model.PostLogoutRedirectUri != null)
