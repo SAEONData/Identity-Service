@@ -50,7 +50,7 @@ namespace SAEON.Identity.Service
                 .UseApplicationInsights()
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
-                    config.AddJsonFile("connectionStrings.json", optional: false, reloadOnChange: true);
+                    config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
                 })
                 .UseStartup<Startup>()
                 .UseSerilog()
