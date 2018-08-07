@@ -52,7 +52,6 @@ namespace SAEON.Identity.Service
                 {
                     config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
                 })
-
                 .UseStartup<Startup>()
                 .UseSerilog()
                 .Build();
