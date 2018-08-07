@@ -314,4 +314,4 @@ Logs/
 [cC]onnection[sS]trings.json
 [cC]onfig/*.json
 [sS]ettings.json
-/SAEON.Identity.Service/secrets.json
+[sS]ecrets.json
