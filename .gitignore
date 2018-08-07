@@ -7,7 +7,6 @@
 *.userosscache
 *.sln.docstates
 *.jfm
-secrets.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
