@@ -48,6 +48,11 @@ namespace SAEON.Identity.Service
             WebHost
                 .CreateDefaultBuilder(args)
                 .UseApplicationInsights()
+                .ConfigureAppConfiguration((hostContext, config) =>
+                {
+                    config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
+                })
+
                 .UseStartup<Startup>()
                 .UseSerilog()
                 .Build();
