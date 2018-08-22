@@ -315,3 +315,4 @@ Logs/
 [cC]onfig/*.json
 [sS]ettings.json
 [sS]ecrets.json
+[sS]ecrets.*.json
