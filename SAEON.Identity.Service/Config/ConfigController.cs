@@ -17,7 +17,7 @@ using SAEON.Identity.Service.Helpers;
 
 namespace SAEON.Identity.Service.Config
 {
-    [Authorize(Roles = "SAEON.Admin")]
+    [Authorize(Roles = "SysAdmin")]
     public class ConfigController : Controller
     {
         ConfigControllerLogic _logic;
