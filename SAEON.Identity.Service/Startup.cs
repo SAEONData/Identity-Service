@@ -85,7 +85,7 @@ namespace SAEON.Identity.Service
 
                         // this enables automatic token cleanup. this is optional.
                         options.EnableTokenCleanup = true;
-                        options.TokenCleanupInterval = 30; // interval in seconds
+                        options.TokenCleanupInterval = Convert.ToInt32(Configuration["Service:TokenCleanup"]); // interval in seconds
                     })
                     .AddAspNetIdentity<SAEONUser>()
                     .AddProfileService<IdentityProfileService>()
