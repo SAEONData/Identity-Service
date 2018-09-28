@@ -309,10 +309,12 @@ App_Data/
 Logs/
 [cC]onnections.config
 [cC]onnection[sS]trings.config
+[cC]onnection[sS]trings.json
 [mM]achine[kK]ey.config
 [sS]mtp.config
-[cC]onnection[sS]trings.json
-[cC]onfig/*.json
-[sS]ettings.json
+*.[sS]ecrets.json
+*.[sS]ecrets.config
 [sS]ecrets.json
+[sS]ecrets.config
 [sS]ecrets.*.json
+[sS]ecrets.*.config

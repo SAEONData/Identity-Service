@@ -11,6 +11,6 @@
   "dependencies": {
     "jquery": "3.3.1",
     "jquery-validation-unobtrusive": "^3.2.10",
-    "mdbootstrap": "^4.5.7"
+    "mdbootstrap": "^4.5.11"
   }
 }
