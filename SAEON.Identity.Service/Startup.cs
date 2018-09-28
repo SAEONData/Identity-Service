@@ -88,6 +88,7 @@ namespace SAEON.Identity.Service
                         options.TokenCleanupInterval = 30; // interval in seconds
                     })
                     .AddAspNetIdentity<SAEONUser>()
+                    .AddProfileService<IdentityProfileService>()
                     .AddSigningCredential(Cert.Load());
 
                 //services.AddMvc(options =>
@@ -136,7 +137,7 @@ namespace SAEON.Identity.Service
                 {
                     FileProvider = new PhysicalFileProvider(
                         Path.Combine(Directory.GetCurrentDirectory(), "node_modules")),
-                        RequestPath = "/node_modules"
+                    RequestPath = "/node_modules"
                 });
 
                 app.UseIdentityServer();
