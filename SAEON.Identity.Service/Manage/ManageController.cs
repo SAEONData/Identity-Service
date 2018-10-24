@@ -616,7 +616,7 @@ namespace SAEON.Identity.Service.UI
                         var callbackUrl = Url.EmailConfirmationLink(model.Id.ToString(), code, Request.Scheme);
                         await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         //throw;
                     }
