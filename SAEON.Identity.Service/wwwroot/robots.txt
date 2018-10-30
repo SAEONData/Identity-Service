@@ -1,0 +1,5 @@
+﻿# Allow all
+User-agent: *
+Allow: /
+
+#Sitemap: http://identity.saeon.ac.za/sitemap.xml

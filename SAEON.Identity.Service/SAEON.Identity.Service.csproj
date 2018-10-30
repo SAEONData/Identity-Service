@@ -33,6 +33,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="robots.txt" />
+    <None Remove="sitemap.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.5.1" />
     <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
     <PackageReference Include="IdentityServer4" Version="2.2.0" />
@@ -55,7 +60,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" />
     <PackageReference Include="PaulMiami.AspNetCore.Mvc.Recaptcha" Version="1.2.1" />
-    <PackageReference Include="SAEON.Logs" Version="1.0.31" />
+    <PackageReference Include="SAEON.Logs" Version="1.0.32" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
