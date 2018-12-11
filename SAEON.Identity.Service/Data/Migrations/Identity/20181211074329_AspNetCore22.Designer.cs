@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SAEON.Identity.Service.Data;
 
 namespace SAEON.Identity.Service.Data.Migrations.Identity
 {
     [DbContext(typeof(SAEONDbContext))]
-    partial class SAEONDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181211074329_AspNetCore22")]
+    partial class AspNetCore22
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

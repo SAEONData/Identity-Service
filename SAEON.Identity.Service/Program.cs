@@ -32,7 +32,7 @@ namespace SAEON.Identity.Service
                 try
                 {
                     // Requires using RazorPagesMovie.Models;
-                    Configuration.InitializeDbAsync(serviceProvider).Wait();
+                    Configuration.InitializeDbAsync(serviceProvider).GetAwaiter().GetResult();
                 }
                 catch (Exception ex)
                 {
