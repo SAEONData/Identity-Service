@@ -38,6 +38,11 @@ namespace SAEON.Identity.Service
             using (Logging.MethodCall(GetType()))
             {
                 var connectionString = Configuration.GetConnectionString("IdentityService");
+                services.AddAuthentication().AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                    options.SlidingExpiration = true;
+                });
                 var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
                 services.AddDbContext<SAEONDbContext>(options => options.UseSqlServer(connectionString, b => b.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure()));
                 services
