@@ -44,11 +44,11 @@ namespace SAEON.Identity.Service
                 Logging.Information("Configuring services");
                 if (!Environment.IsDevelopment())
                 {
-                    services.AddHttpsRedirection(options =>
-                    {
-                        options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
-                        options.HttpsPort = 443;
-                    });
+                    //services.AddHttpsRedirection(options =>
+                    //{
+                    //    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+                    //    options.HttpsPort = 443;
+                    //});
                 }
 
                 var connectionString = Configuration.GetConnectionString("IdentityService");
@@ -147,7 +147,7 @@ namespace SAEON.Identity.Service
                 }
                 else
                 {
-                    app.UseHttpsRedirection();
+                    //app.UseHttpsRedirection();
                     app.UseExceptionHandler("/Home/Error");
                 }
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
