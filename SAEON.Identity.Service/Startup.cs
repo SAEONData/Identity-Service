@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +14,6 @@ using SAEON.Identity.Service.Data;
 using SAEON.Identity.Service.Services;
 using SAEON.Identity.Service.UI;
 using SAEON.Logs;
-using Serilog;
 using System;
 using System.IO;
 using System.Reflection;
@@ -22,11 +22,15 @@ namespace SAEON.Identity.Service
 {
     public class Startup
     {
-        protected IConfiguration Configuration { get; private set; }
+        public IConfiguration Configuration { get; }
+        public IHostingEnvironment Environment { get; }
 
-        public Startup(IConfiguration configuration)
+
+        public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
+
             Logging
                 .CreateConfiguration("Logs/SAEON.Identity.Service.txt", configuration)
                 .Create();
@@ -37,6 +41,16 @@ namespace SAEON.Identity.Service
         {
             using (Logging.MethodCall(GetType()))
             {
+                Logging.Information("Configuring services");
+                if (!Environment.IsDevelopment())
+                {
+                    services.AddHttpsRedirection(options =>
+                    {
+                        options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+                        options.HttpsPort = 443;
+                    });
+                }
+
                 var connectionString = Configuration.GetConnectionString("IdentityService");
                 services.AddAuthentication().AddCookie(options =>
                 {
@@ -125,14 +139,15 @@ namespace SAEON.Identity.Service
         {
             using (Logging.MethodCall(GetType()))
             {
+                Logging.Verbose("Configure: {IsDevelopment}", env.IsDevelopment());
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();
                     app.UseDatabaseErrorPage();
-                    app.UseBrowserLink();
                 }
                 else
                 {
+                    app.UseHttpsRedirection();
                     app.UseExceptionHandler("/Home/Error");
                 }
                 Logging.Information("Environment: {environment}", env.EnvironmentName);

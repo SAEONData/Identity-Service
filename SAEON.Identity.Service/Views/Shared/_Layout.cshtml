@@ -1,6 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="en-za">
 <head>
+    <meta http-equiv="Content-Type" content="text/html" />
+    <meta charset="utf-8">
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128063984-3"></script>
     <script>
@@ -10,8 +12,6 @@
 
         gtag('config', 'UA-128063984-3');
     </script>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     @RenderSection("MetaTags", required: false)
     @if (!string.IsNullOrWhiteSpace(ViewBag.MetaDescription))
@@ -40,7 +40,7 @@
         <link rel="stylesheet" href="~/css/SAEON.min.css" />
     </environment>
     @RenderSection("Styles", required: false)
-    <script type="text/javascript">
+    <script>
         var appInsights = window.appInsights || function (a) {
             function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c
         }({
@@ -50,7 +50,7 @@
         window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
     </script>
 </head>
-<body class="bg-SAEON" id="Body">
+<body class="bg-SAEON" id="Document">
     <div id="Page" class="container-fluid bg-white text-dark rounded">
         <header id="Header">
             <div class="row">
@@ -78,7 +78,6 @@
                     </ul>
                 </div>
             </nav>
-            <br />
             <h1>
                 @if (ViewBag.Title == "Identity Service" || string.IsNullOrWhiteSpace(ViewBag.Title))
                 {
