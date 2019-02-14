@@ -24,12 +24,14 @@ namespace SAEON.Identity.Service
     {
         public IConfiguration Configuration { get; }
         public IHostingEnvironment Environment { get; }
+        public bool HTTPSEnabled { get; private set; } = false;
 
 
         public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
             Configuration = configuration;
             Environment = environment;
+            HTTPSEnabled = Convert.ToBoolean(Configuration["Application:HTTPSEnabled"] ?? "false");
 
             Logging
                 .CreateConfiguration("Logs/SAEON.Identity.Service.txt", configuration)
@@ -41,14 +43,17 @@ namespace SAEON.Identity.Service
         {
             using (Logging.MethodCall(GetType()))
             {
-                Logging.Information("Configuring services");
+                Logging.Information("Configuring services HTTPS: {HTTPSEnabled}", HTTPSEnabled);
                 if (!Environment.IsDevelopment())
                 {
-                    //services.AddHttpsRedirection(options =>
-                    //{
-                    //    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
-                    //    options.HttpsPort = 443;
-                    //});
+                    if (HTTPSEnabled)
+                    {
+                        services.AddHttpsRedirection(options =>
+                        {
+                            options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+                            options.HttpsPort = 443;
+                        });
+                    }
                 }
 
                 var connectionString = Configuration.GetConnectionString("IdentityService");
@@ -147,7 +152,10 @@ namespace SAEON.Identity.Service
                 }
                 else
                 {
-                    //app.UseHttpsRedirection();
+                    if (HTTPSEnabled)
+                    {
+                        app.UseHttpsRedirection();
+                    }
                     app.UseExceptionHandler("/Home/Error");
                 }
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
