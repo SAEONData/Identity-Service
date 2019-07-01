@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SAEON.Identity.Service.Data.Migrations.Configuration
 {
     [DbContext(typeof(ConfigurationDbContext))]
-    [Migration("20181211074107_AspNetCore22")]
+    [Migration("20181211074237_AspNetCore22")]
     partial class AspNetCore22
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
