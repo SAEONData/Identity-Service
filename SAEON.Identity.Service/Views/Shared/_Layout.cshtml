@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+<!DOCTYPE html>
 <html lang="en-za">
 <head>
     <meta http-equiv="Content-Type" content="text/html" />
@@ -47,6 +48,7 @@
 
         window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
     </script>
+    @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body class="bg-SAEON" id="Document">
     <div id="Page" class="container-fluid bg-white text-dark rounded">
