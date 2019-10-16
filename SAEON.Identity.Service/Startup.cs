@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PaulMiami.AspNetCore.Mvc.Recaptcha;
 using SAEON.Identity.Service.Config;
@@ -23,11 +24,11 @@ namespace SAEON.Identity.Service
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment Environment { get; }
+        public IWebHostEnvironment Environment { get; }
         public bool HTTPSEnabled { get; private set; } = false;
 
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
             Environment = environment;
@@ -140,7 +141,7 @@ namespace SAEON.Identity.Service
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             using (Logging.MethodCall(GetType()))
             {
@@ -159,7 +160,8 @@ namespace SAEON.Identity.Service
                     app.UseExceptionHandler("/Home/Error");
                 }
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
-                app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+                //app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+                app.UseCors();
                 app.UseStaticFiles();
                 app.UseStaticFiles(new StaticFileOptions
                 {
@@ -173,13 +175,14 @@ namespace SAEON.Identity.Service
 
                 // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 
-                app.UseMvcWithDefaultRoute();
-                //app.UseMvc(routes =>
-                //{
-                //    routes.MapRoute(
-                //        name: "default",
-                //        template: "{controller=Home}/{action=Index}/{id?}");
-                //});
+                app.UseRouting();
+
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}");
+                });
             }
         }
 
