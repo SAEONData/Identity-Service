@@ -47,7 +47,6 @@ namespace SAEON.Identity.Service
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost
                 .CreateDefaultBuilder(args)
-                .UseApplicationInsights()
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);

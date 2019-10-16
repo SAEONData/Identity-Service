@@ -56,6 +56,7 @@ namespace SAEON.Identity.Service
                         });
                     }
                 }
+                services.AddApplicationInsightsTelemetry();
 
                 var connectionString = Configuration.GetConnectionString("IdentityService");
                 services.AddAuthentication().AddCookie(options =>
@@ -160,6 +161,8 @@ namespace SAEON.Identity.Service
                     app.UseExceptionHandler("/Home/Error");
                 }
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
+                app.UseAuthentication();
+                app.UseAuthorization();
                 //app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
                 app.UseCors();
                 app.UseStaticFiles();
