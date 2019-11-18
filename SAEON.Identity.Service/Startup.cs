@@ -161,20 +161,18 @@ namespace SAEON.Identity.Service
                     app.UseExceptionHandler("/Home/Error");
                 }
                 Logging.Information("Environment: {environment}", env.EnvironmentName);
-                app.UseAuthentication();
-                app.UseAuthorization();
-                //app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
-                app.UseCors();
+                app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+                //app.UseCors();
                 app.UseStaticFiles();
                 app.UseStaticFiles(new StaticFileOptions
                 {
-                    FileProvider = new PhysicalFileProvider(
-                        Path.Combine(Directory.GetCurrentDirectory(), "node_modules")),
+                    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "node_modules")),
                     RequestPath = "/node_modules"
                 });
 
                 app.UseIdentityServer();
                 app.UseAuthentication();
+                app.UseAuthorization();
 
                 // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 

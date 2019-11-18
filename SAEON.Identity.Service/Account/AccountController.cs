@@ -736,7 +736,19 @@ namespace SAEON.Identity.Service.UI
         {
         }
 
+        public ActionResult Test()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateRecaptcha]
+        [ValidateAntiForgeryToken]
+        public ActionResult TestReturn()
+        {
+            return View();
+        }
 
         #region Helpers
 
