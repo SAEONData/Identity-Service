@@ -52,8 +52,8 @@
     </div>
 </form>
 
-<script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
+@*<script src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>*@
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <recaptcha-script/>
 }
-<recaptcha-script />

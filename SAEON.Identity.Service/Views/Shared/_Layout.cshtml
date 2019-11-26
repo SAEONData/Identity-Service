@@ -47,15 +47,6 @@
         <link rel="stylesheet" href="~/css/SAEON.min.css" />
     </environment>
     @RenderSection("Styles", required: false)
-    <script>
-        var appInsights = window.appInsights || function (a) {
-            function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c
-        }({
-            instrumentationKey: "77705ff0-6cf8-4a45-88b6-b9dd87be99c6"
-        });
-
-        window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
-    </script>
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body class="bg-SAEON" id="Document">
@@ -137,6 +128,8 @@
         <!-- MDB core JavaScript -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.6/js/mdb.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/node_modules/jquery-validation/dist/jquery.validate.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
         <!-- JQuery -->
@@ -147,12 +140,11 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <!-- MDB core JavaScript -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.6/js/mdb.min.js"></script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/node_modules/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
     </environment>
-
-
     @RenderSection("Scripts", required: false)
-
 </body>
 
 </html>
