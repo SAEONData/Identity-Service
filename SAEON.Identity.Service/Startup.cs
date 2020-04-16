@@ -176,7 +176,6 @@ namespace SAEON.Identity.Service
                 app.UseAuthentication();
 
                 // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
-
                 app.UseMvcWithDefaultRoute();
                 //app.UseMvc(routes =>
                 //{
