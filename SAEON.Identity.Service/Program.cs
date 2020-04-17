@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SAEON.Identity.Service.Config;
 using SAEON.Identity.Service.Data;
 using SAEON.Logs;
 using Serilog;
@@ -50,6 +49,7 @@ namespace SAEON.Identity.Service
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
+                    config.AddJsonFile("api\\secrets.json", optional: true, reloadOnChange: true);
                 })
                 .UseStartup<Startup>()
                 .UseSerilog()
