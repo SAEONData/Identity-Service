@@ -9,7 +9,7 @@
     "url": "git://github.com/SAEON-Data/Identity-Service.git"
   },
   "dependencies": {
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.1",
     "jquery-validation-unobtrusive": "^3.2.11"
   }
 }

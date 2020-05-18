@@ -40,7 +40,7 @@
     </PackageReference>
     <PackageReference Include="PaulMiami.AspNetCore.Mvc.Recaptcha" Version="1.2.2" />
     <PackageReference Include="SAEON.Logs.NetCore" Version="1.0.25" />
-    <PackageReference Include="Sendgrid" Version="9.14.0" />
+    <PackageReference Include="Sendgrid" Version="9.15.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="appsettings.Debug.json">
