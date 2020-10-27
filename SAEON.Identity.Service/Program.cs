@@ -1,20 +1,9 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
-using IdentityServer4.Models;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using SAEON.Identity.Service.Config;
-using SAEON.Identity.Service.Data;
+using Microsoft.Extensions.Hosting;
 using SAEON.Logs;
-using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service
 {
@@ -24,6 +13,7 @@ namespace SAEON.Identity.Service
 
         public static void Main(string[] args)
         {
+            /*
             host = BuildWebHost(args);
             using (var scope = host.Services.CreateScope())
             {
@@ -42,22 +32,56 @@ namespace SAEON.Identity.Service
             }
 
             host.Run();
+            */
+            SAEONLogs.CreateConfiguration().Initialize();
+            try
+            {
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex);
+                throw;
+            }
+            finally
+            {
+                SAEONLogs.ShutDown();
+            }
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseApplicationInsights()
-                .ConfigureAppConfiguration((hostContext, config) =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .UseSAEONLogs()
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
-                })
-                .UseStartup<Startup>()
-                .UseSerilog()
-                .Build();
+                    webBuilder
+                        .ConfigureAppConfiguration((hostContext, config) =>
+                        {
+                            config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
+                            config.AddJsonFile("api\\secrets.json", optional: true, reloadOnChange: true);
+                        });
+                    webBuilder.UseStartup<Startup>();
+                    //webBuilder.ConfigureKestrel(options =>
+                    //{
+                    //    options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(15);
+                    //});
+                });
+
+        //public static IWebHost BuildWebHost(string[] args) =>
+        //    WebHost
+        //        .CreateDefaultBuilder(args)
+        //        .ConfigureAppConfiguration((hostContext, config) =>
+        //        {
+        //            config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
+        //            config.AddJsonFile("api\\secrets.json", optional: true, reloadOnChange: true);
+        //        })
+        //        .UseStartup<Startup>()
+        //        .UseSerilog()
+        //        .Build();
 
     }
 
+    /*
     internal static class Configuration
     {
         internal static async Task InitializeDbAsync(IServiceProvider serviceProvider)
@@ -95,5 +119,5 @@ namespace SAEON.Identity.Service
             };
         }
     }
-
+    */
 }

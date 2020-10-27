@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+<!DOCTYPE html>
 <html lang="en-za">
 <head>
     <meta http-equiv="Content-Type" content="text/html" />
@@ -25,35 +26,35 @@
     <title>@(ViewBag.Title == "Identity Service" || string.IsNullOrEmpty(ViewBag.Title) ? "Identity Service" : "Identity Service - " + @ViewBag.Title)</title>
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
-    <environment names="Development">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-        <link rel="stylesheet" href="~/node_modules/mdbootstrap/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/node_modules/mdbootstrap/css/mdb.css" />
+    <environment include="Development">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+        <!-- Bootstrap core CSS -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Material Design Bootstrap -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.6/css/mdb.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="~/css/site.css" />
         <link rel="stylesheet" href="~/css/SAEON.css" />
     </environment>
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-        <link rel="stylesheet" href="~/node_modules/mdbootstrap/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="~/node_modules/mdbootstrap/css/mdb.min.css" />
+    <environment exclude="Development">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+        <!-- Bootstrap core CSS -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Material Design Bootstrap -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.6/css/mdb.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="~/css/site.min.css" />
         <link rel="stylesheet" href="~/css/SAEON.min.css" />
     </environment>
     @RenderSection("Styles", required: false)
-    <script>
-        var appInsights = window.appInsights || function (a) {
-            function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c
-        }({
-            instrumentationKey: "77705ff0-6cf8-4a45-88b6-b9dd87be99c6"
-        });
-
-        window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
-    </script>
+    @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body class="bg-SAEON" id="Document">
     <div id="Page" class="container-fluid bg-white text-dark rounded">
         <header id="Header">
             <div class="row">
                 <div class="col-12 text-center">
-                    <img class="Logo img-fluid" src="~/Images/SAEON 20th Logo.png" alt="SAEON Banner" title="© SAEON" />
+                    <img class="Logo img-fluid" src="~/Images/Banner.jpg" alt="SAEON Banner" title="© SAEON" />
                 </div>
             </div>
             <nav class="navbar navbar-expand-sm navbar-dark bg-SAEON rounded">
@@ -110,7 +111,7 @@
                 <div class="col-6">
                     <div class="float-right">
                         <a href="https://www.dst.gov.za/" target="_blank">
-                            <img class="footer-image" src="~/Images/DST logo.png" alt="Department of Science and Technology logo" title="Department of Science and Technology" />
+                            <img class="footer-image dsi-logo" src="~/Images/DSI logo.jpg" alt="Department of Science and Innovation logo" title="Department of Science and Innovation" />
                         </a>
                     </div>
                 </div>
@@ -118,22 +119,32 @@
         </footer>
     </div>
     <environment names="Development">
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/popper.min.js"></script>
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/mdb.min.js"></script>
+        <!-- JQuery -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <!-- Bootstrap tooltips -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+        <!-- Bootstrap core JavaScript -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <!-- MDB core JavaScript -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.6/js/mdb.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/node_modules/jquery-validation/dist/jquery.validate.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/jquery-3.3.1.min.js"></script>
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/popper.min.js"></script>
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/mdb.min.js"></script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <!-- JQuery -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <!-- Bootstrap tooltips -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+        <!-- Bootstrap core JavaScript -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <!-- MDB core JavaScript -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.6/js/mdb.min.js"></script>
+        <script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/node_modules/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
     </environment>
-
     @RenderSection("Scripts", required: false)
-
 </body>
 
 </html>

@@ -1,5 +1,4 @@
 ﻿using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;
@@ -168,29 +167,19 @@ namespace SAEON.Identity.Service.Config
 
         internal ICollection<string> StringToGrantType(string value)
         {
-            switch (value.ToLower())
+            return (value.ToLower()) switch
             {
-                case "clientcredentials":
-                    return GrantTypes.ClientCredentials;
-                case "code":
-                    return GrantTypes.Code;
-                case "codeandclientcredentials":
-                    return GrantTypes.CodeAndClientCredentials;
-                case "hybrid":
-                    return GrantTypes.Hybrid;
-                case "hybridandclientcredentials":
-                    return GrantTypes.HybridAndClientCredentials;
-                case "implicit":
-                    return GrantTypes.Implicit;
-                case "implicitandclientcredentials":
-                    return GrantTypes.ImplicitAndClientCredentials;
-                case "resourceownerpassword":
-                    return GrantTypes.ResourceOwnerPassword;
-                case "resourceownerpasswordandclientcredentials":
-                    return GrantTypes.ResourceOwnerPasswordAndClientCredentials;
-                default:
-                    return new List<string>();
-            }
+                "clientcredentials" => GrantTypes.ClientCredentials,
+                "code" => GrantTypes.Code,
+                "codeandclientcredentials" => GrantTypes.CodeAndClientCredentials,
+                "hybrid" => GrantTypes.Hybrid,
+                "hybridandclientcredentials" => GrantTypes.HybridAndClientCredentials,
+                "implicit" => GrantTypes.Implicit,
+                "implicitandclientcredentials" => GrantTypes.ImplicitAndClientCredentials,
+                "resourceownerpassword" => GrantTypes.ResourceOwnerPassword,
+                "resourceownerpasswordandclientcredentials" => GrantTypes.ResourceOwnerPasswordAndClientCredentials,
+                _ => new List<string>(),
+            };
         }
 
         internal string GrantTypeToString(ICollection<string> value)
@@ -382,7 +371,8 @@ namespace SAEON.Identity.Service.Config
                         Description = dataModel.Description,
                         Claims = dataModel.UserClaims.ToList(),
                         Secrets = dataModel.ApiSecrets.Select(x => x.Value).ToList(),
-                        Scopes = dataModel.Scopes.Select(x => new Scope() { Name = x.Name, DisplayName = x.DisplayName }).ToList()
+                        Scopes = dataModel.Scopes.Select(x => new Scope() { Name = x, DisplayName = x }).ToList()
+                        //Scopes = dataModel.Scopes.Select(x => new Scope() { Name = x.Name, DisplayName = x.DisplayName }).ToList()
                     };
                 }
                 catch (Exception ex)
@@ -436,7 +426,7 @@ namespace SAEON.Identity.Service.Config
             {
                 foreach (var scope in api.Scopes)
                 {
-                    isApi.Scopes.Add(new IdentityServer4.Models.Scope(scope.Name, scope.DisplayName));
+                    isApi.Scopes.Add(scope.Name);
                 }
             }
 
@@ -560,7 +550,7 @@ namespace SAEON.Identity.Service.Config
                     {
                         roles = roleManager.Roles.Select(x => new Role() { Id = x.Id, Name = x.Name }).ToList();
 
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -589,7 +579,7 @@ namespace SAEON.Identity.Service.Config
                     try
                     {
                         var dbUser = userManager.Users.FirstOrDefault(x => x.Id == userId);
-                        if(dbUser != null)
+                        if (dbUser != null)
                         {
                             await userManager.AddToRoleAsync(dbUser, roleName);
                             result = true;
@@ -714,7 +704,7 @@ namespace SAEON.Identity.Service.Config
                                         }
 
                                         //Remove Role Claim
-                                        identityResult = await roleManager.RemoveClaimAsync(identityRole, 
+                                        identityResult = await roleManager.RemoveClaimAsync(identityRole,
                                             roleManager.GetClaimsAsync(identityRole).Result.FirstOrDefault(x => x.Type == ClaimTypes.Role));
                                         if (!identityResult.Succeeded)
                                         {
@@ -734,7 +724,7 @@ namespace SAEON.Identity.Service.Config
                                     //ADD
                                     identityRole = new SAEONRole() { Id = role.Id, Name = role.Name };
                                     var identityResult = await roleManager.CreateAsync(identityRole);
-                                    if(!identityResult.Succeeded)
+                                    if (!identityResult.Succeeded)
                                     {
                                         throw new Exception("Create Role failed");
                                     }
@@ -747,9 +737,9 @@ namespace SAEON.Identity.Service.Config
                                 }
                             }
 
-                            foreach(var dbRole in roleManager.Roles)
+                            foreach (var dbRole in roleManager.Roles)
                             {
-                                if(!roles.Any(x => x.Id == dbRole.Id))
+                                if (!roles.Any(x => x.Id == dbRole.Id))
                                 {
                                     //DELETE
                                     //Delete role
