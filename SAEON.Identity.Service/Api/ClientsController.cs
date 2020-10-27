@@ -1,14 +1,8 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
-using IdentityServer4.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using SAEON.Logs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.Api
@@ -29,14 +23,15 @@ namespace SAEON.Identity.Service.Api
         [HttpPost]
         public async Task<IActionResult> AddNodesClientAsync()
         {
-            using (Logging.MethodCall(GetType()))
+            using (SAEONLogs.MethodCall(GetType()))
             {
                 try
                 {
+                    /*
                     var serviceConfiguration = config.GetSection("IdentityService");
                     var configClients = new List<ConfigClient>();
                     serviceConfiguration.GetSection("Clients").Bind(configClients);
-                    Logging.Information("Clients: {@clients}", configClients);
+                    SAEONLogs.Information("Clients: {@clients}", configClients);
                     var context = serviceProvider.GetRequiredService<ConfigurationDbContext>();
                     foreach (var configClient in configClients)
                     {
@@ -81,7 +76,7 @@ namespace SAEON.Identity.Service.Api
                                 client.AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials;
                                 break;
                             default:
-                                Logging.Error("Unknown GrantType: {GranType}", configClient.GrantType);
+                                SAEONLogs.Error("Unknown GrantType: {GranType}", configClient.GrantType);
                                 continue;
                         }
                         foreach (var secret in configClient.Secrets)
@@ -104,9 +99,9 @@ namespace SAEON.Identity.Service.Api
                         {
                             client.PostLogoutRedirectUris.Add(uri);
                         }
-                        Logging.Information("Client: {@client}", client);
+                        SAEONLogs.Information("Client: {@client}", client);
                         var isclients = await context.Clients.Select(i => i.ClientId).ToListAsync();
-                        Logging.Information("ClientIds: {ClientIds}", isclients);
+                        SAEONLogs.Information("ClientIds: {ClientIds}", isclients);
                         if (!await context.Clients.AnyAsync(i => i.ClientId == client.ClientId))
                         {
                             await context.Clients.AddAsync(client.ToEntity());
@@ -115,7 +110,7 @@ namespace SAEON.Identity.Service.Api
                         //else
                         //{
                         //    var isClient = await context.Clients.Include(i => i.ClientSecrets).FirstAsync(i => i.ClientId == client.ClientId);
-                        //    Logging.Information("Client: {@Client}", isClient);
+                        //    SAEONLogs.Information("Client: {@Client}", isClient);
                         //    isClient.ClientName = client.ClientName;
                         //    isClient.ClientSecrets.Clear();
                         //    foreach (var secret in client.ClientSecrets)
@@ -132,12 +127,12 @@ namespace SAEON.Identity.Service.Api
                         //    context.SaveChanges();
                         //}
                     }
-
+                    */
                     return Ok("Client(s) added");
                 }
                 catch (Exception ex)
                 {
-                    Logging.Exception(ex);
+                    SAEONLogs.Exception(ex);
                     throw;
                 }
             }

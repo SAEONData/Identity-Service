@@ -21,8 +21,8 @@ namespace SAEON.Identity.Service.HealthCheck
         [HttpGet]
         public IActionResult Get()
         {
-            using (Logging.MethodCall(GetType()))
-                {
+            using (SAEONLogs.MethodCall(GetType()))
+            {
                 var model = new HealthModel();
                 try
                 {
@@ -34,7 +34,7 @@ namespace SAEON.Identity.Service.HealthCheck
                 }
                 catch (Exception ex)
                 {
-                    Logging.Exception(ex);
+                    SAEONLogs.Exception(ex);
                     model.Database = ex.Message;
                     model.Healthy = false;
                 }

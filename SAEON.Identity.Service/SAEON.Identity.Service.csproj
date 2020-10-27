@@ -1,11 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-  </PropertyGroup>
-
-  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-SAEON.Identity.Service-2f84bbff-6d1e-4a1e-b431-b4988fa4a06f</UserSecretsId>
     <ApplicationIcon>SAEON.ico</ApplicationIcon>
     <Authors>Tim Parker-Nance</Authors>
@@ -13,8 +9,6 @@
     <Product>SAEON Identity Service</Product>
     <Description>The SAEON Identity Service provides OpenID Connect single sign-on to all SAEON web site</Description>
     <Copyright>© 2017-2018 South African Environmental Observation Network (SAEON)</Copyright>
-    <ApplicationInsightsResourceId>/subscriptions/53cea979-29f9-43db-aa3d-8349a5bd3452/resourcegroups/SAEON.Identity/providers/microsoft.insights/components/SAEON.Identity.Service</ApplicationInsightsResourceId>
-    <ApplicationInsightsAnnotationResourceId>/subscriptions/53cea979-29f9-43db-aa3d-8349a5bd3452/resourceGroups/SAEON.Identity/providers/microsoft.insights/components/SAEON.Identity.Service</ApplicationInsightsAnnotationResourceId>
     <Version>1.0.3</Version>
   </PropertyGroup>
 
@@ -24,55 +18,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.447" />
-    <PackageReference Include="IdentityServer4" Version="2.3.2" />
-    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.3.0" />
-    <PackageReference Include="IdentityServer4.EntityFramework" Version="2.3.2" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0" />
-    <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.26">
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.1" />
+    <PackageReference Include="IdentityServer4.EntityFramework" Version="4.1.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PaulMiami.AspNetCore.Mvc.Recaptcha" Version="1.2.2" />
-    <PackageReference Include="SAEON.Logs.NetCore" Version="1.0.25" />
-    <PackageReference Include="Sendgrid" Version="9.15.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="appsettings.Debug.json">
-      <IsTransformFile>true</IsTransformFile>
-      <DependentUpon>appsettings.json</DependentUpon>
-    </None>
-    <None Include="appsettings.Release.json">
-      <IsTransformFile>true</IsTransformFile>
-      <DependentUpon>appsettings.json</DependentUpon>
-    </None>
-    <None Include="appsettings.SAEON.json">
-      <IsTransformFile>true</IsTransformFile>
-      <DependentUpon>appsettings.json</DependentUpon>
-    </None>
-    <None Include="secrets.Debug.json">
-      <IsTransformFile>true</IsTransformFile>
-      <DependentUpon>secrets.json</DependentUpon>
-    </None>
-    <None Include="secrets.Release.json">
-      <IsTransformFile>true</IsTransformFile>
-      <DependentUpon>secrets.json</DependentUpon>
-    </None>
+    <PackageReference Include="SAEON.Logs.NetCore" Version="1.0.47" />
+    <PackageReference Include="Sendgrid" Version="9.21.0" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="appsettings.json">
-      <TransformOnBuild>true</TransformOnBuild>
-    </Content>
-    <Content Update="secrets.json">
-      <TransformOnBuild>true</TransformOnBuild>
-    </Content>
   </ItemGroup>
 </Project>

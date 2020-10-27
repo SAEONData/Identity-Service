@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using PaulMiami.AspNetCore.Mvc.Recaptcha;
 using SAEON.Identity.Service.Config;
 using SAEON.Identity.Service.Data;
@@ -23,41 +23,26 @@ namespace SAEON.Identity.Service
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment Environment { get; }
-        public bool HTTPSEnabled { get; private set; } = false;
 
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            Environment = environment;
-            HTTPSEnabled = Convert.ToBoolean(Configuration["Application:HTTPSEnabled"] ?? "false");
-
-            Logging
-                .CreateConfiguration("Logs/SAEON.Identity.Service.txt", configuration)
-                .Create();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            using (Logging.MethodCall(GetType()))
+            using (SAEONLogs.MethodCall(GetType()))
             {
-                Logging.Information("Configuring services HTTPS: {HTTPSEnabled}", HTTPSEnabled);
-                services.AddApplicationInsightsTelemetry();
-                if (!Environment.IsDevelopment())
-                {
-                    if (HTTPSEnabled)
-                    {
-                        services.AddHttpsRedirection(options =>
-                        {
-                            options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
-                            options.HttpsPort = 443;
-                        });
-                    }
-                }
-
+                services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
                 var connectionString = Configuration.GetConnectionString("IdentityService");
+                services.Configure<CookiePolicyOptions>(options =>
+                {
+                    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                    options.CheckConsentNeeded = context => true;
+                    options.MinimumSameSitePolicy = SameSiteMode.None;
+                });
                 services.AddAuthentication().AddCookie(options =>
                 {
                     options.ExpireTimeSpan = TimeSpan.FromDays(30);
@@ -69,7 +54,7 @@ namespace SAEON.Identity.Service
                     .AddIdentity<SAEONUser, SAEONRole>(config =>
                     {
                         config.User.RequireUniqueEmail = true;
-                        config.SignIn.RequireConfirmedEmail = true; //prevents registered users from logging in until their email is confirmed
+                        config.SignIn.RequireConfirmedEmail = true; //prevents registered users from SAEONLogs in until their email is confirmed
                         config.Lockout = new LockoutOptions
                         {
                             AllowedForNewUsers = true,
@@ -116,11 +101,6 @@ namespace SAEON.Identity.Service
                     .AddProfileService<IdentityProfileService>()
                     .AddSigningCredential(Cert.Load());
 
-                //services.AddMvc(options =>
-                //{
-                //    options.Filters.Add<SecurityHeadersAttribute>();
-                //});
-
                 services.AddMvc();
 
                 services.AddRecaptcha(new RecaptchaOptions
@@ -129,10 +109,8 @@ namespace SAEON.Identity.Service
                     SecretKey = Configuration["Recaptcha:SecretKey"]
                 });
 
-                services.AddLogging();
-                services.AddCors();
-
-                services.AddSingleton<IConfiguration>(Configuration);
+                //services.AddCors();
+                //services.AddSingleton<IConfiguration>(Configuration);
 
                 // Add application services.
                 services.AddTransient<IEmailSender, EmailSender>();
@@ -143,27 +121,23 @@ namespace SAEON.Identity.Service
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            using (Logging.MethodCall(GetType()))
+            using (SAEONLogs.MethodCall(GetType()))
             {
-                Logging.Verbose("Configure: {IsDevelopment}", env.IsDevelopment());
-                //app.UseApplicationInsights();
+                SAEONLogs.Verbose("Configure: {IsDevelopment}", env.IsDevelopment());
+                SAEONLogs.Information("Environment: {environment}", env.EnvironmentName);
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();
-                    app.UseDatabaseErrorPage();
                 }
                 else
                 {
-                    if (HTTPSEnabled)
-                    {
-                        app.UseHttpsRedirection();
-                    }
                     app.UseExceptionHandler("/Home/Error");
+                    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                    app.UseHsts();
                 }
-                Logging.Information("Environment: {environment}", env.EnvironmentName);
-                app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+                app.UseHttpsRedirection();
                 app.UseStaticFiles();
                 app.UseStaticFiles(new StaticFileOptions
                 {
@@ -172,17 +146,17 @@ namespace SAEON.Identity.Service
                     RequestPath = "/node_modules"
                 });
 
+                app.UseCookiePolicy();
+                //app.UseResponseCaching();
+                //app.UseResponseCompression();
+                app.UseRouting();
                 app.UseIdentityServer();
                 app.UseAuthentication();
-
-                // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
-                app.UseMvcWithDefaultRoute();
-                //app.UseMvc(routes =>
-                //{
-                //    routes.MapRoute(
-                //        name: "default",
-                //        template: "{controller=Home}/{action=Index}/{id?}");
-                //});
+                app.UseAuthorization();
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapDefaultControllerRoute();
+                });
             }
         }
 
