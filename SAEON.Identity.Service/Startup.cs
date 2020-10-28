@@ -16,7 +16,6 @@ using SAEON.Identity.Service.UI;
 using SAEON.Logs;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace SAEON.Identity.Service
 {
@@ -48,8 +47,7 @@ namespace SAEON.Identity.Service
                     options.ExpireTimeSpan = TimeSpan.FromDays(30);
                     options.SlidingExpiration = true;
                 });
-                var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-                services.AddDbContext<SAEONDbContext>(options => options.UseSqlServer(connectionString, b => b.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure()));
+                services.AddDbContext<SAEONDbContext>(options => options.UseSqlServer(connectionString, b => b.EnableRetryOnFailure()));
                 services
                     .AddIdentity<SAEONUser, SAEONRole>(config =>
                     {
@@ -86,12 +84,12 @@ namespace SAEON.Identity.Service
                     .AddConfigurationStore(options =>
                     {
                         options.ConfigureDbContext = builder =>
-                            builder.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure());
+                            builder.UseSqlServer(connectionString, b => b.EnableRetryOnFailure());
                     })
                     .AddOperationalStore(options =>
                     {
                         options.ConfigureDbContext = builder =>
-                            builder.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure());
+                            builder.UseSqlServer(connectionString, b => b.EnableRetryOnFailure());
 
                         // this enables automatic token cleanup. this is optional.
                         options.EnableTokenCleanup = true;
