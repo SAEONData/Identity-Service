@@ -27,3 +27,5 @@ GO
 SET IDENTITY_INSERT IdentityResourceClaims OFF;  
 GO
 
+DROP TABLE ApiSecrets
+DROP TABLE IdentityClaims
