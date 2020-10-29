@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using SAEON.Logs;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.Api
 {
@@ -21,7 +20,8 @@ namespace SAEON.Identity.Service.Api
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNodesClientAsync()
+        //public async Task<IActionResult> AddNodesClientAsync()
+        public IActionResult AddNodesClient()
         {
             using (SAEONLogs.MethodCall(GetType()))
             {

@@ -3,9 +3,8 @@ using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SAEON.Identity.Service.Data;
+using SAEON.Logs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +15,17 @@ namespace SAEON.Identity.Service.Config
 {
     internal class ConfigControllerLogic
     {
+        private readonly ConfigurationDbContext dbContext;
+        private readonly UserManager<SAEONUser> userManager;
+        private readonly RoleManager<SAEONRole> roleManager;
+
+        public ConfigControllerLogic(ConfigurationDbContext dbContext, UserManager<SAEONUser> userManager, RoleManager<SAEONRole> roleManager)
+        {
+            this.dbContext = dbContext;
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+        }
+
         internal Client GetClientResource(int Id, out Exception error)
         {
             Client clientResource = new Client();
@@ -59,35 +69,22 @@ namespace SAEON.Identity.Service.Config
             var clientResources = new List<IdentityServer4.EntityFramework.Entities.Client>();
             error = null;
 
-            var host = Program.host;
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
-
-                using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
-                {
-                    try
-                    {
-                        clientResources = context.Clients
-                            .Include(c => c.AllowedGrantTypes)
-                            .Include(c => c.ClientSecrets)
-                            .Include(c => c.AllowedScopes)
-                            .Include(c => c.AllowedCorsOrigins)
-                            .Include(c => c.RedirectUris)
-                            .Include(c => c.PostLogoutRedirectUris)
-                            .OrderBy(c => c.ClientId).ToList();
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to get Client Resources from DB.");
-
-                        error = ex;
-                    }
-
-                }
+                clientResources = dbContext.Clients
+                    .Include(c => c.AllowedGrantTypes)
+                    .Include(c => c.ClientSecrets)
+                    .Include(c => c.AllowedScopes)
+                    .Include(c => c.AllowedCorsOrigins)
+                    .Include(c => c.RedirectUris)
+                    .Include(c => c.PostLogoutRedirectUris)
+                    .OrderBy(c => c.ClientId).ToList();
             }
-
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex, "Unable to get Client Resources from DB.");
+                error = ex;
+            }
             return clientResources;
         }
 
@@ -212,57 +209,47 @@ namespace SAEON.Identity.Service.Config
 
             try
             {
-                var host = Program.host;
-                using (var scope = host.Services.CreateScope())
+                try
                 {
-                    var serviceProvider = scope.ServiceProvider;
-                    using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
+                    var dbClient = dbContext.Clients
+                        .Include(c => c.AllowedGrantTypes)
+                        .Include(c => c.ClientSecrets)
+                        .Include(c => c.AllowedScopes)
+                        .Include(c => c.AllowedCorsOrigins)
+                        .Include(c => c.RedirectUris)
+                        .Include(c => c.PostLogoutRedirectUris)
+                        .FirstOrDefault(x => x.Id == client.Id);
+
+                    if (dbClient != null)
                     {
-                        try
-                        {
-                            var dbClient = context.Clients
-                                .Include(c => c.AllowedGrantTypes)
-                                .Include(c => c.ClientSecrets)
-                                .Include(c => c.AllowedScopes)
-                                .Include(c => c.AllowedCorsOrigins)
-                                .Include(c => c.RedirectUris)
-                                .Include(c => c.PostLogoutRedirectUris)
-                                .FirstOrDefault(x => x.Id == client.Id);
-
-                            if (dbClient != null)
-                            {
-                                //UPDATE
-                                dbClient.ClientId = client.ClientId;
-                                dbClient.ClientName = client.ClientName;
-                                dbClient.IdentityTokenLifetime = client.IdentityTokenLifetime;
-                                dbClient.AccessTokenLifetime = client.AccessTokenLifetime;
-                                dbClient.AllowedGrantTypes = client.AllowedGrantTypes;
-                                dbClient.ClientSecrets = client.ClientSecrets;
-                                dbClient.AllowedScopes = client.AllowedScopes;
-                                dbClient.AllowedCorsOrigins = client.AllowedCorsOrigins;
-                                dbClient.RedirectUris = client.RedirectUris;
-                                dbClient.PostLogoutRedirectUris = client.PostLogoutRedirectUris;
-                                dbClient.RequireConsent = client.RequireConsent;
-                                dbClient.AllowRememberConsent = client.AllowRememberConsent;
-                                dbClient.AllowOfflineAccess = client.AllowOfflineAccess;
-                                dbClient.AllowAccessTokensViaBrowser = client.AllowAccessTokensViaBrowser;
-                            }
-                            else
-                            {
-                                //ADD
-                                context.Clients.Add(client);
-                            }
-
-                            context.SaveChanges();
-                        }
-                        catch (Exception ex)
-                        {
-                            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                            logger.LogError(ex, "Unabled to save ClientResources to DB.");
-
-                            throw ex;
-                        }
+                        //UPDATE
+                        dbClient.ClientId = client.ClientId;
+                        dbClient.ClientName = client.ClientName;
+                        dbClient.IdentityTokenLifetime = client.IdentityTokenLifetime;
+                        dbClient.AccessTokenLifetime = client.AccessTokenLifetime;
+                        dbClient.AllowedGrantTypes = client.AllowedGrantTypes;
+                        dbClient.ClientSecrets = client.ClientSecrets;
+                        dbClient.AllowedScopes = client.AllowedScopes;
+                        dbClient.AllowedCorsOrigins = client.AllowedCorsOrigins;
+                        dbClient.RedirectUris = client.RedirectUris;
+                        dbClient.PostLogoutRedirectUris = client.PostLogoutRedirectUris;
+                        dbClient.RequireConsent = client.RequireConsent;
+                        dbClient.AllowRememberConsent = client.AllowRememberConsent;
+                        dbClient.AllowOfflineAccess = client.AllowOfflineAccess;
+                        dbClient.AllowAccessTokensViaBrowser = client.AllowAccessTokensViaBrowser;
                     }
+                    else
+                    {
+                        //ADD
+                        dbContext.Clients.Add(client);
+                    }
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    SAEONLogs.Exception(ex, "Unable to save ClientResources to DB.");
+                    throw;
                 }
 
                 result = true;
@@ -280,39 +267,27 @@ namespace SAEON.Identity.Service.Config
             bool result = false;
             error = null;
 
-            var host = Program.host;
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
+                var client = dbContext.Clients
+                    .Include(c => c.AllowedGrantTypes)
+                    .Include(c => c.ClientSecrets)
+                    .Include(c => c.AllowedScopes)
+                    .Include(c => c.AllowedCorsOrigins)
+                    .Include(c => c.RedirectUris)
+                    .Include(c => c.PostLogoutRedirectUris)
+                    .FirstOrDefault(x => x.Id == Id);
 
-                using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
+                if (client != null)
                 {
-                    try
-                    {
-                        var client = context.Clients
-                            .Include(c => c.AllowedGrantTypes)
-                            .Include(c => c.ClientSecrets)
-                            .Include(c => c.AllowedScopes)
-                            .Include(c => c.AllowedCorsOrigins)
-                            .Include(c => c.RedirectUris)
-                            .Include(c => c.PostLogoutRedirectUris)
-                            .FirstOrDefault(x => x.Id == Id);
-
-                        if (client != null)
-                        {
-                            context.Clients.Remove(client);
-                            context.SaveChanges();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to delete ClientResource from DB.");
-
-                        error = ex;
-                    }
-
+                    dbContext.Clients.Remove(client);
+                    dbContext.SaveChanges();
                 }
+            }
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex, "Unable to delete ClientResource from DB.");
+                error = ex;
             }
 
             return result;
@@ -323,30 +298,18 @@ namespace SAEON.Identity.Service.Config
             var apiResources = new List<IdentityServer4.EntityFramework.Entities.ApiResource>();
             error = null;
 
-            var host = Program.host;
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
-
-                using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
-                {
-                    try
-                    {
-                        apiResources = context.ApiResources
-                            .Include(x => x.UserClaims)
-                            .Include(x => x.Secrets)
-                            .Include(x => x.Scopes)
-                            .OrderBy(c => c.Name).ToList();
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to get API Resources from DB.");
-
-                        error = ex;
-                    }
-
-                }
+                apiResources = dbContext.ApiResources
+                    .Include(x => x.UserClaims)
+                    .Include(x => x.Secrets)
+                    .Include(x => x.Scopes)
+                    .OrderBy(c => c.Name).ToList();
+            }
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex, "Unable to get API Resources from DB.");
+                error = ex;
             }
 
             return apiResources;
@@ -442,46 +405,36 @@ namespace SAEON.Identity.Service.Config
 
             try
             {
-                var host = Program.host;
-                using (var scope = host.Services.CreateScope())
+                try
                 {
-                    var serviceProvider = scope.ServiceProvider;
-                    using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
+                    var dbApi = dbContext.ApiResources
+                        .Include(c => c.UserClaims)
+                        .Include(c => c.Secrets)
+                        .Include(c => c.Scopes)
+                        .FirstOrDefault(x => x.Id == api.Id);
+
+                    if (dbApi != null)
                     {
-                        try
-                        {
-                            var dbApi = context.ApiResources
-                                .Include(c => c.UserClaims)
-                                .Include(c => c.Secrets)
-                                .Include(c => c.Scopes)
-                                .FirstOrDefault(x => x.Id == api.Id);
-
-                            if (dbApi != null)
-                            {
-                                //UPDATE
-                                dbApi.Name = api.Name;
-                                dbApi.DisplayName = api.DisplayName;
-                                dbApi.Description = api.Description;
-                                dbApi.UserClaims = api.UserClaims;
-                                dbApi.Secrets = api.Secrets;
-                                dbApi.Scopes = api.Scopes;
-                            }
-                            else
-                            {
-                                //ADD
-                                context.ApiResources.Add(api);
-                            }
-
-                            context.SaveChanges();
-                        }
-                        catch (Exception ex)
-                        {
-                            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                            logger.LogError(ex, "Unabled to save ApiResources to DB.");
-
-                            throw ex;
-                        }
+                        //UPDATE
+                        dbApi.Name = api.Name;
+                        dbApi.DisplayName = api.DisplayName;
+                        dbApi.Description = api.Description;
+                        dbApi.UserClaims = api.UserClaims;
+                        dbApi.Secrets = api.Secrets;
+                        dbApi.Scopes = api.Scopes;
                     }
+                    else
+                    {
+                        //ADD
+                        dbContext.ApiResources.Add(api);
+                    }
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    SAEONLogs.Exception(ex, "Unable to save ApiResources to DB.");
+                    throw;
                 }
 
                 result = true;
@@ -499,37 +452,26 @@ namespace SAEON.Identity.Service.Config
             bool result = false;
             error = null;
 
-            var host = Program.host;
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
+                var api = dbContext.ApiResources
+                    .Include(c => c.UserClaims)
+                    .Include(c => c.Secrets)
+                    .Include(c => c.Scopes)
+                    .FirstOrDefault(x => x.Id == Id);
 
-                using (var context = serviceProvider.GetRequiredService<ConfigurationDbContext>())
+                if (api != null)
                 {
-                    try
-                    {
-                        var api = context.ApiResources
-                            .Include(c => c.UserClaims)
-                            .Include(c => c.Secrets)
-                            .Include(c => c.Scopes)
-                            .FirstOrDefault(x => x.Id == Id);
-
-                        if (api != null)
-                        {
-                            context.ApiResources.Remove(api);
-                            context.SaveChanges();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to delete ApiResource from DB.");
-
-                        error = ex;
-                    }
-
+                    dbContext.ApiResources.Remove(api);
+                    dbContext.SaveChanges();
                 }
             }
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex, "Unable to delete ApiResource from DB.");
+                error = ex;
+            }
+
 
             return result;
         }
@@ -539,29 +481,15 @@ namespace SAEON.Identity.Service.Config
             var roles = new List<Role>();
             error = null;
 
-            var host = Program.host;
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
-
-                using (var roleManager = serviceProvider.GetRequiredService<RoleManager<SAEONRole>>())
-                {
-                    try
-                    {
-                        roles = roleManager.Roles.Select(x => new Role() { Id = x.Id, Name = x.Name }).ToList();
-
-
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to get Roles from DB.");
-
-                        error = ex;
-                    }
-                }
+                roles = roleManager.Roles.Select(x => new Role() { Id = x.Id, Name = x.Name }).ToList();
             }
-
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex, "Unable to get Roles from DB.");
+                error = ex;
+            }
             return roles;
         }
 
@@ -569,30 +497,19 @@ namespace SAEON.Identity.Service.Config
         {
             bool result = false;
 
-            var host = Program.host;
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
-
-                using (var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>())
+                var dbUser = userManager.Users.FirstOrDefault(x => x.Id == userId);
+                if (dbUser != null)
                 {
-                    try
-                    {
-                        var dbUser = userManager.Users.FirstOrDefault(x => x.Id == userId);
-                        if (dbUser != null)
-                        {
-                            await userManager.AddToRoleAsync(dbUser, roleName);
-                            result = true;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to add User to Role.");
-                    }
+                    await userManager.AddToRoleAsync(dbUser, roleName);
+                    result = true;
                 }
             }
-
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex, "Unable to add User to Role.");
+            }
             return result;
         }
 
@@ -600,30 +517,19 @@ namespace SAEON.Identity.Service.Config
         {
             bool result = false;
 
-            var host = Program.host;
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
-
-                using (var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>())
+                var dbUser = userManager.Users.FirstOrDefault(x => x.Id == userId);
+                if (dbUser != null)
                 {
-                    try
-                    {
-                        var dbUser = userManager.Users.FirstOrDefault(x => x.Id == userId);
-                        if (dbUser != null)
-                        {
-                            await userManager.RemoveFromRoleAsync(dbUser, roleName);
-                            result = true;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to remove User from Role.");
-                    }
+                    await userManager.RemoveFromRoleAsync(dbUser, roleName);
+                    result = true;
                 }
             }
-
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex, "Unable to remove User from Role.");
+            }
             return result;
         }
 
@@ -632,44 +538,32 @@ namespace SAEON.Identity.Service.Config
             var userResources = new List<User>();
             error = null;
 
-            var host = Program.host;
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
+                var dbUsers = userManager.Users
+                    .OrderBy(x => (x.FirstName + " " + x.Surname))
+                    .ToList();
 
-                using (var userManager = serviceProvider.GetRequiredService<UserManager<SAEONUser>>())
+                foreach (var dbUser in dbUsers)
                 {
-                    try
+                    var dbRoles = userManager.GetRolesAsync(dbUser).Result.ToList();
+
+                    userResources.Add(new User()
                     {
-                        var dbUsers = userManager.Users
-                            .OrderBy(x => (x.FirstName + " " + x.Surname))
-                            .ToList();
-
-                        foreach (var dbUser in dbUsers)
-                        {
-                            var dbRoles = userManager.GetRolesAsync(dbUser).Result.ToList();
-
-                            userResources.Add(new User()
-                            {
-                                Id = dbUser.Id,
-                                Name = dbUser.FirstName,
-                                Surname = dbUser.Surname,
-                                Email = dbUser.Email,
-                                Password = dbUser.PasswordHash,
-                                Roles = dbRoles
-                            });
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "Unabled to get User Resources from DB.");
-
-                        error = ex;
-                    }
+                        Id = dbUser.Id,
+                        Name = dbUser.FirstName,
+                        Surname = dbUser.Surname,
+                        Email = dbUser.Email,
+                        Password = dbUser.PasswordHash,
+                        Roles = dbRoles
+                    });
                 }
             }
-
+            catch (Exception ex)
+            {
+                SAEONLogs.Exception(ex, "Unable to get User Resources from DB.");
+                error = ex;
+            }
             return userResources;
         }
 
@@ -679,95 +573,83 @@ namespace SAEON.Identity.Service.Config
 
             try
             {
-                var host = Program.host;
-                using (var scope = host.Services.CreateScope())
+                try
                 {
-                    var serviceProvider = scope.ServiceProvider;
-                    using (var roleManager = serviceProvider.GetRequiredService<RoleManager<SAEONRole>>())
+                    foreach (var role in roles)
                     {
-                        try
+                        var identityRole = roleManager.Roles.FirstOrDefault(x => x.Id == role.Id);
+                        if (identityRole != null)
                         {
-                            foreach (var role in roles)
+                            if (identityRole.Name != role.Name)
                             {
-                                var identityRole = roleManager.Roles.FirstOrDefault(x => x.Id == role.Id);
-                                if (identityRole != null)
+                                //UPDATE
+                                //Update Role Name
+                                identityRole.Name = role.Name;
+                                var identityResult = await roleManager.UpdateAsync(identityRole);
+                                if (!identityResult.Succeeded)
                                 {
-                                    if (identityRole.Name != role.Name)
-                                    {
-                                        //UPDATE
-                                        //Update Role Name
-                                        identityRole.Name = role.Name;
-                                        var identityResult = await roleManager.UpdateAsync(identityRole);
-                                        if (!identityResult.Succeeded)
-                                        {
-                                            throw new Exception("Role Name updated failed");
-                                        }
-
-                                        //Remove Role Claim
-                                        identityResult = await roleManager.RemoveClaimAsync(identityRole,
-                                            roleManager.GetClaimsAsync(identityRole).Result.FirstOrDefault(x => x.Type == ClaimTypes.Role));
-                                        if (!identityResult.Succeeded)
-                                        {
-                                            throw new Exception("Add Role-Claim failed");
-                                        }
-
-                                        //Add new Role Claim
-                                        identityResult = await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role.Name));
-                                        if (!identityResult.Succeeded)
-                                        {
-                                            throw new Exception("Add Role-Claim failed");
-                                        }
-                                    }
+                                    throw new Exception("Role Name updated failed");
                                 }
-                                else
-                                {
-                                    //ADD
-                                    identityRole = new SAEONRole() { Id = role.Id, Name = role.Name };
-                                    var identityResult = await roleManager.CreateAsync(identityRole);
-                                    if (!identityResult.Succeeded)
-                                    {
-                                        throw new Exception("Create Role failed");
-                                    }
 
-                                    identityResult = await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role.Name));
-                                    if (!identityResult.Succeeded)
-                                    {
-                                        throw new Exception("Add Role-Claim failed");
-                                    }
+                                //Remove Role Claim
+                                identityResult = await roleManager.RemoveClaimAsync(identityRole,
+                                    roleManager.GetClaimsAsync(identityRole).Result.FirstOrDefault(x => x.Type == ClaimTypes.Role));
+                                if (!identityResult.Succeeded)
+                                {
+                                    throw new Exception("Add Role-Claim failed");
                                 }
-                            }
 
-                            foreach (var dbRole in roleManager.Roles)
-                            {
-                                if (!roles.Any(x => x.Id == dbRole.Id))
+                                //Add new Role Claim
+                                identityResult = await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role.Name));
+                                if (!identityResult.Succeeded)
                                 {
-                                    //DELETE
-                                    //Delete role
-                                    var identityResult = await roleManager.DeleteAsync(dbRole);
-                                    if (!identityResult.Succeeded)
-                                    {
-                                        throw new Exception("Delete Role failed");
-                                    }
+                                    throw new Exception("Add Role-Claim failed");
                                 }
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                            logger.LogError(ex, "Unabled to save Roles to DB.");
+                            //ADD
+                            identityRole = new SAEONRole() { Id = role.Id, Name = role.Name };
+                            var identityResult = await roleManager.CreateAsync(identityRole);
+                            if (!identityResult.Succeeded)
+                            {
+                                throw new Exception("Create Role failed");
+                            }
 
-                            throw ex;
+                            identityResult = await roleManager.AddClaimAsync(identityRole, new Claim(ClaimTypes.Role, role.Name));
+                            if (!identityResult.Succeeded)
+                            {
+                                throw new Exception("Add Role-Claim failed");
+                            }
+                        }
+                    }
+
+                    foreach (var dbRole in roleManager.Roles)
+                    {
+                        if (!roles.Any(x => x.Id == dbRole.Id))
+                        {
+                            //DELETE
+                            //Delete role
+                            var identityResult = await roleManager.DeleteAsync(dbRole);
+                            if (!identityResult.Succeeded)
+                            {
+                                throw new Exception("Delete Role failed");
+                            }
                         }
                     }
                 }
-
+                catch (Exception ex)
+                {
+                    SAEONLogs.Exception(ex, "Unable to save Roles to DB.");
+                    throw;
+                }
                 result = true;
             }
             catch
             {
                 result = false;
             }
-
             return result;
         }
     }

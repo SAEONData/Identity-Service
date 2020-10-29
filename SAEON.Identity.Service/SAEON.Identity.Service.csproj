@@ -18,6 +18,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\Configuration\20201029113858_AspNetCore31.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029113858_AspNetCore31.Designer.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029121123_AspNetCore31.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029121123_AspNetCore31.Designer.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029124107_AspNetCore31.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029124107_AspNetCore31.Designer.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029125505_AspNetCore31.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029125505_AspNetCore31.Designer.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029130116_Name.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029130116_Name.Designer.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029132506_AspNetCore31Cleanup.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029132506_AspNetCore31Cleanup.Designer.cs" />
+    <Compile Remove="Data\Migrations\Identity\20201029121412_AspNetCore31.cs" />
+    <Compile Remove="Data\Migrations\Identity\20201029121412_AspNetCore31.Designer.cs" />
+    <Compile Remove="Data\Migrations\PersistedGrant\20201029121325_AspNetCore31.cs" />
+    <Compile Remove="Data\Migrations\PersistedGrant\20201029121325_AspNetCore31.Designer.cs" />
+    <Compile Remove="Data\Migrations\PersistedGrant\20201029124138_AspNetCore31.cs" />
+    <Compile Remove="Data\Migrations\PersistedGrant\20201029124138_AspNetCore31.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.1" />
     <PackageReference Include="IdentityServer4.EntityFramework" Version="4.1.1" />

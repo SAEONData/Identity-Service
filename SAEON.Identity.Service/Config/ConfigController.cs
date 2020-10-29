@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using IdentityServer4.EntityFramework.DbContexts;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using SAEON.Identity.Service.Data;
 using SAEON.Identity.Service.Helpers;
 using System;
 using System.Collections.Generic;
@@ -12,9 +15,10 @@ namespace SAEON.Identity.Service.Config
     {
         readonly ConfigControllerLogic _logic;
 
-        public ConfigController()
+
+        public ConfigController(ConfigurationDbContext dbContext, UserManager<SAEONUser> userManager, RoleManager<SAEONRole> roleManager)
         {
-            _logic = new ConfigControllerLogic();
+            _logic = new ConfigControllerLogic(dbContext, userManager, roleManager);
         }
 
         public ActionResult ClientResources()
