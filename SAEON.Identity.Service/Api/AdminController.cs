@@ -1,27 +1,58 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IdentityServer4.EntityFramework.DbContexts;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using SAEON.Identity.Service.Data;
 using SAEON.Logs;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SAEON.Identity.Service.Api
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class ClientsController : ControllerBase
+    public class AdminController : ControllerBase
     {
         private readonly IServiceProvider serviceProvider;
         private readonly IConfiguration config;
 
-        public ClientsController(IServiceProvider serviceProvider, IConfiguration config)
+        public AdminController(IServiceProvider serviceProvider, IConfiguration config)
         {
             this.serviceProvider = serviceProvider;
             this.config = config;
         }
 
         [HttpPost]
-        //public async Task<IActionResult> AddNodesClientAsync()
-        public IActionResult AddNodesClient()
+        public async Task<IActionResult> MigrateDb()
+        {
+            using (SAEONLogs.MethodCall(GetType()))
+            {
+                try
+                {
+                    SAEONLogs.Information("Migrating ConfigurationDbContext");
+                    var configurationDbContext = serviceProvider.GetRequiredService<ConfigurationDbContext>();
+                    await configurationDbContext.Database.MigrateAsync();
+                    SAEONLogs.Information("Migrating PersistedGrantDbContext");
+                    var persistedGrantDbContext = serviceProvider.GetRequiredService<PersistedGrantDbContext>();
+                    await persistedGrantDbContext.Database.MigrateAsync();
+                    SAEONLogs.Information("Migrating SAEONDbContext");
+                    var dbContext = serviceProvider.GetRequiredService<SAEONDbContext>();
+                    await dbContext.Database.MigrateAsync();
+                    return Ok("Databases migrated");
+                }
+                catch (Exception ex)
+                {
+                    SAEONLogs.Exception(ex);
+                    throw;
+                }
+            }
+        }
+
+        [HttpPost]
+        //public async Task<IActionResult> AddClientsAsync()
+        public IActionResult AddClients()
         {
             using (SAEONLogs.MethodCall(GetType()))
             {
