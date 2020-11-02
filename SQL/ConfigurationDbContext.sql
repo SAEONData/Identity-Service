@@ -1,3 +1,11 @@
+--ApiScopes -> ApiResourceScopes
+Insert into ApiResourceScopes
+  (Scope, ApiResourceId)
+Select
+  ApiResources.Name, ApiResources.Id
+from
+  ApiResources
+
 --ApiSecrets -> ApiResourceSecrets
 SET IDENTITY_INSERT ApiResourceSecrets ON;  
 GO
@@ -29,3 +37,12 @@ GO
 
 DROP TABLE ApiSecrets
 DROP TABLE IdentityClaims
+
+Update
+  ClientCorsOrigins
+set
+  Origin = Replace(Origin,'/ndao','')
+where
+  Origin like '%/ndao'
+
+Update ApiScopes set Enabled = 1
