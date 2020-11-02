@@ -37,6 +37,10 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 name: "IX_ApiScopes_ApiResourceId",
                 table: "ApiScopes");
 
+            migrationBuilder.DropIndex(
+                name: "IX_ApiScopeClaims_ApiScopeId",
+                table: "ApiScopeClaims");
+
             migrationBuilder.DropPrimaryKey(
                 name: "PK_IdentityProperties",
                 table: "IdentityProperties");
@@ -53,6 +57,10 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 name: "ApiResourceId",
                 table: "ApiScopes");
 
+            migrationBuilder.DropColumn(
+                name: "ApiScopeId",
+                table: "ApiScopeClaims");
+
             migrationBuilder.RenameTable(
                 name: "IdentityProperties",
                 newName: "IdentityResourceProperties");
@@ -64,16 +72,6 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
             migrationBuilder.RenameTable(
                 name: "ApiClaims",
                 newName: "ApiResourceClaims");
-
-            migrationBuilder.RenameColumn(
-                name: "ApiScopeId",
-                table: "ApiScopeClaims",
-                newName: "ScopeId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_ApiScopeClaims_ApiScopeId",
-                table: "ApiScopeClaims",
-                newName: "IX_ApiScopeClaims_ScopeId");
 
             migrationBuilder.RenameIndex(
                 name: "IX_IdentityProperties_IdentityResourceId",
@@ -107,6 +105,12 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 table: "ApiScopes",
                 nullable: false,
                 defaultValue: false);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ScopeId",
+                table: "ApiScopeClaims",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<string>(
                 name: "AllowedAccessTokenSigningAlgorithms",
@@ -221,6 +225,11 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ApiScopeClaims_ScopeId",
+                table: "ApiScopeClaims",
+                column: "ScopeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ApiResourceScopes_ApiResourceId",
                 table: "ApiResourceScopes",
                 column: "ApiResourceId");
@@ -303,6 +312,10 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
             migrationBuilder.DropTable(
                 name: "IdentityResourceClaims");
 
+            migrationBuilder.DropIndex(
+                name: "IX_ApiScopeClaims_ScopeId",
+                table: "ApiScopeClaims");
+
             migrationBuilder.DropPrimaryKey(
                 name: "PK_IdentityResourceProperties",
                 table: "IdentityResourceProperties");
@@ -328,6 +341,10 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 table: "ApiScopes");
 
             migrationBuilder.DropColumn(
+                name: "ScopeId",
+                table: "ApiScopeClaims");
+
+            migrationBuilder.DropColumn(
                 name: "AllowedAccessTokenSigningAlgorithms",
                 table: "ApiResources");
 
@@ -347,16 +364,6 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 name: "ApiResourceClaims",
                 newName: "ApiClaims");
 
-            migrationBuilder.RenameColumn(
-                name: "ScopeId",
-                table: "ApiScopeClaims",
-                newName: "ApiScopeId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_ApiScopeClaims_ScopeId",
-                table: "ApiScopeClaims",
-                newName: "IX_ApiScopeClaims_ApiScopeId");
-
             migrationBuilder.RenameIndex(
                 name: "IX_IdentityResourceProperties_IdentityResourceId",
                 table: "IdentityProperties",
@@ -375,6 +382,14 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
             migrationBuilder.AddColumn<int>(
                 name: "ApiResourceId",
                 table: "ApiScopes",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ApiScopeId",
+                table: "ApiScopeClaims",
+                type: "int",
                 nullable: false,
                 defaultValue: 0);
 
@@ -397,14 +412,14 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 name: "ApiSecrets",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ApiResourceId = table.Column<int>(nullable: false),
-                    Created = table.Column<DateTime>(nullable: false),
-                    Description = table.Column<string>(maxLength: 1000, nullable: true),
-                    Expiration = table.Column<DateTime>(nullable: true),
-                    Type = table.Column<string>(maxLength: 250, nullable: false),
-                    Value = table.Column<string>(maxLength: 4000, nullable: false)
+                    ApiResourceId = table.Column<int>(type: "int", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Expiration = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -421,10 +436,10 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 name: "IdentityClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdentityResourceId = table.Column<int>(nullable: false),
-                    Type = table.Column<string>(maxLength: 200, nullable: false)
+                    IdentityResourceId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -441,6 +456,11 @@ namespace SAEON.Identity.Service.Data.Migrations.Configuration
                 name: "IX_ApiScopes_ApiResourceId",
                 table: "ApiScopes",
                 column: "ApiResourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiScopeClaims_ApiScopeId",
+                table: "ApiScopeClaims",
+                column: "ApiScopeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApiSecrets_ApiResourceId",

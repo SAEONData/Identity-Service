@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SAEON.Identity.Service.Data.Migrations.Configuration
 {
     [DbContext(typeof(ConfigurationDbContext))]
-    [Migration("20201029131224_AspNetCore31")]
+    [Migration("20201102104138_AspNetCore31")]
     partial class AspNetCore31
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

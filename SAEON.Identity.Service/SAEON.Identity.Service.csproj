@@ -28,6 +28,8 @@
     <Compile Remove="Data\Migrations\Configuration\20201029125505_AspNetCore31.Designer.cs" />
     <Compile Remove="Data\Migrations\Configuration\20201029130116_Name.cs" />
     <Compile Remove="Data\Migrations\Configuration\20201029130116_Name.Designer.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029131224_AspNetCore31.cs" />
+    <Compile Remove="Data\Migrations\Configuration\20201029131224_AspNetCore31.Designer.cs" />
     <Compile Remove="Data\Migrations\Configuration\20201029132506_AspNetCore31Cleanup.cs" />
     <Compile Remove="Data\Migrations\Configuration\20201029132506_AspNetCore31Cleanup.Designer.cs" />
     <Compile Remove="Data\Migrations\Identity\20201029121412_AspNetCore31.cs" />
@@ -36,6 +38,8 @@
     <Compile Remove="Data\Migrations\PersistedGrant\20201029121325_AspNetCore31.Designer.cs" />
     <Compile Remove="Data\Migrations\PersistedGrant\20201029124138_AspNetCore31.cs" />
     <Compile Remove="Data\Migrations\PersistedGrant\20201029124138_AspNetCore31.Designer.cs" />
+    <Compile Remove="Data\Migrations\PersistedGrant\20201029132827_Name.cs" />
+    <Compile Remove="Data\Migrations\PersistedGrant\20201029132827_Name.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,7 +55,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PaulMiami.AspNetCore.Mvc.Recaptcha" Version="1.2.2" />
-    <PackageReference Include="SAEON.Logs.NetCore" Version="1.0.47" />
+    <PackageReference Include="SAEON.Logs.NetCore" Version="1.0.48" />
     <PackageReference Include="Sendgrid" Version="9.21.0" />
   </ItemGroup>
   <ItemGroup>

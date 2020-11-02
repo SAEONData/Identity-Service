@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SAEON.Identity.Service.Data.Migrations.PersistedGrant
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20201029132827_Name")]
-    partial class Name
+    [Migration("20201102104210_AspNetCore31")]
+    partial class AspNetCore31
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

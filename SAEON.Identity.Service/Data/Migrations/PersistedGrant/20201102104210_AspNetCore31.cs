@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SAEON.Identity.Service.Data.Migrations.PersistedGrant
 {
-    public partial class Name : Migration
+    public partial class AspNetCore31 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
