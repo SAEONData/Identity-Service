@@ -43,14 +43,12 @@ namespace SAEON.Identity.Service
                     options.CheckConsentNeeded = context => true;
                     options.MinimumSameSitePolicy = SameSiteMode.None;
                 });
-                services.AddAuthentication().AddCookie(options =>
+                services.AddAntiforgery(options =>
                 {
-                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
-                    options.SlidingExpiration = true;
+                    options.Cookie.SameSite = SameSiteMode.None;
                 });
                 var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
                 services.AddDbContext<SAEONDbContext>(options => options.UseSqlServer(connectionString, b => b.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure()));
-                //services.AddDbContext<SAEONDbContext>(options => options.UseSqlServer(connectionString, b => b.EnableRetryOnFailure()));
                 services
                     .AddIdentity<SAEONUser, SAEONRole>(config =>
                     {
