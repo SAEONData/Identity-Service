@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using SAEON.Logs;
 using System;
+using System.IO;
 
 namespace SAEON.Identity.Service
 {
@@ -37,7 +38,10 @@ namespace SAEON.Identity.Service
                     webBuilder
                         .ConfigureAppConfiguration((hostContext, config) =>
                         {
-                            config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
+                            if (File.Exists("secrets.json"))
+                            {
+                                config.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
+                            }
                             config.AddJsonFile("api\\secrets.json", optional: true, reloadOnChange: true);
                         });
                     webBuilder.UseStartup<Startup>();

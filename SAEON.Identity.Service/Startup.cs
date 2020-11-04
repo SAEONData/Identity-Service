@@ -39,7 +39,6 @@ namespace SAEON.Identity.Service
                 var connectionString = Configuration.GetConnectionString("IdentityService");
                 services.Configure<CookiePolicyOptions>(options =>
                 {
-                    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                     options.CheckConsentNeeded = context => true;
                     options.MinimumSameSitePolicy = SameSiteMode.None;
                 });
@@ -47,6 +46,7 @@ namespace SAEON.Identity.Service
                 {
                     options.Cookie.SameSite = SameSiteMode.None;
                 });
+                services.AddAuthentication();
                 var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
                 services.AddDbContext<SAEONDbContext>(options => options.UseSqlServer(connectionString, b => b.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure()));
                 services
