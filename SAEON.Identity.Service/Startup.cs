@@ -35,18 +35,7 @@ namespace SAEON.Identity.Service
         {
             using (SAEONLogs.MethodCall(GetType()))
             {
-                services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
                 var connectionString = Configuration.GetConnectionString("IdentityService");
-                services.Configure<CookiePolicyOptions>(options =>
-                {
-                    options.CheckConsentNeeded = context => true;
-                    options.MinimumSameSitePolicy = SameSiteMode.None;
-                });
-                services.AddAntiforgery(options =>
-                {
-                    options.Cookie.SameSite = SameSiteMode.None;
-                });
-                services.AddAuthentication();
                 var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
                 services.AddDbContext<SAEONDbContext>(options => options.UseSqlServer(connectionString, b => b.MigrationsAssembly(migrationsAssembly).EnableRetryOnFailure()));
                 services
@@ -100,6 +89,15 @@ namespace SAEON.Identity.Service
                     .AddProfileService<IdentityProfileService>()
                     .AddSigningCredential(Cert.Load());
 
+                services.Configure<CookiePolicyOptions>(options =>
+                {
+                    options.CheckConsentNeeded = context => true;
+                    options.MinimumSameSitePolicy = SameSiteMode.None;
+                });
+                services.AddAntiforgery(options =>
+                {
+                    options.Cookie.SameSite = SameSiteMode.None;
+                });
                 services.AddMvc();
 
                 services.AddRecaptcha(new RecaptchaOptions
@@ -115,8 +113,7 @@ namespace SAEON.Identity.Service
                 services.AddTransient<IEmailSender, EmailSender>();
                 services.Configure<AuthMessageSenderOptions>(Configuration.GetSection("SendGrid"));
             }
-
-            services.AddApplicationInsightsTelemetry();
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
