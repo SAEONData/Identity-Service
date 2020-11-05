@@ -40,6 +40,7 @@ namespace SAEON.Identity.Service
                     options.CheckConsentNeeded = context => true;
                     options.MinimumSameSitePolicy = SameSiteMode.None;
                 });
+                services.AddAntiforgery(options => { options.Cookie.Expiration = TimeSpan.Zero; });
                 //services.AddAntiforgery(options =>
                 //{
                 //    options.Cookie.SameSite = SameSiteMode.None;
