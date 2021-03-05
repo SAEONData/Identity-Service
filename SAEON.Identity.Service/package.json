@@ -8,11 +8,6 @@
     "type": "git",
     "url": "git://github.com/SAEON-Data/Identity-Service.git"
   },
-  "dependencies": {
-    "jquery": "3.3.1",
-    "jquery-validation-unobtrusive": "^3.2.12"
-  },
-  "devDependencies": {
-    "mdbootstrap": "^4.19.2"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
