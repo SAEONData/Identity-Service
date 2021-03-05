@@ -112,21 +112,16 @@
             </div>
         </footer>
     </div>
+    <script type="text/javascript" src="~/node_modules/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/node_modules/jquery-validation/dist/jquery.validate.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js" asp-append-version="true"></script><!-- JQuery -->
+    <script type="text/javascript" src="~/node_modules/mdbootstrap/js/popper.min.js"></script>
+    <script type="text/javascript" src="~/node_modules/mdbootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/node_modules/mdbootstrap/js/mdb.min.js"></script>
     <environment names="Development">
-        <script type="text/javascript" src="~/node_modules/jquery/dist/jquery.min.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/node_modules/jquery-validation/dist/jquery.validate.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js" asp-append-version="true"></script><!-- JQuery -->
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/mdb.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
-        <script type="text/javascript" src="~/node_modules/jquery/dist/jquery.min.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/node_modules/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
-        <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>-->
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/node_modules/mdbootstrap/js/mdb.min.js"></script>
         <script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
     @RenderSection("Scripts", required: false)
