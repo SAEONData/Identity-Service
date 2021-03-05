@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using PaulMiami.AspNetCore.Mvc.Recaptcha;
 using SAEON.Identity.Service.Config;
@@ -15,7 +14,6 @@ using SAEON.Identity.Service.Services;
 using SAEON.Identity.Service.UI;
 using SAEON.Logs;
 using System;
-using System.IO;
 using System.Reflection;
 
 namespace SAEON.Identity.Service
@@ -133,12 +131,12 @@ namespace SAEON.Identity.Service
                 }
                 app.UseHttpsRedirection();
                 app.UseStaticFiles();
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(
-                        Path.Combine(Directory.GetCurrentDirectory(), "node_modules")),
-                    RequestPath = "/node_modules"
-                });
+                //app.UseStaticFiles(new StaticFileOptions
+                //{
+                //    FileProvider = new PhysicalFileProvider(
+                //        Path.Combine(Directory.GetCurrentDirectory(), "node_modules")),
+                //    RequestPath = "/node_modules"
+                //});
 
                 app.UseCookiePolicy();
                 //app.UseResponseCaching();
